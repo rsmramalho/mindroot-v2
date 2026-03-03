@@ -9,10 +9,11 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { page: 'home',     icon: '⌂', label: 'Home' },
-  { page: 'inbox',    icon: '▦', label: 'Inbox' },
-  { page: 'ritual',   icon: '◎', label: 'Ritual' },
-  { page: 'journal',  icon: '○', label: 'Journal' },
+  { page: 'home',      icon: '⌂', label: 'Home' },
+  { page: 'projects',  icon: '▧', label: 'Projetos' },
+  { page: 'calendar',  icon: '▦', label: 'Agenda' },
+  { page: 'ritual',    icon: '◎', label: 'Ritual' },
+  { page: 'journal',   icon: '○', label: 'Journal' },
 ];
 
 export function BottomNav() {

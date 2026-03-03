@@ -52,38 +52,39 @@ export function useSoul() {
 
   // User seleciona emoção pós → salva e mostra resultado
   const selectEmotion = useCallback(
-    async (emotion: Emotion) => {
+    (emotion: Emotion) => {
       if (!checkIn.item || !checkIn.trigger) return;
 
       const shift = detectShift(checkIn.item.emotion_before, emotion);
 
-      // Salvar emotion_after no item
-      updateMutation.mutate({
-        id: checkIn.item.id,
-        updates: { emotion_after: emotion },
-      });
-
-      // Criar reflection automática
-      const user_id = checkIn.item.user_id;
-      const reflectionTitle = buildReflectionTitle(checkIn.item, emotion, shift);
-
-      createItem.mutate({
-        user_id,
-        title: reflectionTitle,
-        type: 'reflection',
-        module: checkIn.item.module,
-        emotion_before: checkIn.item.emotion_before,
-        emotion_after: emotion,
-        tags: ['auto_checkin'],
-        context: `Check-in após: ${checkIn.item.title}`,
-      });
-
+      // ★ Set result state FIRST — before mutations trigger re-renders
+      const item = checkIn.item;
       setCheckIn((prev) => ({
         ...prev,
         phase: 'result',
         emotionAfter: emotion,
         shift,
       }));
+
+      // Then fire mutations (these trigger query invalidation + re-renders)
+      updateMutation.mutate({
+        id: item.id,
+        updates: { emotion_after: emotion },
+      });
+
+      // Criar reflection automática
+      const reflectionTitle = buildReflectionTitle(item, emotion, shift);
+
+      createItem.mutate({
+        user_id: item.user_id,
+        title: reflectionTitle,
+        type: 'reflection',
+        module: item.module,
+        emotion_before: item.emotion_before,
+        emotion_after: emotion,
+        tags: ['auto_checkin'],
+        context: `Check-in após: ${item.title}`,
+      });
     },
     [checkIn.item, checkIn.trigger, updateMutation, createItem]
   );

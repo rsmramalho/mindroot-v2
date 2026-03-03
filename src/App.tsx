@@ -8,8 +8,13 @@ import { AppShell } from '@/components/shell/AppShell';
 import { AuthPage } from '@/pages/Auth';
 import { HomePage } from '@/pages/Home';
 import { InboxPage } from '@/pages/Inbox';
+import { ProjectsPage } from '@/pages/Projects';
+import { CalendarPage } from '@/pages/Calendar';
 import { RitualPage } from '@/pages/Ritual';
 import { JournalPage } from '@/pages/Journal';
+
+// Global components
+import CommandPalette from '@/components/shared/CommandPalette';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +33,11 @@ function PageRouter() {
       return <HomePage />;
     case 'inbox':
       return <InboxPage />;
+    case 'projects':
+    case 'project-detail':
+      return <ProjectsPage />;
+    case 'calendar':
+      return <CalendarPage />;
     case 'ritual':
       return <RitualPage />;
     case 'journal':
@@ -41,6 +51,7 @@ function AuthenticatedApp() {
   return (
     <AppShell>
       <PageRouter />
+      <CommandPalette />
     </AppShell>
   );
 }
