@@ -13,6 +13,9 @@ export default defineConfig({
     port: 5173,
     open: true,
   },
+  test: {
+    exclude: ['e2e/**', 'node_modules/**'],
+  },
   build: {
     rollupOptions: {
       output: {
