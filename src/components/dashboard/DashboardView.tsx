@@ -25,6 +25,7 @@ interface DashboardViewProps {
   onArchive: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (id: string, updates: Partial<AtomItem>) => void;
+  onOpenSheet?: (item: AtomItem) => void;
 }
 
 export default function DashboardView({
@@ -34,6 +35,7 @@ export default function DashboardView({
   onArchive,
   onDelete,
   onEdit,
+  onOpenSheet,
 }: DashboardViewProps) {
   // Filtrar apenas ativos (não completados, não arquivados)
   const activeItems = useMemo(
@@ -112,6 +114,7 @@ export default function DashboardView({
               onArchive={onArchive}
               onDelete={onDelete}
               onEdit={onEdit}
+              onOpenSheet={onOpenSheet}
             />
           ))}
         </Section>
@@ -136,6 +139,7 @@ export default function DashboardView({
                 onArchive={onArchive}
                 onDelete={onDelete}
                 onEdit={onEdit}
+              onOpenSheet={onOpenSheet}
               />
             ))}
           </Section>
@@ -154,6 +158,7 @@ export default function DashboardView({
               onArchive={onArchive}
               onDelete={onDelete}
               onEdit={onEdit}
+              onOpenSheet={onOpenSheet}
             />
           ))}
         </Section>

@@ -1,12 +1,15 @@
 // pages/Inbox.tsx — Classificar itens sem módulo
-import { useState, useMemo } from 'react';
+// alpha.8: EditSheet + ConfirmDialog integration
+import { useState, useMemo, useCallback } from 'react';
 import { useItems } from '@/hooks/useItems';
 import { useItemMutations } from '@/hooks/useItemMutations';
-import type { ItemModule, ItemPriority } from '@/types/item';
+import type { AtomItem, ItemModule, ItemPriority, UpdateItemPayload } from '@/types/item';
 import { sortItems } from '@/engine/dashboard-filters';
 import ItemRow from '@/components/shared/ItemRow';
 import InboxActions from '@/components/inbox/InboxActions';
 import EmptyState from '@/components/shared/EmptyState';
+import EditSheet from '@/components/shared/EditSheet';
+import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import { startOfDay, formatISO } from 'date-fns';
 
 export function InboxPage() {
@@ -14,10 +17,18 @@ export function InboxPage() {
   const { updateMutation, completeMutation, deleteMutation } = useItemMutations();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  // Edit sheet state
+  const [editingItem, setEditingItem] = useState<AtomItem | null>(null);
+
+  // Delete confirm state
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
   const inboxItems = useMemo(
     () => sortItems(rawInbox, 'created_at', 'desc'),
     [rawInbox]
   );
+
+  const deletingItem = deletingId ? inboxItems.find((i) => i.id === deletingId) : null;
 
   const handleSetModule = (id: string, module: string) => {
     updateMutation.mutate({ id, updates: { module: module as ItemModule } });
@@ -46,9 +57,28 @@ export function InboxPage() {
     setSelectedId(null);
   };
 
-  const handleDelete = (id: string) => {
-    deleteMutation.mutate(id);
-    setSelectedId(null);
+  const handleDelete = useCallback((id: string) => {
+    setDeletingId(id);
+  }, []);
+
+  const handleConfirmDelete = () => {
+    if (deletingId) {
+      deleteMutation.mutate(deletingId);
+      setDeletingId(null);
+      setSelectedId(null);
+    }
+  };
+
+  const handleEdit = (id: string, updates: Partial<AtomItem>) => {
+    updateMutation.mutate({ id, updates });
+  };
+
+  const handleOpenSheet = useCallback((item: AtomItem) => {
+    setEditingItem(item);
+  }, []);
+
+  const handleSheetSave = (id: string, updates: UpdateItemPayload) => {
+    updateMutation.mutate({ id, updates });
   };
 
   if (isLoading) {
@@ -90,6 +120,8 @@ export function InboxPage() {
               item={item}
               onComplete={handleComplete}
               onDelete={handleDelete}
+              onEdit={handleEdit}
+              onOpenSheet={handleOpenSheet}
               showActions={false}
             />
           </div>
@@ -109,6 +141,25 @@ export function InboxPage() {
           )}
         </div>
       ))}
+
+      {/* Edit Sheet */}
+      <EditSheet
+        item={editingItem}
+        onSave={handleSheetSave}
+        onClose={() => setEditingItem(null)}
+      />
+
+      {/* Delete Confirm */}
+      <ConfirmDialog
+        open={!!deletingId}
+        title="Excluir item"
+        description={deletingItem ? `"${deletingItem.title}" será removido permanentemente.` : ''}
+        confirmLabel="Excluir"
+        cancelLabel="Cancelar"
+        confirmColor="#e85d5d"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeletingId(null)}
+      />
     </div>
   );
 }

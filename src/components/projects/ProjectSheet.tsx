@@ -4,7 +4,7 @@
 
 import { useState, useMemo } from 'react';
 import type { ProjectWithChildren } from '@/hooks/useProject';
-import type { AtomItem } from '@/types/item';
+import type { AtomItem, UpdateItemPayload } from '@/types/item';
 import { useItemMutations } from '@/hooks/useItemMutations';
 import { useAppStore } from '@/store/app-store';
 import { format, parseISO } from 'date-fns';
@@ -12,6 +12,8 @@ import { ptBR } from 'date-fns/locale';
 import ItemRow from '@/components/shared/ItemRow';
 import ModuleBadge from '@/components/shared/ModuleBadge';
 import EmptyState from '@/components/shared/EmptyState';
+import EditSheet from '@/components/shared/EditSheet';
+import ConfirmDialog from '@/components/shared/ConfirmDialog';
 
 type Pane = 'overview' | 'tasks' | 'notes' | 'timeline';
 
@@ -33,6 +35,8 @@ export default function ProjectSheet({ data, tasks, notes, onBack }: ProjectShee
   const [activePane, setActivePane] = useState<Pane>('overview');
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newNoteTitle, setNewNoteTitle] = useState('');
+  const [editingItem, setEditingItem] = useState<AtomItem | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const { project, totalTasks, completedTasks, progress } = data;
   const { createItem, completeMutation, uncompleteMutation, deleteMutation, updateMutation } =
     useItemMutations();
@@ -40,11 +44,21 @@ export default function ProjectSheet({ data, tasks, notes, onBack }: ProjectShee
 
   const handleComplete = (id: string) => completeMutation.mutate(id);
   const handleUncomplete = (id: string) => uncompleteMutation.mutate(id);
-  const handleDelete = (id: string) => deleteMutation.mutate(id);
+  const handleDelete = (id: string) => setDeletingId(id);
+  const handleConfirmDelete = () => {
+    if (deletingId) {
+      deleteMutation.mutate(deletingId);
+      setDeletingId(null);
+    }
+  };
   const handleArchive = (id: string) => {
     updateMutation.mutate({ id, updates: { archived: true } });
   };
   const handleEdit = (id: string, updates: Partial<AtomItem>) => {
+    updateMutation.mutate({ id, updates });
+  };
+  const handleOpenSheet = (item: AtomItem) => setEditingItem(item);
+  const handleSheetSave = (id: string, updates: UpdateItemPayload) => {
     updateMutation.mutate({ id, updates });
   };
 
@@ -292,6 +306,7 @@ export default function ProjectSheet({ data, tasks, notes, onBack }: ProjectShee
                   onArchive={handleArchive}
                   onDelete={handleDelete}
                   onEdit={handleEdit}
+                  onOpenSheet={handleOpenSheet}
                 />
               ))}
             </div>
@@ -488,11 +503,28 @@ export default function ProjectSheet({ data, tasks, notes, onBack }: ProjectShee
           )}
         </div>
       )}
+
+      {/* Edit Sheet */}
+      <EditSheet
+        item={editingItem}
+        onSave={handleSheetSave}
+        onClose={() => setEditingItem(null)}
+      />
+
+      {/* Delete Confirm */}
+      <ConfirmDialog
+        open={!!deletingId}
+        title="Excluir item"
+        description="Este item será removido permanentemente."
+        confirmLabel="Excluir"
+        cancelLabel="Cancelar"
+        confirmColor="#e85d5d"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeletingId(null)}
+      />
     </div>
   );
 }
-
-// ━━━ Stat Block ━━━
 function StatBlock({ label, value }: { label: string; value: string }) {
   return (
     <div

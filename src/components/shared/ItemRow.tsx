@@ -1,6 +1,6 @@
 // components/shared/ItemRow.tsx
 // Item row com ações: complete, edit inline, archive, delete
-// Fase 1: swipe actions via botões (sem lib de gestos)
+// alpha.8: "..." button abre EditSheet, inline edit melhorado
 
 import { useState, useRef } from 'react';
 import { format, isToday, isPast, startOfDay } from 'date-fns';
@@ -17,6 +17,7 @@ interface ItemRowProps {
   onArchive?: (id: string) => void;
   onDelete?: (id: string) => void;
   onEdit?: (id: string, updates: Partial<AtomItem>) => void;
+  onOpenSheet?: (item: AtomItem) => void;
   showActions?: boolean;
   compact?: boolean;
 }
@@ -28,6 +29,7 @@ export default function ItemRow({
   onArchive,
   onDelete,
   onEdit,
+  onOpenSheet,
   showActions = true,
   compact = false,
 }: ItemRowProps) {
@@ -73,6 +75,11 @@ export default function ItemRow({
     }
   };
 
+  const handleOpenSheet = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onOpenSheet?.(item);
+  };
+
   const formatDueDate = () => {
     if (!item.due_date) return null;
     const date = new Date(item.due_date);
@@ -88,7 +95,7 @@ export default function ItemRow({
         borderRadius: '8px',
       }}
     >
-      {/* ━━━ Main Row ━━━ */}
+      {/* Main Row */}
       <div
         className="flex items-center gap-3 cursor-pointer select-none"
         style={{ padding: compact ? '8px 4px' : '10px 8px' }}
@@ -170,6 +177,26 @@ export default function ItemRow({
           </span>
         )}
 
+        {/* "..." menu button */}
+        {onOpenSheet && !isCompleted && (
+          <button
+            onClick={handleOpenSheet}
+            className="flex-shrink-0 flex items-center justify-center rounded transition-all duration-150 opacity-0 group-hover:opacity-100"
+            style={{
+              width: 24,
+              height: 24,
+              color: '#a8947850',
+              fontSize: '14px',
+              fontFamily: '"JetBrains Mono", monospace',
+              letterSpacing: '2px',
+              backgroundColor: 'transparent',
+            }}
+            title="Editar detalhes"
+          >
+            ···
+          </button>
+        )}
+
         {/* Expand indicator */}
         <span
           className="transition-transform duration-150"
@@ -183,12 +210,31 @@ export default function ItemRow({
         </span>
       </div>
 
-      {/* ━━━ Expanded Details + Actions ━━━ */}
+      {/* Expanded Details + Actions */}
       {expanded && (
         <div
           className="overflow-hidden transition-all duration-200"
           style={{ padding: '0 8px 10px 40px' }}
         >
+          {/* Description preview */}
+          {item.description && (
+            <p
+              className="mb-2"
+              style={{
+                fontSize: '12px',
+                fontFamily: 'Inter, sans-serif',
+                color: '#a8947870',
+                lineHeight: 1.5,
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}
+            >
+              {item.description}
+            </p>
+          )}
+
           {/* Tags */}
           {item.tags && item.tags.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-2">
@@ -222,6 +268,14 @@ export default function ItemRow({
               {onEdit && (
                 <ActionBtn label="Editar" icon="✎" onClick={handleStartEdit} color="#c4a882" />
               )}
+              {onOpenSheet && (
+                <ActionBtn
+                  label="Detalhes"
+                  icon="◇"
+                  onClick={(e) => { e.stopPropagation(); onOpenSheet(item); }}
+                  color="#a89478"
+                />
+              )}
               {onArchive && (
                 <ActionBtn
                   label="Arquivar"
@@ -246,7 +300,7 @@ export default function ItemRow({
   );
 }
 
-// ━━━ Action Button ━━━
+// Action Button
 
 function ActionBtn({
   label,

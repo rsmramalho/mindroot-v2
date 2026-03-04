@@ -16,6 +16,7 @@ interface DayDetailProps {
   onDelete: (id: string) => void;
   onArchive: (id: string) => void;
   onEdit: (id: string, updates: Partial<AtomItem>) => void;
+  onOpenSheet?: (item: AtomItem) => void;
 }
 
 export default function DayDetail({
@@ -26,6 +27,7 @@ export default function DayDetail({
   onDelete,
   onArchive,
   onEdit,
+  onOpenSheet,
 }: DayDetailProps) {
   const dayItems = useMemo(() => {
     return items.filter((i) => {
@@ -95,6 +97,7 @@ export default function DayDetail({
               onDelete={onDelete}
               onArchive={onArchive}
               onEdit={onEdit}
+              onOpenSheet={onOpenSheet}
               compact
             />
           ))}

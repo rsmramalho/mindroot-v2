@@ -14,6 +14,7 @@ interface CalendarViewProps {
   onDelete: (id: string) => void;
   onArchive: (id: string) => void;
   onEdit: (id: string, updates: Partial<AtomItem>) => void;
+  onOpenSheet?: (item: AtomItem) => void;
 }
 
 export default function CalendarView({
@@ -23,6 +24,7 @@ export default function CalendarView({
   onDelete,
   onArchive,
   onEdit,
+  onOpenSheet,
 }: CalendarViewProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
@@ -95,6 +97,7 @@ export default function CalendarView({
           onDelete={onDelete}
           onArchive={onArchive}
           onEdit={onEdit}
+          onOpenSheet={onOpenSheet}
         />
       )}
     </div>

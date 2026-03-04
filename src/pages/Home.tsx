@@ -1,38 +1,64 @@
 // pages/Home.tsx — Dashboard principal + Soul Layer integration
-// Fase 2: completar task → check-in → reflection
+// alpha.8: EditSheet + ConfirmDialog integration
 
+import { useState, useCallback } from 'react';
 import { useItems } from '@/hooks/useItems';
 import { useItemMutations } from '@/hooks/useItemMutations';
 import { useSoul } from '@/hooks/useSoul';
-import type { AtomItem } from '@/types/item';
+import type { AtomItem, UpdateItemPayload } from '@/types/item';
 import DashboardView from '@/components/dashboard/DashboardView';
 import { AtomInput } from '@/components/input/AtomInput';
 import CheckInPrompt from '@/components/soul/CheckInPrompt';
 import SoulPulse from '@/components/soul/SoulPulse';
+import EditSheet from '@/components/shared/EditSheet';
+import ConfirmDialog from '@/components/shared/ConfirmDialog';
 
 export function HomePage() {
   const { items, isLoading } = useItems();
   const { completeMutation, uncompleteMutation, updateMutation, deleteMutation } = useItemMutations();
   const { checkIn, onItemComplete, startPicking, selectEmotion, skip, dismiss } = useSoul();
 
+  // Edit sheet state
+  const [editingItem, setEditingItem] = useState<AtomItem | null>(null);
+
+  // Delete confirm state
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const deletingItem = deletingId ? items.find((i) => i.id === deletingId) : null;
+
   const handleComplete = (id: string) => {
     const item = items.find((i) => i.id === id);
     if (item) {
-      // Completa o item
       completeMutation.mutate(id);
-      // Verifica se precisa de check-in
       onItemComplete(item);
     }
   };
 
   const handleUncomplete = (id: string) => uncompleteMutation.mutate(id);
-  const handleDelete = (id: string) => deleteMutation.mutate(id);
+
+  const handleDelete = useCallback((id: string) => {
+    setDeletingId(id);
+  }, []);
+
+  const handleConfirmDelete = () => {
+    if (deletingId) {
+      deleteMutation.mutate(deletingId);
+      setDeletingId(null);
+    }
+  };
 
   const handleArchive = (id: string) => {
     updateMutation.mutate({ id, updates: { archived: true } });
   };
 
   const handleEdit = (id: string, updates: Partial<AtomItem>) => {
+    updateMutation.mutate({ id, updates });
+  };
+
+  const handleOpenSheet = useCallback((item: AtomItem) => {
+    setEditingItem(item);
+  }, []);
+
+  const handleSheetSave = (id: string, updates: UpdateItemPayload) => {
     updateMutation.mutate({ id, updates });
   };
 
@@ -60,6 +86,7 @@ export function HomePage() {
         onArchive={handleArchive}
         onDelete={handleDelete}
         onEdit={handleEdit}
+        onOpenSheet={handleOpenSheet}
       />
 
       {/* Check-in overlay */}
@@ -69,6 +96,25 @@ export function HomePage() {
         onSelectEmotion={selectEmotion}
         onSkip={skip}
         onDismiss={dismiss}
+      />
+
+      {/* Edit Sheet */}
+      <EditSheet
+        item={editingItem}
+        onSave={handleSheetSave}
+        onClose={() => setEditingItem(null)}
+      />
+
+      {/* Delete Confirm */}
+      <ConfirmDialog
+        open={!!deletingId}
+        title="Excluir item"
+        description={deletingItem ? `"${deletingItem.title}" será removido permanentemente.` : ''}
+        confirmLabel="Excluir"
+        cancelLabel="Cancelar"
+        confirmColor="#e85d5d"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeletingId(null)}
       />
     </div>
   );
