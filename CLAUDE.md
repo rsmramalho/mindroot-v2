@@ -18,6 +18,7 @@ npm run build    # tsc -b && vite build
 npm test         # vitest (270 tests, 14 suites)
 npx tsc --noEmit # Type check only
 npx playwright test # E2E tests (69 tests, 10 specs)
+bash scripts/audit.sh  # Full system audit (20 checks)
 ```
 
 ## Architecture
@@ -127,7 +128,7 @@ app-store (navigation, filters, soul state, user), ritual-store (period, check-i
 - Unit: 270 tests, 14 suites (vitest)
 - E2E: 69 tests, 10 specs (playwright)
 - Pattern: pure logic extraction, no React providers or Supabase mocks needed
-- Src LOC: ~12,229
+- Src LOC: ~13,083
 
 ## Production
 
@@ -154,5 +155,4 @@ VITE_SUPABASE_ANON_KEY=...
 | alpha.6 | 03/03/2026 | Production config (vercel.json, auto-seed trigger, setup guide) + Playwright E2E (69 tests) |
 | alpha.7 | 04/03/2026 | Onboarding welcome flow + actionable empty states + input tooltip |
 | alpha.8 | 05/03/2026 | Item editing — EditSheet, ModulePicker, PriorityPicker, ConfirmDialog, inline edit, audit script |
-| alpha.8 | 05/03/2026 | Item editing (EditSheet, inline edit, ConfirmDialog) + audit script |
 | alpha.9 | 05/03/2026 | Recurrence engine, virtual reset, RecurrencePicker, recurrence badges (270 tests) |
