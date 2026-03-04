@@ -4,7 +4,7 @@ Emotional productivity system. Emotion precedes action, reflection closes the lo
 
 ## Version
 
-v1.0.0-alpha.7 — All 5 phases complete + onboarding + production config + E2E tests.
+v1.0.0-alpha.9 — Recurrence engine + virtual reset + streak display.
 
 ## Stack
 
@@ -15,7 +15,7 @@ React 19 · TypeScript 5.8 · Vite 6 · Tailwind 3.4 · Supabase · TanStack Que
 ```bash
 npm run dev      # Dev server (port 5173)
 npm run build    # tsc -b && vite build
-npm test         # vitest (222 tests, 13 suites)
+npm test         # vitest (270 tests, 14 suites)
 npx tsc --noEmit # Type check only
 npx playwright test # E2E tests (69 tests, 10 specs)
 ```
@@ -76,7 +76,7 @@ supabase/        # Migrations, edge functions, seeds
 | Analytics | pages/Analytics.tsx | Heatmap, emotional pulse, module breakdown, streaks |
 | Auth | pages/Auth.tsx | Email/password + Google OAuth |
 
-## Components (39)
+## Components (42)
 
 - analytics/ (1): AnalyticsView
 - calendar/ (3): CalendarView, MonthGrid, DayDetail
@@ -88,7 +88,7 @@ supabase/        # Migrations, edge functions, seeds
 - projects/ (3): ProjectList, ProjectCard, ProjectSheet
 - ritual/ (3): RitualView, RitualHabit, RitualCheckIn
 - settings/ (1): SettingsDrawer
-- shared/ (7): CommandPalette, EmptyState, ItemRow, Logo, ModuleBadge, PriorityDot, TagChip
+- shared/ (12): CommandPalette, ConfirmDialog, EditSheet, EmptyState, ItemRow, Logo, ModuleBadge, ModulePicker, PriorityDot, PriorityPicker, RecurrencePicker, TagChip
 - shell/ (3): AppShell, BottomNav, TopBar
 - soul/ (4): EmotionPicker, CheckInPrompt, PostCheckIn, SoulPulse
 
@@ -100,9 +100,9 @@ useAnalytics, useAuth, useItemMutations, useItems, useJournal, useNotifications,
 
 supabase, item-service, auth-service, ai-service, notification-service
 
-## Engine (3)
+## Engine (4)
 
-parsing (natural input → structured data), soul (check-in triggers, emotion shift), dashboard-filters
+parsing (natural input → structured data), soul (check-in triggers, emotion shift), dashboard-filters, recurrence (virtual reset, period detection, streak)
 
 ## Stores (3)
 
@@ -120,12 +120,14 @@ app-store (navigation, filters, soul state, user), ritual-store (period, check-i
 - supabase/migrations/001_core_schema.sql — items table + RLS
 - supabase/migrations/002_fix_type_constraint.sql — expanded type enum
 - supabase/migrations/003_auto_seed_rituals.sql — auto-seed rituals on first login
+- supabase/migrations/004_backfill_ritual_recurrence.sql — set recurrence='daily' on existing rituals
 
 ## Tests
 
-- Unit: 222 tests, 13 suites (vitest)
+- Unit: 270 tests, 14 suites (vitest)
 - E2E: 69 tests, 10 specs (playwright)
 - Pattern: pure logic extraction, no React providers or Supabase mocks needed
+- Src LOC: ~12,229
 
 ## Production
 
@@ -151,3 +153,6 @@ VITE_SUPABASE_ANON_KEY=...
 | alpha.5 | 03/03/2026 | Fase 5 — PWA, Google Auth, Analytics, Notifications, AI parsing, brand, animations, audit (222 tests) |
 | alpha.6 | 03/03/2026 | Production config (vercel.json, auto-seed trigger, setup guide) + Playwright E2E (69 tests) |
 | alpha.7 | 04/03/2026 | Onboarding welcome flow + actionable empty states + input tooltip |
+| alpha.8 | 05/03/2026 | Item editing — EditSheet, ModulePicker, PriorityPicker, ConfirmDialog, inline edit, audit script |
+| alpha.8 | 05/03/2026 | Item editing (EditSheet, inline edit, ConfirmDialog) + audit script |
+| alpha.9 | 05/03/2026 | Recurrence engine, virtual reset, RecurrencePicker, recurrence badges (270 tests) |
