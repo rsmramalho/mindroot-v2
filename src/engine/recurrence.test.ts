@@ -1,6 +1,6 @@
 // engine/recurrence.test.ts — Recurrence Engine tests
 // shouldReset, isCompletedInCurrentPeriod, getNextOccurrence, applyVirtualReset
-// Uses local noon dates — date-fns operates in local time
+// Uses UTC-safe timestamps (T12:00Z) to avoid Brisbane timezone bug
 
 import { describe, it, expect } from 'vitest';
 import {
@@ -48,19 +48,11 @@ function makeItem(overrides: Partial<AtomItem> = {}): AtomItem {
   };
 }
 
-// Helper: create a date at noon local time on a specific date
-// date-fns operates in local time, so tests must use local dates
-function noon(year: number, month: number, day: number): Date {
+// Helper: create a date at noon LOCAL time on a specific date
+// date-fns operates in local time, so we must use local dates
+function noonUTC(year: number, month: number, day: number): Date {
   return new Date(year, month - 1, day, 12, 0, 0);
 }
-
-// Helper: create an ISO string at noon local for completed_at fields
-function noonISO(year: number, month: number, day: number): string {
-  return new Date(year, month - 1, day, 12, 0, 0).toISOString();
-}
-
-// Alias for backward compat in test code
-const noonUTC = noon;
 
 // ─── shouldReset ─────────────────────────────────────────
 
@@ -114,13 +106,11 @@ describe('shouldReset', () => {
     });
 
     it('handles completion just before midnight (same day = no reset)', () => {
-      const now = noon(2025, 3, 5);
-      // Use local 23:59 so it stays on the same local day
-      const lateNight = new Date(2025, 2, 5, 23, 59, 0);
+      const now = noonUTC(2025, 3, 5);
       const item = makeItem({
         recurrence: 'daily',
         completed: true,
-        completed_at: lateNight.toISOString(),
+        completed_at: new Date(2025, 2, 5, 23, 59, 0).toISOString(),
       });
       expect(shouldReset(item, now)).toBe(false);
     });
@@ -294,7 +284,7 @@ describe('isCompletedInCurrentPeriod', () => {
 
 describe('getNextOccurrence', () => {
   it('daily: returns tomorrow', () => {
-    const now = noon(2025, 3, 5);
+    const now = noonUTC(2025, 3, 5);
     const next = getNextOccurrence('daily', now);
     expect(next.getFullYear()).toBe(2025);
     expect(next.getMonth()).toBe(2); // March = 2
@@ -303,38 +293,38 @@ describe('getNextOccurrence', () => {
 
   it('weekly: returns next Monday', () => {
     // Wednesday March 5
-    const now = noon(2025, 3, 5);
+    const now = noonUTC(2025, 3, 5);
     const next = getNextOccurrence('weekly', now);
     expect(next.getDate()).toBe(10); // Next Monday
   });
 
   it('monthly: returns first of next month', () => {
-    const now = noon(2025, 3, 15);
+    const now = noonUTC(2025, 3, 15);
     const next = getNextOccurrence('monthly', now);
     expect(next.getMonth()).toBe(3); // April = 3
     expect(next.getDate()).toBe(1);
   });
 
   it('weekdays: Friday returns Monday', () => {
-    const friday = noon(2025, 3, 7);
+    const friday = noonUTC(2025, 3, 7);
     const next = getNextOccurrence('weekdays', friday);
     expect(next.getDate()).toBe(10); // Monday
   });
 
   it('weekdays: Monday returns Tuesday', () => {
-    const monday = noon(2025, 3, 3);
+    const monday = noonUTC(2025, 3, 3);
     const next = getNextOccurrence('weekdays', monday);
     expect(next.getDate()).toBe(4); // Tuesday
   });
 
   it('weekdays: Saturday returns Monday', () => {
-    const saturday = noon(2025, 3, 8);
+    const saturday = noonUTC(2025, 3, 8);
     const next = getNextOccurrence('weekdays', saturday);
     expect(next.getDate()).toBe(10); // Monday
   });
 
   it('weekdays: Sunday returns Monday', () => {
-    const sunday = noon(2025, 3, 9);
+    const sunday = noonUTC(2025, 3, 9);
     const next = getNextOccurrence('weekdays', sunday);
     expect(next.getDate()).toBe(10); // Monday
   });
