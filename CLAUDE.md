@@ -4,7 +4,7 @@ Emotional productivity system. Emotion precedes action, reflection closes the lo
 
 ## Version
 
-v1.0.0-alpha.18 — AI contextual suggestions: 7 pattern detectors, dismissable suggestion cards on Dashboard.
+v1.0.0-alpha.19 — Export & backup: journal Markdown export, full JSON backup, weekly auto-backup.
 
 ## Stack
 
@@ -15,7 +15,7 @@ React 19 · TypeScript 5.8 · Vite 6 · Tailwind 3.4 · Supabase · TanStack Que
 ```bash
 npm run dev      # Dev server (port 5173)
 npm run build    # tsc -b && vite build
-npm test         # vitest (411 tests, 21 suites)
+npm test         # vitest (433 tests, 22 suites)
 npx tsc --noEmit # Type check only
 npx playwright test # E2E tests (69 tests, 10 specs)
 bash scripts/audit.sh  # Full system audit (20 checks)
@@ -101,9 +101,9 @@ useAnalytics, useAuth, useItemMutations, useItems, useJournal, useNotifications,
 
 supabase, item-service (offline-aware), auth-service, ai-service, notification-service, push-service
 
-## Engine (8)
+## Engine (9)
 
-parsing (natural input → structured data), soul (check-in triggers, emotion shift), dashboard-filters, recurrence (virtual reset, period detection, streak), offline-queue (IndexedDB queue, compaction, conflict resolution), insights (emotion-productivity correlation, period/weekday patterns, natural language suggestions), search (query parsing with filter prefixes, relevance scoring, full-text search), ai-suggestions (7 pattern detectors: procrastination, emotion timing, overdue cluster, energy overload, positive streak, period emotion risk, module imbalance)
+parsing (natural input → structured data), soul (check-in triggers, emotion shift), dashboard-filters, recurrence (virtual reset, period detection, streak), offline-queue (IndexedDB queue, compaction, conflict resolution), insights (emotion-productivity correlation, period/weekday patterns, natural language suggestions), search (query parsing with filter prefixes, relevance scoring, full-text search), ai-suggestions (7 pattern detectors: procrastination, emotion timing, overdue cluster, energy overload, positive streak, period emotion risk, module imbalance), export (journal→Markdown, all data→JSON backup, weekly auto-backup scheduling)
 
 ## Stores (6)
 
@@ -134,7 +134,7 @@ app-store (navigation, filters, soul state, user), ritual-store (period, check-i
 
 ## Tests
 
-- Unit: 411 tests, 21 suites (vitest)
+- Unit: 433 tests, 22 suites (vitest)
 - E2E: 69 tests, 10 specs (playwright)
 - Pattern: pure logic extraction, no React providers or Supabase mocks needed
 - Src LOC: ~14,681
@@ -174,3 +174,4 @@ VITE_SUPABASE_ANON_KEY=...
 | alpha.16 | 09/03/2026 | Search + advanced filters: search engine with filter prefixes (mod: emo: per: prio: tipo: tag: data:), full-text search (title+description+tags), relevance scoring, CommandPalette with filter chips, JournalView tag filter bar (392 tests) |
 | alpha.17 | 09/03/2026 | M2 QA: accessibility (ARIA roles/labels on all dialogs, nav, buttons, live regions, focus traps), performance (React.memo ItemRow, deterministic skeletons, tooltip cleanup), bug fixes (version display, CheckInPrompt Escape, mobile "..." button), M2 milestone complete (392 tests) |
 | alpha.18 | 09/03/2026 | AI contextual suggestions: pure engine with 7 pattern detectors (procrastination, emotion timing, overdue cluster, energy overload, positive streak, period emotion risk, module imbalance), AiSuggestions dashboard panel with dismissable cards, max 3 suggestions sorted by priority (411 tests) |
+| alpha.19 | 09/03/2026 | Export & backup: journal→Markdown export, full JSON backup (with meta), weekly auto-backup scheduling (localStorage), export buttons in SettingsDrawer (433 tests) |
