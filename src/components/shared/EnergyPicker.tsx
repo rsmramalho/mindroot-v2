@@ -48,6 +48,7 @@ export default function EnergyPicker({ value, onChange }: EnergyPickerProps) {
                 border: `1px solid ${active ? `${ENERGY_COLOR}40` : '#a8947815'}`,
               }}
               title={ENERGY_LABELS[level]}
+              aria-label={ENERGY_LABELS[level]}
             >
               <div className="flex items-end gap-[2px]" style={{ height: 16 }}>
                 {Array.from({ length: level }).map((_, i) => (

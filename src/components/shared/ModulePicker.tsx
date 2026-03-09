@@ -37,6 +37,7 @@ export default function ModulePicker({ value, onChange }: ModulePickerProps) {
               key={key}
               type="button"
               onClick={() => onChange(selected ? null : (key as ItemModule))}
+              aria-label={label}
               className="flex items-center gap-1.5 rounded-lg transition-all duration-150"
               style={{
                 padding: '8px 10px',

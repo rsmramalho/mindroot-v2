@@ -4,7 +4,7 @@ Emotional productivity system. Emotion precedes action, reflection closes the lo
 
 ## Version
 
-v1.0.0-alpha.21 — Sharing: public share links for reflections & streaks, /share/:token page.
+v1.0.0 — Released. Emotional productivity system.
 
 ## Stack
 
@@ -15,7 +15,7 @@ React 19 · TypeScript 5.8 · Vite 6 · Tailwind 3.4 · Supabase · TanStack Que
 ```bash
 npm run dev      # Dev server (port 5173)
 npm run build    # tsc -b && vite build
-npm test         # vitest (467 tests, 24 suites)
+npm test         # vitest (467 tests, 24 suites, all passing)
 npx tsc --noEmit # Type check only
 npx playwright test # E2E tests (69 tests, 10 specs)
 bash scripts/audit.sh  # Full system audit (20 checks)
@@ -64,10 +64,11 @@ supabase/        # Migrations, edge functions, seeds
 - `RitualPeriod`: aurora | zenite | crepusculo
 - `Emotion`: calmo | focado | grato | animado | confiante | ansioso | cansado | frustrado | triste | perdido | neutro
 
-## Pages (9)
+## Pages (10)
 
 | Page | File | Description |
 |------|------|-------------|
+| Landing | pages/Landing.tsx | Public landing page with hero, benefits, CTA (pre-auth) |
 | Home | pages/Home.tsx | Dashboard with SoulPulse, AiSuggestions, FocusBlock, today/active sections |
 | Inbox | pages/Inbox.tsx | Unclassified items with actions (complete, archive, delete) |
 | Projects | pages/Projects.tsx | Project list + ProjectSheet (4 panes: Geral/Tarefas/Notas/Timeline) |
@@ -139,7 +140,7 @@ app-store (navigation, filters, soul state, user), ritual-store (period, check-i
 - Unit: 467 tests, 24 suites (vitest)
 - E2E: 69 tests, 10 specs (playwright)
 - Pattern: pure logic extraction, no React providers or Supabase mocks needed
-- Src LOC: ~14,681
+- Src LOC: ~20,902
 
 ## Production
 
@@ -179,3 +180,23 @@ VITE_SUPABASE_ANON_KEY=...
 | alpha.19 | 09/03/2026 | Export & backup: journal→Markdown export, full JSON backup (with meta), weekly auto-backup scheduling (localStorage), export buttons in SettingsDrawer (433 tests) |
 | alpha.20 | 09/03/2026 | Themes & personalization: dark/light toggle with CSS variables, custom module colors (12 presets), configurable dashboard section order (move up/down), theme-store with localStorage persistence, Settings UI controls with reset (455 tests) |
 | alpha.21 | 10/03/2026 | Sharing: public share links for reflections & streaks, share-service, ShareReflectionSheet, ShareStreakCard, SharedContentPage (/share/:token), 006_public_shares migration (467 tests) |
+| v1.0.0 | 10/03/2026 | Release: WCAG AA accessibility (aria-labels on pickers), lazy-loaded pages (code splitting), Landing page, console cleanup, USAGE.md docs, performance optimization (270KB main bundle) |
+
+## Architecture Decisions
+
+- **Hardcoded hex colors**: 37 components use hardcoded hex instead of CSS variables. Documented as tech debt — full migration to CSS vars planned for v1.1.
+- **Lazy loading**: 7 authenticated pages are lazy-loaded via React.lazy(). Pre-auth pages (Landing, Auth, SharedContent) remain static for instant load.
+- **Named exports + lazy**: Pages use named exports per convention. Lazy imports use `.then(m => ({ default: m.NamedExport }))` pattern.
+
+## Para contribuidores
+
+```bash
+git clone <repo-url>
+cd mindroot
+npm install
+# Create .env with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
+npm run dev       # Dev server on :5173
+npm test          # Unit tests
+npm run build     # Production build
+bash scripts/audit.sh  # Full audit
+```

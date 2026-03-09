@@ -1,22 +1,26 @@
 // App.tsx — Router + Providers
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { useAppStore } from '@/store/app-store';
 import { AppShell } from '@/components/shell/AppShell';
 import { LogoFull } from '@/components/shared/Logo';
+import { ListSkeleton } from '@/components/shared/Skeleton';
 
-// Pages
+// Static pages (pre-auth / public)
 import { SharedContentPage } from '@/pages/SharedContent';
 import { AuthPage } from '@/pages/Auth';
-import { HomePage } from '@/pages/Home';
-import { InboxPage } from '@/pages/Inbox';
-import { ProjectsPage } from '@/pages/Projects';
-import { CalendarPage } from '@/pages/Calendar';
-import { RitualPage } from '@/pages/Ritual';
-import { JournalPage } from '@/pages/Journal';
-import { AnalyticsPage } from '@/pages/Analytics';
+import { LandingPage } from '@/pages/Landing';
+
+// Lazy-loaded pages (post-auth)
+const HomePage = lazy(() => import('@/pages/Home').then(m => ({ default: m.HomePage })));
+const InboxPage = lazy(() => import('@/pages/Inbox').then(m => ({ default: m.InboxPage })));
+const ProjectsPage = lazy(() => import('@/pages/Projects').then(m => ({ default: m.ProjectsPage })));
+const CalendarPage = lazy(() => import('@/pages/Calendar').then(m => ({ default: m.CalendarPage })));
+const RitualPage = lazy(() => import('@/pages/Ritual').then(m => ({ default: m.RitualPage })));
+const JournalPage = lazy(() => import('@/pages/Journal').then(m => ({ default: m.JournalPage })));
+const AnalyticsPage = lazy(() => import('@/pages/Analytics').then(m => ({ default: m.AnalyticsPage })));
 
 // Global components
 import CommandPalette from '@/components/shared/CommandPalette';
@@ -70,7 +74,9 @@ function PageRouter() {
         exit={{ opacity: 0, y: -6 }}
         transition={{ duration: 0.15, ease: 'easeOut' }}
       >
-        {renderPage()}
+        <Suspense fallback={<ListSkeleton />}>
+          {renderPage()}
+        </Suspense>
       </motion.div>
     </AnimatePresence>
   );
@@ -95,6 +101,7 @@ function AppContent() {
   const onboardingDone = useOnboardingStore((s) => s.onboardingDone);
   const themeMode = useThemeStore((s) => s.mode);
   const moduleColors = useThemeStore((s) => s.moduleColors);
+  const [showAuth, setShowAuth] = useState(false);
 
   // Apply theme CSS vars on mount and when theme changes
   useEffect(() => {
@@ -132,7 +139,8 @@ function AppContent() {
   }
 
   if (!user) {
-    return <AuthPage />;
+    if (showAuth) return <AuthPage onBack={() => setShowAuth(false)} />;
+    return <LandingPage onLogin={() => setShowAuth(true)} />;
   }
 
   if (!onboardingDone) {

@@ -362,7 +362,7 @@ export default function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
               color: '#a8947825',
             }}
           >
-            MindRoot v1.0.0-alpha.20
+            MindRoot v1.0.0
           </span>
         </div>
       </motion.div>

@@ -4,7 +4,11 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { LogoFull } from '@/components/shared/Logo';
 
-export function AuthPage() {
+interface AuthPageProps {
+  onBack?: () => void;
+}
+
+export function AuthPage({ onBack }: AuthPageProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,6 +41,16 @@ export function AuthPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
     >
+      {/* Back to landing */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="absolute top-6 left-6 font-sans text-xs text-muted hover:text-light transition-colors"
+        >
+          ← Voltar
+        </button>
+      )}
+
       {/* Logo */}
       <div className="mb-10 text-center flex flex-col items-center">
         <LogoFull

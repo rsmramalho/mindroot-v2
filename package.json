@@ -1,7 +1,7 @@
 {
   "name": "mindroot",
-  "version": "1.0.0-alpha.12",
-  "description": "Atom Engine 4.0 — Emoção + Ação + Tempo",
+  "version": "1.0.0",
+  "description": "MindRoot — Sistema de produtividade emocional",
   "type": "module",
   "scripts": {
     "dev": "vite",

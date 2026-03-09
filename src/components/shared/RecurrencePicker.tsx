@@ -44,6 +44,7 @@ export default function RecurrencePicker({ value, onChange }: RecurrencePickerPr
               key={key}
               type="button"
               onClick={() => onChange(isNone ? null : key)}
+              aria-label={`Recorrencia: ${label}`}
               className="flex items-center gap-1.5 rounded-lg transition-all duration-150"
               style={{
                 padding: '8px 12px',

@@ -63,8 +63,7 @@ export const pushService = {
       // Save to Supabase
       await this.saveSubscription(userId, subscription);
       return subscription;
-    } catch (err) {
-      console.error('[push] Subscribe failed:', err);
+    } catch {
       return null;
     }
   },
@@ -82,8 +81,7 @@ export const pushService = {
       await this.removeSubscription(userId, subscription.endpoint);
 
       return true;
-    } catch (err) {
-      console.error('[push] Unsubscribe failed:', err);
+    } catch {
       return false;
     }
   },
@@ -103,7 +101,7 @@ export const pushService = {
     );
 
     if (error) {
-      console.error('[push] Save subscription failed:', error);
+      throw error;
     }
   },
 
@@ -116,7 +114,7 @@ export const pushService = {
       .eq('endpoint', endpoint);
 
     if (error) {
-      console.error('[push] Remove subscription failed:', error);
+      throw error;
     }
   },
 

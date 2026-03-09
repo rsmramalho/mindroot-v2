@@ -33,6 +33,7 @@ export default function PriorityPicker({ value, onChange }: PriorityPickerProps)
               key={key}
               type="button"
               onClick={() => onChange(selected ? null : (key as ItemPriority))}
+              aria-label={`Prioridade: ${label}`}
               className="flex items-center gap-1.5 rounded-lg transition-all duration-150 flex-1"
               style={{
                 padding: '8px 6px',

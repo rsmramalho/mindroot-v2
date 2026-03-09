@@ -34,6 +34,7 @@ export default function TagChip({ tag, onRemove }: TagChipProps) {
             e.stopPropagation();
             onRemove();
           }}
+          aria-label={`Remover tag ${display}`}
           className="ml-0.5 hover:opacity-70 transition-opacity"
           style={{ color: '#a89478', fontSize: '10px', lineHeight: 1 }}
         >
