@@ -1,5 +1,5 @@
-// App.tsx — Router + Providers (< 80 linhas)
-import { useState } from 'react';
+// App.tsx — Router + Providers
+import { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
@@ -23,6 +23,8 @@ import SettingsDrawer from '@/components/settings/SettingsDrawer';
 import WelcomeFlow from '@/components/onboarding/WelcomeFlow';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { useOnboardingStore } from '@/store/onboarding-store';
+import { useThemeStore } from '@/store/theme-store';
+import { applyThemeToDom } from '@/engine/theme';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -90,6 +92,13 @@ function AuthenticatedApp() {
 function AppContent() {
   const { user, loading } = useAuth();
   const onboardingDone = useOnboardingStore((s) => s.onboardingDone);
+  const themeMode = useThemeStore((s) => s.mode);
+  const moduleColors = useThemeStore((s) => s.moduleColors);
+
+  // Apply theme CSS vars on mount and when theme changes
+  useEffect(() => {
+    applyThemeToDom({ mode: themeMode, moduleColors, dashboardOrder: useThemeStore.getState().dashboardOrder });
+  }, [themeMode, moduleColors]);
 
   if (loading) {
     return (

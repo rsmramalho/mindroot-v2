@@ -2,7 +2,8 @@
 // Badge visual do módulo (área da vida)
 // Standalone — usado em ItemRow, Dashboard, Inbox
 
-
+import { useThemeStore } from '@/store/theme-store';
+import type { ItemModule } from '@/types/item';
 
 const MODULE_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
   purpose: { label: 'Propósito', color: '#c4a882', icon: '◇' },
@@ -21,10 +22,17 @@ interface ModuleBadgeProps {
 }
 
 export default function ModuleBadge({ module, size = 'sm', showLabel = true }: ModuleBadgeProps) {
+  const customColors = useThemeStore((s) => s.moduleColors);
+
   if (!module) return null;
 
   const config = MODULE_CONFIG[module];
   if (!config) return null;
+
+  // Use custom color if available for known modules
+  const color = (module in customColors)
+    ? customColors[module as ItemModule]
+    : config.color;
 
   const isSmall = size === 'sm';
 
@@ -32,9 +40,9 @@ export default function ModuleBadge({ module, size = 'sm', showLabel = true }: M
     <span
       className="inline-flex items-center gap-1 rounded-full border"
       style={{
-        borderColor: `${config.color}40`,
-        backgroundColor: `${config.color}15`,
-        color: config.color,
+        borderColor: `${color}40`,
+        backgroundColor: `${color}15`,
+        color: color,
         padding: isSmall ? '1px 8px' : '2px 10px',
         fontSize: isSmall ? '11px' : '12px',
         fontFamily: 'Inter, sans-serif',

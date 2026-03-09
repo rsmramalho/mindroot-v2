@@ -13,6 +13,8 @@ import {
   sortItems,
   MODULE_COLORS,
 } from '@/engine/dashboard-filters';
+import { useThemeStore } from '@/store/theme-store';
+import type { DashboardSection } from '@/engine/theme';
 import OverdueAlert from './OverdueAlert';
 import FocusBlock from './FocusBlock';
 import ItemRow from '@/components/shared/ItemRow';
@@ -72,6 +74,9 @@ export default function DashboardView({
     [activeItems, focusTodayIds]
   );
 
+  const dashboardOrder = useThemeStore((s) => s.dashboardOrder);
+  const customModuleColors = useThemeStore((s) => s.moduleColors);
+
   if (activeItems.length === 0) {
     return (
       <EmptyState
@@ -80,6 +85,56 @@ export default function DashboardView({
       />
     );
   }
+
+  const itemRowProps = { onComplete, onUncomplete, onArchive, onDelete, onEdit, onOpenSheet };
+  const sectionVariants = { hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0, transition: { duration: 0.25 } } };
+
+  const renderSection = (section: DashboardSection) => {
+    switch (section) {
+      case 'overdue':
+        return (
+          <motion.div key="overdue" variants={sectionVariants}>
+            <OverdueAlert items={overdueItems} />
+          </motion.div>
+        );
+      case 'focus':
+        return (
+          <motion.div key="focus" variants={sectionVariants}>
+            <FocusBlock items={focusItems} onComplete={onComplete} />
+          </motion.div>
+        );
+      case 'today':
+        return todayItems.length > 0 ? (
+          <Section key="today" title="Hoje" count={todayItems.length} color="#e8a84c">
+            {sortItems(todayItems, 'priority', 'asc').map((item) => (
+              <ItemRow key={item.id} item={item} {...itemRowProps} />
+            ))}
+          </Section>
+        ) : null;
+      case 'modules':
+        return moduleGroups.map((group) => {
+          if (group.items.length === 0 || group.key.startsWith('_')) return null;
+          const color = customModuleColors[group.key as keyof typeof customModuleColors] || MODULE_COLORS[group.key];
+          return (
+            <Section key={group.key} title={group.label} count={group.items.length} color={color}>
+              {group.items.map((item) => (
+                <ItemRow key={item.id} item={item} {...itemRowProps} />
+              ))}
+            </Section>
+          );
+        });
+      case 'unclassified':
+        return unclassified.length > 0 ? (
+          <Section key="unclassified" title="Sem modulo" count={unclassified.length} color="#a8947860">
+            {unclassified.map((item) => (
+              <ItemRow key={item.id} item={item} {...itemRowProps} />
+            ))}
+          </Section>
+        ) : null;
+      default:
+        return null;
+    }
+  };
 
   return (
     <motion.div
@@ -92,77 +147,7 @@ export default function DashboardView({
         visible: { transition: { staggerChildren: 0.06 } },
       }}
     >
-      {/* ━━━ Overdue Alert ━━━ */}
-      <motion.div variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0, transition: { duration: 0.25 } } }}>
-        <OverdueAlert items={overdueItems} />
-      </motion.div>
-
-      {/* ━━━ Focus Block ━━━ */}
-      <motion.div variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0, transition: { duration: 0.25 } } }}>
-        <FocusBlock items={focusItems} onComplete={onComplete} />
-      </motion.div>
-
-      {/* ━━━ Hoje ━━━ */}
-      {todayItems.length > 0 && (
-        <Section title="Hoje" count={todayItems.length} color="#e8a84c">
-          {sortItems(todayItems, 'priority', 'asc').map((item) => (
-            <ItemRow
-              key={item.id}
-              item={item}
-              onComplete={onComplete}
-              onUncomplete={onUncomplete}
-              onArchive={onArchive}
-              onDelete={onDelete}
-              onEdit={onEdit}
-              onOpenSheet={onOpenSheet}
-            />
-          ))}
-        </Section>
-      )}
-
-      {/* ━━━ Por Módulo ━━━ */}
-      {moduleGroups.map((group) => {
-        if (group.items.length === 0 || group.key.startsWith('_')) return null;
-        return (
-          <Section
-            key={group.key}
-            title={group.label}
-            count={group.items.length}
-            color={MODULE_COLORS[group.key]}
-          >
-            {group.items.map((item) => (
-              <ItemRow
-                key={item.id}
-                item={item}
-                onComplete={onComplete}
-                onUncomplete={onUncomplete}
-                onArchive={onArchive}
-                onDelete={onDelete}
-                onEdit={onEdit}
-              onOpenSheet={onOpenSheet}
-              />
-            ))}
-          </Section>
-        );
-      })}
-
-      {/* ━━━ Sem módulo (classificar) ━━━ */}
-      {unclassified.length > 0 && (
-        <Section title="Sem módulo" count={unclassified.length} color="#a8947860">
-          {unclassified.map((item) => (
-            <ItemRow
-              key={item.id}
-              item={item}
-              onComplete={onComplete}
-              onUncomplete={onUncomplete}
-              onArchive={onArchive}
-              onDelete={onDelete}
-              onEdit={onEdit}
-              onOpenSheet={onOpenSheet}
-            />
-          ))}
-        </Section>
-      )}
+      {dashboardOrder.map((section) => renderSection(section))}
     </motion.div>
   );
 }

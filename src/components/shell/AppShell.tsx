@@ -15,7 +15,7 @@ interface AppShellProps {
 export function AppShell({ children, onOpenSettings }: AppShellProps) {
   useOfflineSync();
   return (
-    <div className="min-h-dvh flex flex-col bg-bg">
+    <div className="min-h-dvh flex flex-col" style={{ backgroundColor: 'var(--mr-bg, #111318)' }}>
       <TopBar onOpenSettings={onOpenSettings} />
       <main className="flex-1 max-w-lg mx-auto w-full px-4 pt-4 pb-20">
         {children}

@@ -7,8 +7,13 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePWA } from '@/hooks/usePWA';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useAppStore } from '@/store/app-store';
+import { useThemeStore } from '@/store/theme-store';
 import { useItems } from '@/hooks/useItems';
 import { exportJournalMarkdown, exportAllDataJson } from '@/engine/export';
+import { SECTION_LABELS, DEFAULT_MODULE_COLORS } from '@/engine/theme';
+import type { DashboardSection } from '@/engine/theme';
+import { MODULES } from '@/types/item';
+import type { ItemModule } from '@/types/item';
 
 interface SettingsDrawerProps {
   open: boolean;
@@ -22,6 +27,17 @@ export default function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
     useNotifications();
   const navigate = useAppStore((s) => s.navigate);
   const { items } = useItems();
+  const {
+    mode: themeMode,
+    moduleColors,
+    dashboardOrder,
+    toggleTheme,
+    setModuleColor,
+    resetModuleColors,
+    moveDashboardSectionUp,
+    moveDashboardSectionDown,
+    resetDashboardOrder,
+  } = useThemeStore();
 
   const handleSignOut = async () => {
     await signOut();
@@ -232,6 +248,62 @@ export default function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
             }}
           />
 
+          {/* Theme */}
+          <SettingsItem
+            label="Tema"
+            description={themeMode === 'dark' ? 'Escuro — padrao' : 'Claro'}
+            onClick={toggleTheme}
+            trailing={
+              <span
+                style={{
+                  fontFamily: '"JetBrains Mono", monospace',
+                  fontSize: '10px',
+                  color: themeMode === 'light' ? '#c4a882' : '#a8947850',
+                  backgroundColor: themeMode === 'light' ? '#c4a88215' : '#a8947810',
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                  border: `1px solid ${themeMode === 'light' ? '#c4a88230' : '#a8947815'}`,
+                }}
+              >
+                {themeMode === 'dark' ? 'escuro' : 'claro'}
+              </span>
+            }
+          />
+
+          {/* Module Colors */}
+          <SettingsSectionHeader label="Cores dos modulos" onReset={resetModuleColors} />
+          {MODULES.map((m) => (
+            <ModuleColorRow
+              key={m.key}
+              module={m.key}
+              label={m.label}
+              color={moduleColors[m.key]}
+              defaultColor={DEFAULT_MODULE_COLORS[m.key]}
+              onChange={(c) => setModuleColor(m.key, c)}
+            />
+          ))}
+
+          {/* Dashboard Order */}
+          <SettingsSectionHeader label="Ordem do dashboard" onReset={resetDashboardOrder} />
+          {dashboardOrder.map((section, idx) => (
+            <DashboardOrderRow
+              key={section}
+              section={section}
+              isFirst={idx === 0}
+              isLast={idx === dashboardOrder.length - 1}
+              onMoveUp={() => moveDashboardSectionUp(section)}
+              onMoveDown={() => moveDashboardSectionDown(section)}
+            />
+          ))}
+
+          <div
+            style={{
+              height: 1,
+              backgroundColor: '#a8947810',
+              margin: '8px 8px',
+            }}
+          />
+
           {/* Export & Backup */}
           <SettingsItem
             label="Exportar diario"
@@ -290,7 +362,7 @@ export default function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
               color: '#a8947825',
             }}
           >
-            MindRoot v1.0.0-alpha.19
+            MindRoot v1.0.0-alpha.20
           </span>
         </div>
       </motion.div>
@@ -407,5 +479,163 @@ function SettingsToggle({
         {checked ? 'on' : 'off'}
       </span>
     </button>
+  );
+}
+
+// ─── Settings Section Header ────────────────────────────────
+
+function SettingsSectionHeader({ label, onReset }: { label: string; onReset?: () => void }) {
+  return (
+    <div className="flex items-center justify-between" style={{ padding: '12px 12px 4px' }}>
+      <span
+        style={{
+          fontFamily: '"JetBrains Mono", monospace',
+          fontSize: '10px',
+          fontWeight: 500,
+          color: '#a8947850',
+          textTransform: 'uppercase',
+          letterSpacing: '0.06em',
+        }}
+      >
+        {label}
+      </span>
+      {onReset && (
+        <button
+          onClick={onReset}
+          className="transition-opacity duration-150 hover:opacity-80"
+          style={{
+            fontFamily: '"JetBrains Mono", monospace',
+            fontSize: '9px',
+            color: '#a8947835',
+            padding: '2px 6px',
+          }}
+        >
+          resetar
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ─── Module Color Row ───────────────────────────────────────
+
+const COLOR_PRESETS = [
+  '#c4a882', '#8a9e7a', '#d4856a', '#b8c4a8', '#a89478', '#8a6e5a',
+  '#e8a84c', '#7aa8c4', '#c47a9e', '#9e7ac4', '#7ac4b8', '#c4c47a',
+];
+
+function ModuleColorRow({
+  module,
+  label,
+  color,
+  defaultColor,
+  onChange,
+}: {
+  module: ItemModule;
+  label: string;
+  color: string;
+  defaultColor: string;
+  onChange: (color: string) => void;
+}) {
+  return (
+    <div
+      className="flex items-center gap-3"
+      style={{ padding: '6px 12px 6px 24px' }}
+    >
+      <span
+        style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '12px',
+          color: color,
+          fontWeight: 400,
+          minWidth: '70px',
+        }}
+      >
+        {label}
+      </span>
+      <div className="flex items-center gap-1 flex-wrap flex-1">
+        {COLOR_PRESETS.map((preset) => (
+          <button
+            key={preset}
+            onClick={() => onChange(preset)}
+            aria-label={`Cor ${preset}`}
+            className="transition-transform duration-100 hover:scale-125"
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: '50%',
+              backgroundColor: preset,
+              border: color === preset ? '2px solid #e8e0d4' : '1px solid #a8947820',
+              flexShrink: 0,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Dashboard Order Row ────────────────────────────────────
+
+function DashboardOrderRow({
+  section,
+  isFirst,
+  isLast,
+  onMoveUp,
+  onMoveDown,
+}: {
+  section: DashboardSection;
+  isFirst: boolean;
+  isLast: boolean;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+}) {
+  return (
+    <div
+      className="flex items-center gap-2"
+      style={{ padding: '6px 12px 6px 24px' }}
+    >
+      <span
+        className="flex-1"
+        style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '12px',
+          color: '#e8e0d4cc',
+          fontWeight: 400,
+        }}
+      >
+        {SECTION_LABELS[section]}
+      </span>
+      <div className="flex items-center gap-1">
+        <button
+          onClick={onMoveUp}
+          disabled={isFirst}
+          aria-label={`Mover ${SECTION_LABELS[section]} para cima`}
+          style={{
+            fontFamily: '"JetBrains Mono", monospace',
+            fontSize: '12px',
+            color: isFirst ? '#a8947820' : '#a8947860',
+            padding: '2px 6px',
+            cursor: isFirst ? 'default' : 'pointer',
+          }}
+        >
+          ^
+        </button>
+        <button
+          onClick={onMoveDown}
+          disabled={isLast}
+          aria-label={`Mover ${SECTION_LABELS[section]} para baixo`}
+          style={{
+            fontFamily: '"JetBrains Mono", monospace',
+            fontSize: '12px',
+            color: isLast ? '#a8947820' : '#a8947860',
+            padding: '2px 6px',
+            cursor: isLast ? 'default' : 'pointer',
+          }}
+        >
+          v
+        </button>
+      </div>
+    </div>
   );
 }
