@@ -4,7 +4,7 @@ Emotional productivity system. Emotion precedes action, reflection closes the lo
 
 ## Version
 
-v1.0.0-alpha.17 — M2 complete: QA polish, accessibility (ARIA), focus traps, performance (React.memo), bug fixes.
+v1.0.0-alpha.18 — AI contextual suggestions: 7 pattern detectors, dismissable suggestion cards on Dashboard.
 
 ## Stack
 
@@ -15,7 +15,7 @@ React 19 · TypeScript 5.8 · Vite 6 · Tailwind 3.4 · Supabase · TanStack Que
 ```bash
 npm run dev      # Dev server (port 5173)
 npm run build    # tsc -b && vite build
-npm test         # vitest (392 tests, 20 suites)
+npm test         # vitest (411 tests, 21 suites)
 npx tsc --noEmit # Type check only
 npx playwright test # E2E tests (69 tests, 10 specs)
 bash scripts/audit.sh  # Full system audit (20 checks)
@@ -68,7 +68,7 @@ supabase/        # Migrations, edge functions, seeds
 
 | Page | File | Description |
 |------|------|-------------|
-| Home | pages/Home.tsx | Dashboard with SoulPulse, FocusBlock, today/active sections |
+| Home | pages/Home.tsx | Dashboard with SoulPulse, AiSuggestions, FocusBlock, today/active sections |
 | Inbox | pages/Inbox.tsx | Unclassified items with actions (complete, archive, delete) |
 | Projects | pages/Projects.tsx | Project list + ProjectSheet (4 panes: Geral/Tarefas/Notas/Timeline) |
 | Calendar | pages/Calendar.tsx | MonthGrid + DayDetail |
@@ -77,11 +77,11 @@ supabase/        # Migrations, edge functions, seeds
 | Analytics | pages/Analytics.tsx | Heatmap, emotional pulse, module breakdown, streaks, insights, emotion correlation, period chart |
 | Auth | pages/Auth.tsx | Email/password + Google OAuth |
 
-## Components (47)
+## Components (48)
 
 - analytics/ (1): AnalyticsView
 - calendar/ (3): CalendarView, MonthGrid, DayDetail
-- dashboard/ (3): DashboardView, FocusBlock, OverdueAlert
+- dashboard/ (4): DashboardView, FocusBlock, OverdueAlert, AiSuggestions
 - inbox/ (1): InboxActions
 - input/ (3): AtomInput, TokenPreview, AiPreview
 - journal/ (3): JournalView, JournalEntry, JournalPrompt
@@ -101,9 +101,9 @@ useAnalytics, useAuth, useItemMutations, useItems, useJournal, useNotifications,
 
 supabase, item-service (offline-aware), auth-service, ai-service, notification-service, push-service
 
-## Engine (7)
+## Engine (8)
 
-parsing (natural input → structured data), soul (check-in triggers, emotion shift), dashboard-filters, recurrence (virtual reset, period detection, streak), offline-queue (IndexedDB queue, compaction, conflict resolution), insights (emotion-productivity correlation, period/weekday patterns, natural language suggestions), search (query parsing with filter prefixes, relevance scoring, full-text search)
+parsing (natural input → structured data), soul (check-in triggers, emotion shift), dashboard-filters, recurrence (virtual reset, period detection, streak), offline-queue (IndexedDB queue, compaction, conflict resolution), insights (emotion-productivity correlation, period/weekday patterns, natural language suggestions), search (query parsing with filter prefixes, relevance scoring, full-text search), ai-suggestions (7 pattern detectors: procrastination, emotion timing, overdue cluster, energy overload, positive streak, period emotion risk, module imbalance)
 
 ## Stores (6)
 
@@ -134,7 +134,7 @@ app-store (navigation, filters, soul state, user), ritual-store (period, check-i
 
 ## Tests
 
-- Unit: 392 tests, 20 suites (vitest)
+- Unit: 411 tests, 21 suites (vitest)
 - E2E: 69 tests, 10 specs (playwright)
 - Pattern: pure logic extraction, no React providers or Supabase mocks needed
 - Src LOC: ~14,681
@@ -173,3 +173,4 @@ VITE_SUPABASE_ANON_KEY=...
 | alpha.15 | 09/03/2026 | Analytics v2: insights engine (emotion-productivity correlation, period productivity, weekday patterns), InsightsPanel, EmotionCorrelation chart, PeriodChart, natural language suggestions in pt-BR (348 tests) |
 | alpha.16 | 09/03/2026 | Search + advanced filters: search engine with filter prefixes (mod: emo: per: prio: tipo: tag: data:), full-text search (title+description+tags), relevance scoring, CommandPalette with filter chips, JournalView tag filter bar (392 tests) |
 | alpha.17 | 09/03/2026 | M2 QA: accessibility (ARIA roles/labels on all dialogs, nav, buttons, live regions, focus traps), performance (React.memo ItemRow, deterministic skeletons, tooltip cleanup), bug fixes (version display, CheckInPrompt Escape, mobile "..." button), M2 milestone complete (392 tests) |
+| alpha.18 | 09/03/2026 | AI contextual suggestions: pure engine with 7 pattern detectors (procrastination, emotion timing, overdue cluster, energy overload, positive streak, period emotion risk, module imbalance), AiSuggestions dashboard panel with dismissable cards, max 3 suggestions sorted by priority (411 tests) |
