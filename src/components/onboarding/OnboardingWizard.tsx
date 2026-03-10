@@ -102,8 +102,8 @@ export function OnboardingWizard() {
     if (selectedPeriod) {
       useRitualStore.getState().refreshPeriod();
     }
-    setOnboardingDone();
-  }, [selectedPeriod, setOnboardingDone]);
+    if (user) setOnboardingDone(user.id);
+  }, [selectedPeriod, setOnboardingDone, user]);
 
   const handleCreateEntry = useCallback(async () => {
     if (!entryText.trim() || !user) {

@@ -4,7 +4,7 @@ Emotional productivity system. Emotion precedes action, reflection closes the lo
 
 ## Version
 
-v1.0.0-alpha.24 — Bug fixes: logout→landing, Google OAuth redirect, onboarding reset.
+v1.0.0-alpha.24 — Bug fixes: Google OAuth callback race condition (PKCE code preserved), logout→landing (useLayoutEffect), per-user onboarding state.
 
 ## Stack
 
@@ -182,7 +182,7 @@ VITE_SUPABASE_ANON_KEY=...
 | alpha.21 | 10/03/2026 | Sharing: public share links for reflections & streaks, share-service, ShareReflectionSheet, ShareStreakCard, SharedContentPage (/share/:token), 006_public_shares migration (467 tests) |
 | v1.0.0 | 10/03/2026 | Release: WCAG AA accessibility (aria-labels on pickers), lazy-loaded pages (code splitting), Landing page, console cleanup, USAGE.md docs, performance optimization (270KB main bundle) |
 | alpha.23 | 10/03/2026 | Landing melhorada (subtitulo, app mockup, exemplos concretos nos cards), OnboardingWizard 3 passos (nome + area foco, periodos rituais, primeira entrada) (467 tests) |
-| alpha.24 | 10/03/2026 | Bug fixes: logout resets to Landing (not Auth), Google OAuth redirect to /auth/callback, onboarding reset button in dev Settings (467 tests) |
+| alpha.24 | 11/03/2026 | Bug fixes: Google OAuth PKCE race condition (removed synchronous replaceState, Supabase reads ?code before cleanup), logout→landing via useLayoutEffect, per-user onboarding store (new users on shared devices get wizard) (467 tests) |
 
 ## Google OAuth Setup (manual)
 

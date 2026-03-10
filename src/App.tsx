@@ -1,5 +1,5 @@
 // App.tsx — Router + Providers
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, useLayoutEffect, lazy, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
@@ -98,13 +98,13 @@ function AuthenticatedApp() {
 
 function AppContent() {
   const { user, loading } = useAuth();
-  const onboardingDone = useOnboardingStore((s) => s.onboardingDone);
+  const isOnboardingDone = useOnboardingStore((s) => s.isOnboardingDone);
   const themeMode = useThemeStore((s) => s.mode);
   const moduleColors = useThemeStore((s) => s.moduleColors);
   const [showAuth, setShowAuth] = useState(false);
 
-  // BUG 1 fix: reset showAuth when user logs out
-  useEffect(() => {
+  // Fix logout→landing: reset showAuth before paint to avoid one-frame flash of Auth
+  useLayoutEffect(() => {
     if (!user) setShowAuth(false);
   }, [user]);
 
@@ -148,7 +148,7 @@ function AppContent() {
     return <LandingPage onLogin={() => setShowAuth(true)} />;
   }
 
-  if (!onboardingDone) {
+  if (!isOnboardingDone(user.id)) {
     return <OnboardingWizard />;
   }
 
@@ -169,12 +169,10 @@ export default function App() {
     );
   }
 
-  // Handle /auth/callback — Google OAuth redirect lands here
-  // Supabase JS auto-exchanges the code via onAuthStateChange,
-  // so we just clean the URL and let AppContent render normally
-  if (pathname === '/auth/callback') {
-    window.history.replaceState(null, '', '/');
-  }
+  // /auth/callback: Google OAuth lands here with ?code=xxx
+  // Do NOT replaceState here — Supabase reads ?code asynchronously via
+  // detectSessionInUrl. Clearing the URL now would strip the code before
+  // the PKCE exchange can happen. useAuth cleans the URL after SIGNED_IN fires.
 
   return (
     <QueryClientProvider client={queryClient}>

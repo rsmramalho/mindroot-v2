@@ -338,7 +338,7 @@ export default function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
               label="Resetar onboarding"
               description="Rever fluxo de boas-vindas"
               onClick={() => {
-                useOnboardingStore.getState().resetOnboarding();
+                useOnboardingStore.getState().resetOnboarding(user?.id);
                 onClose();
               }}
             />

@@ -8,16 +8,34 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check existing session
-    authService.getSession().then((session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // On the OAuth callback URL, Supabase needs to read ?code from the URL
+    // before we clear it. Keep loading=true until onAuthStateChange fires.
+    const isOAuthCallback = window.location.pathname === '/auth/callback';
 
-    // Listen for auth changes
-    const { data: { subscription } } = authService.onAuthStateChange((_event, session) => {
+    if (!isOAuthCallback) {
+      // Normal flow: resolve loading from existing session
+      authService.getSession().then((session) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
+      });
+    }
+    // On callback URL: skip getSession — the code exchange is async and hasn't
+    // completed yet. onAuthStateChange(SIGNED_IN) will fire once it's done.
+
+    const { data: { subscription } } = authService.onAuthStateChange((event, session) => {
+      // On the callback URL, Supabase fires INITIAL_SESSION (null) before the
+      // code exchange completes. Ignore that event to keep the loading screen.
+      if (isOAuthCallback && event === 'INITIAL_SESSION' && !session) {
+        return;
+      }
+
       setUser(session?.user ?? null);
       setLoading(false);
+
+      // Clean OAuth callback URL after successful exchange
+      if (window.location.pathname === '/auth/callback') {
+        window.history.replaceState(null, '', '/');
+      }
     });
 
     return () => subscription.unsubscribe();
