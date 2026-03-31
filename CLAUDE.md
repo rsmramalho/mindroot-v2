@@ -4,7 +4,7 @@ Emotional productivity system. Emotion precedes action, reflection closes the lo
 
 ## Version
 
-v1.0.0-alpha.25.1 — Landing polish: hero spacing, botão #b8976e, scroll hint refinement.
+v1.0.0-alpha.26 — Full migration to Atom Engine Schema v2 (Genesis v4.2.1).
 
 ## Stack
 
@@ -40,7 +40,7 @@ supabase/        # Migrations, edge functions, seeds
 
 1. **Named exports on pages**: `export function HomePage()` — App.tsx imports `{ HomePage }` etc.
 2. **Path alias**: `@/` = `src/`. Always use `@/` imports.
-3. **AtomItem booleans**: `item.completed` (boolean), `item.archived` (boolean). NEVER use `item.completed_at` as boolean check. NEVER use `item.status`.
+3. **AtomItem Schema v2**: Use `item.status` enum ('active', 'completed', 'archived'). Use `item.state` for pipeline stage. Access soul/operations/recurrence via `item.body.soul`, `item.body.operations`, `item.body.recurrence`. NEVER use v1 fields (completed, archived, parent_id, priority as direct field, emotion_before/after as direct field).
 4. **Service layer**: hooks → service → Supabase. Hooks never import from `service/supabase.ts` directly.
 5. **No emoji in UI**: use word-based labels, font-mono icons.
 6. **Language**: code/comments in English, UI strings in Brazilian Portuguese.
@@ -53,16 +53,25 @@ supabase/        # Migrations, edge functions, seeds
 - Text: `light` #e8e0d4, `mind` #c4a882, `muted` #a89478
 - Accent colors: `heart` #d4856a, `soul` #8a9e7a
 - Ritual periods: `aurora` #f0c674, `zenite` #e8e0d4, `crepusculo` #8a6e5a
-- Module colors: purpose, work, family, body, mind, soul (see tailwind.config.ts)
+- Module colors: work, body, mind, family, purpose, bridge, finance, social (see tailwind.config.ts)
 - Style: dark/light theme (toggle in Settings), minimalist, no emoji
 
-## Key Types (src/types/item.ts)
+## Key Types (src/types/item.ts) — Schema v2
 
-- `AtomItem` — core entity with `id`, `title`, `type`, `module`, `priority`, `tags`, `completed`, `archived`, `parent_id`, `due_date`, `emotion_before`, `emotion_after`
-- `ItemType`: task | habit | ritual | chore | project | note | reflection | journal
-- `ItemModule`: purpose | work | family | body | mind | soul
-- `RitualPeriod`: aurora | zenite | crepusculo
+- `AtomItem` — core entity: `id`, `title`, `type`, `module`, `tags`, `status`, `state`, `genesis_stage`, `project_id`, `naming_convention`, `notes`, `body` (JSONB), `source`, `created_at`, `updated_at`, `created_by`
+- `AtomType`: note | reflection | recommendation | podcast | article | resource | list | task | habit | recipe | workout | spec | checkpoint | project | session-log | wrap | ritual | review | log | doc | research | template | lib (23 types)
+- `AtomModule`: work | body | mind | family | purpose | bridge | finance | social (8 modules)
+- `AtomState`: inbox | classified | structured | validated | connected | propagated | committed | archived (8 pipeline stages)
+- `AtomStatus`: inbox | draft | active | paused | waiting | someday | completed | archived
+- `AtomRelation`: belongs_to | blocks | feeds | mirrors | derives | references | morphed_from | extracted_from
+- `AtomSource`: claude-project | claude-chat | claude-code | mindroot | constellation | obsidian | drive | manual | atom-engine
+- Extensions (in body JSONB): `SoulExtension` (energy_level, emotion_before/after, needs_checkin, ritual_slot), `OperationsExtension` (priority, deadline, due_date, progress), `RecurrenceExtension` (rule, streak_count, completion_log)
+- `ItemConnection`: source_id, target_id, relation, note
+- `AtomEvent`: source_id, target_id, event_type, payload
 - `Emotion`: calmo | focado | grato | animado | confiante | ansioso | cansado | frustrado | triste | perdido | neutro
+- `RitualSlot`: aurora | zenite | crepusculo
+- `EnergyLevel`: high | medium | low
+- `Priority`: high | medium | low
 
 ## Pages (10)
 
@@ -101,7 +110,7 @@ useAnalytics, useAuth, useItemMutations, useItems, useJournal, useNotifications,
 
 ## Services (7)
 
-supabase, item-service (offline-aware), auth-service, ai-service, notification-service, push-service, share-service
+supabase, item-service (itemService + connectionService + eventService), auth-service, ai-service, notification-service, push-service, share-service
 
 ## Engine (10)
 
@@ -126,14 +135,22 @@ app-store (navigation, filters, soul state, user), ritual-store (period, check-i
 - Requires VAPID keys (generate via scripts/generate-vapid-keys.js)
 - Can be triggered by pg_cron, external cron, or manual invocation
 
-## Database
+## Database — Atom Engine Schema v2
 
-- supabase/migrations/001_core_schema.sql — items table + RLS
-- supabase/migrations/002_fix_type_constraint.sql — expanded type enum
-- supabase/migrations/003_auto_seed_rituals.sql — auto-seed rituals on first login
-- supabase/migrations/004_backfill_ritual_recurrence.sql — set recurrence='daily' on existing rituals
-- supabase/migrations/005_push_subscriptions.sql — push notification subscription storage
-- supabase/migrations/006_public_shares.sql — public sharing (reflections & streaks)
+Supabase project: avvwjkzkzklloyfugzer (deployed 29 Mar 2026)
+
+3 tables (Schema v2 — Genesis v4.2.1):
+- `items` — nodes (AtomItem core + body JSONB for extensions)
+- `item_connections` — edges (source_id, target_id, relation, note)
+- `atom_events` — propagation + audit trail
+
+Enums: atom_state, atom_type, atom_module, atom_relation, atom_status
+Triggers: sync_genesis_stage (state↔genesis_stage), check_orphan_downgrade (connection deletion)
+RLS: user isolation on all 3 tables
+Indexes: 12 indexes across all tables
+
+Legacy migrations (v1 — dropped on Schema v2 deploy):
+- 001-006: original items table, type constraints, rituals, push, shares
 
 ## Tests
 
@@ -185,6 +202,8 @@ VITE_SUPABASE_ANON_KEY=...
 | alpha.24 | 11/03/2026 | Bug fixes: Google OAuth PKCE race condition (removed synchronous replaceState, Supabase reads ?code before cleanup), logout→landing via useLayoutEffect, per-user onboarding store (new users on shared devices get wizard) (467 tests) |
 | alpha.25 | 11/03/2026 | Landing page editorial redesign — hero full viewport, períodos Aurora/Zenite/Crepúsculo, orb animado (467 tests) |
 | alpha.25.1 | 11/03/2026 | Landing polish — hero spacing, botão #b8976e, scroll hint refinement, remove hover re-renders (467 tests) |
+| alpha.25.2 | 11/03/2026 | Border-radius botão 4px, scroll hint visível (467 tests) |
+| alpha.26 | 29/03/2026 | **BREAKING: Full migration to Atom Engine Schema v2 (Genesis v4.2.1).** Types rewritten (AtomItem, 23 AtomTypes, 8 modules, state machine). Service layer rewritten (itemService + connectionService + eventService). 65 files migrated, 707→0 TS errors. Supabase Schema v2 deployed (3 tables, enums, triggers, RLS). |
 
 ## Google OAuth Setup (manual)
 
