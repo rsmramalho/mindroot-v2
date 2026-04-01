@@ -4,7 +4,7 @@ Emotional productivity system — the face of Atom OS. Emotion precedes action, 
 
 ## Version
 
-v2.0.0-alpha.3 — PHI spiral. Phases · — △ complete. Fase □ next.
+v2.0.0-alpha.8 — PHI spiral. All 11 pages built from wireframes. Full auth flow.
 
 ## Stack
 
@@ -122,6 +122,30 @@ VITE_SUPABASE_URL=...
 VITE_SUPABASE_ANON_KEY=...
 ```
 
+## Pages (12)
+
+| Page | File | Wireframe |
+|------|------|-----------|
+| Landing | pages/Landing.tsx | — |
+| Auth | pages/Auth.tsx | — |
+| Onboarding | pages/Onboarding.tsx | mindroot-wireframe-raiz-onboarding.html |
+| Home | pages/Home.tsx | mindroot-wireframe-home.html |
+| Pipeline/Triage | pages/Pipeline.tsx | mindroot-wireframe-triage-pipeline-v2.html |
+| Wrap | pages/Wrap.tsx | mindroot-wireframe-wrap.html |
+| Projects | pages/Projects.tsx | mindroot-wireframe-projects.html |
+| Calendar | pages/Calendar.tsx | mindroot-wireframe-calendar.html |
+| Analytics | pages/Analytics.tsx | mindroot-wireframe-analytics.html |
+| Library | pages/Library.tsx | mindroot-wireframe-library-reflexoes.html |
+| Settings | pages/Settings.tsx | mindroot-wireframe-settings.html |
+| Raiz | pages/Raiz.tsx | mindroot-wireframe-raiz-dashboard.html |
+
+## Components
+
+- atoms/ (8): tokens, GeometryIcon, TypeChip, StageBadge, ModuleBar, ConfidenceBar, FAB, index
+- shell/ (3): AppShell, TopBar, BottomNav
+- home/ (5): SoulCard, WrapBanner, AtomInput, InboxPreview, AuditBar
+- shared/ (1): ItemCard
+
 ## PHI Phases
 
 | Phase | Geometry | Status | Commit |
@@ -129,7 +153,7 @@ VITE_SUPABASE_ANON_KEY=...
 | · Sementes | · | done | 1e019f5 |
 | — Raizes | — | done | f68ee25 |
 | △ Geometria | △ | done | 16f4149 |
-| □ Fundacao | □ | next | — |
-| ⬠ Conexao | ⬠ | — | — |
-| ⬡ Ativacao | ⬡ | — | — |
-| ○ Completude | ○ | — | — |
+| □ Fundacao | □ | done | 775f8cc, dc48982 |
+| ⬠ Conexao | ⬠ | done | 2cfc511 |
+| ⬡ Ativacao | ⬡ | done | cf886ab |
+| ○ Completude | ○ | in progress | — |
