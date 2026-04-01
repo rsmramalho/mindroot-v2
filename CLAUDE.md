@@ -144,7 +144,8 @@ VITE_SUPABASE_ANON_KEY=...
 - atoms/ (8): tokens, GeometryIcon, TypeChip, StageBadge, ModuleBar, ConfidenceBar, FAB, index
 - shell/ (3): AppShell, TopBar, BottomNav
 - home/ (5): SoulCard, WrapBanner, AtomInput, InboxPreview, AuditBar
-- shared/ (1): ItemCard
+- shared/ (4): ItemCard, Skeleton, EmptyState, ErrorBanner
+- companion/ (1): CompanionSheet
 
 ## PHI Phases
 
@@ -156,4 +157,4 @@ VITE_SUPABASE_ANON_KEY=...
 | □ Fundacao | □ | done | 775f8cc, dc48982 |
 | ⬠ Conexao | ⬠ | done | 2cfc511 |
 | ⬡ Ativacao | ⬡ | done | cf886ab |
-| ○ Completude | ○ | in progress | — |
+| ○ Completude | ○ | in progress | 950c2e8, 756edc3 |
