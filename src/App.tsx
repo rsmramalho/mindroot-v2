@@ -1,32 +1,48 @@
 // App.tsx — MindRoot v2
-// Landing → Auth → Onboarding → Shell + pages
+// Landing → Auth → Onboarding → Shell + pages + companion
 
-import { useState, useLayoutEffect } from 'react';
+import { useState, useLayoutEffect, lazy, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { useRealtime } from '@/hooks/useRealtime';
 import { useAppStore } from '@/store/app-store';
 import { AppShell } from '@/components/shell/AppShell';
+import { CompanionSheet } from '@/components/companion/CompanionSheet';
 
-import { HomePage } from '@/pages/Home';
-import { PipelinePage } from '@/pages/Pipeline';
-import { WrapPage } from '@/pages/Wrap';
-import { ProjectsPage } from '@/pages/Projects';
-import { CalendarPage } from '@/pages/Calendar';
-import { AnalyticsPage } from '@/pages/Analytics';
-import { LibraryPage } from '@/pages/Library';
-import { SettingsPage } from '@/pages/Settings';
-import { RaizPage } from '@/pages/Raiz';
-import { AuthPage } from '@/pages/Auth';
+// Static pages (pre-auth)
 import { LandingPage } from '@/pages/Landing';
+import { AuthPage } from '@/pages/Auth';
 import { OnboardingPage } from '@/pages/Onboarding';
+
+// Lazy-loaded pages (post-auth)
+const HomePage = lazy(() => import('@/pages/Home').then((m) => ({ default: m.HomePage })));
+const PipelinePage = lazy(() => import('@/pages/Pipeline').then((m) => ({ default: m.PipelinePage })));
+const WrapPage = lazy(() => import('@/pages/Wrap').then((m) => ({ default: m.WrapPage })));
+const ProjectsPage = lazy(() => import('@/pages/Projects').then((m) => ({ default: m.ProjectsPage })));
+const CalendarPage = lazy(() => import('@/pages/Calendar').then((m) => ({ default: m.CalendarPage })));
+const AnalyticsPage = lazy(() => import('@/pages/Analytics').then((m) => ({ default: m.AnalyticsPage })));
+const LibraryPage = lazy(() => import('@/pages/Library').then((m) => ({ default: m.LibraryPage })));
+const SettingsPage = lazy(() => import('@/pages/Settings').then((m) => ({ default: m.SettingsPage })));
+const RaizPage = lazy(() => import('@/pages/Raiz').then((m) => ({ default: m.RaizPage })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { retry: 1, refetchOnWindowFocus: false },
   },
 });
+
+// ─── Loading fallback ─────────────────────────────────
+
+function PageSkeleton() {
+  return (
+    <div className="p-5 space-y-3">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="h-14 bg-surface rounded-xl animate-pulse" />
+      ))}
+    </div>
+  );
+}
 
 // ─── Page Router ──────────────────────────────────────
 
@@ -59,7 +75,9 @@ function PageRouter() {
         exit={{ opacity: 0, y: -4 }}
         transition={{ duration: 0.12, ease: 'easeOut' }}
       >
-        {renderPage()}
+        <Suspense fallback={<PageSkeleton />}>
+          {renderPage()}
+        </Suspense>
       </motion.div>
     </AnimatePresence>
   );
@@ -69,10 +87,20 @@ function PageRouter() {
 
 function AuthenticatedApp() {
   useRealtime();
+  const [companionOpen, setCompanionOpen] = useState(false);
 
   return (
-    <AppShell>
+    <AppShell onOpenSettings={() => useAppStore.getState().navigate('settings')}>
       <PageRouter />
+      {/* FAB for companion */}
+      <button
+        onClick={() => setCompanionOpen(true)}
+        className="fixed bottom-20 right-5 w-12 h-12 rounded-full bg-gradient-to-br from-[#7F77DD] via-[#378ADD] to-[#1D9E75] text-white flex items-center justify-center text-lg font-light shadow-lg shadow-[#534AB7]/20 z-30"
+        aria-label="Abrir companion"
+      >
+        ○
+      </button>
+      <CompanionSheet open={companionOpen} onClose={() => setCompanionOpen(false)} />
     </AppShell>
   );
 }
@@ -84,12 +112,10 @@ function AppContent() {
   const [showAuth, setShowAuth] = useState(false);
   const [onboardingDone, setOnboardingDone] = useState(false);
 
-  // Reset showAuth when user logs out
   useLayoutEffect(() => {
     if (!user) setShowAuth(false);
   }, [user]);
 
-  // Check localStorage for onboarding
   useLayoutEffect(() => {
     if (user) {
       const key = `mindroot_onboarding_${user.id}`;
