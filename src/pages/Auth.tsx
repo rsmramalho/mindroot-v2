@@ -2,7 +2,7 @@
 // Light-first, DM Sans. Email + Google OAuth via Supabase.
 
 import { useState } from 'react';
-import { supabase } from '@/service/supabase';
+import { authService } from '@/service/auth-service';
 
 interface AuthPageProps {
   onBack?: () => void;
@@ -20,11 +20,9 @@ export function AuthPage({ onBack }: AuthPageProps) {
     setLoading(true);
     try {
       if (mode === 'login') {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        await authService.signInWithEmail(email, password);
       } else {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
+        await authService.signUp(email, password);
       }
     } catch (err: any) {
       setError(err.message ?? 'Erro na autenticacao');
@@ -34,10 +32,11 @@ export function AuthPage({ onBack }: AuthPageProps) {
   };
 
   const handleGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.origin },
-    });
+    try {
+      await authService.signInWithGoogle();
+    } catch (err: any) {
+      setError(err.message ?? 'Erro com Google');
+    }
   };
 
   return (
