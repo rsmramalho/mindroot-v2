@@ -51,7 +51,7 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
     <button
       onClick={onClick}
       className={`flex-1 text-center py-2 text-[13px] rounded-lg transition-all ${
-        active ? 'bg-white font-medium text-text-heading shadow-sm' : 'text-text-muted'
+        active ? 'bg-card font-medium text-text-heading shadow-sm' : 'text-text-muted'
       }`}
     >
       {children}
@@ -164,7 +164,7 @@ function StageItem({ item }: { item: AtomItem }) {
   const typeColor = item.type ? getTypeColor(item.type) : '#8a8a8a';
 
   return (
-    <div className="flex items-center gap-2 p-2 px-2.5 mt-1 rounded-lg bg-white border border-[#e8e6df] text-[13px]">
+    <div className="flex items-center gap-2 p-2 px-2.5 mt-1 rounded-lg bg-card border border-border text-[13px]">
       <div className="w-[3px] h-6 rounded-sm shrink-0" style={{ background: moduleColor }} />
       <span className="flex-1 truncate">{item.title}</span>
       {item.type && (
@@ -250,7 +250,7 @@ function TriageView() {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
-            className="bg-white border border-[#e8e6df] rounded-2xl p-5 mb-4"
+            className="bg-card border border-border rounded-2xl p-5 mb-4"
           >
             {/* Module bar */}
             <div

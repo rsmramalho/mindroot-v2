@@ -52,7 +52,7 @@ export function AuthPage({ onBack }: AuthPageProps) {
         {/* Google */}
         <button
           onClick={handleGoogle}
-          className="w-full bg-white border border-border rounded-xl py-3 text-sm font-medium text-text-heading mb-4 hover:bg-surface transition-colors"
+          className="w-full bg-surface border border-border rounded-xl py-3 text-sm font-medium text-text-heading mb-4 hover:opacity-80 transition-colors"
         >
           Continuar com Google
         </button>
@@ -69,14 +69,14 @@ export function AuthPage({ onBack }: AuthPageProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="email"
-          className="w-full bg-white border border-border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#534AB7] mb-2"
+          className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-sm text-text outline-none focus:border-[#534AB7] placeholder:text-text-muted mb-2"
         />
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="senha"
-          className="w-full bg-white border border-border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#534AB7] mb-4"
+          className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-sm text-text outline-none focus:border-[#534AB7] placeholder:text-text-muted mb-4"
           onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
         />
 

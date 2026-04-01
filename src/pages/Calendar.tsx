@@ -59,11 +59,11 @@ export function CalendarPage() {
 
       {/* Week nav */}
       <div className="flex items-center justify-between py-3">
-        <button onClick={prevWeek} className="w-7 h-7 rounded-full border border-border bg-white flex items-center justify-center text-xs text-text-muted">←</button>
+        <button onClick={prevWeek} className="w-7 h-7 rounded-full border border-border bg-card flex items-center justify-center text-xs text-text-muted">←</button>
         <div className="text-[13px] font-medium">
           {format(weekStart, "d", { locale: ptBR })} – {format(addDays(weekStart, 6), "d MMM", { locale: ptBR })}
         </div>
-        <button onClick={nextWeek} className="w-7 h-7 rounded-full border border-border bg-white flex items-center justify-center text-xs text-text-muted">→</button>
+        <button onClick={nextWeek} className="w-7 h-7 rounded-full border border-border bg-card flex items-center justify-center text-xs text-text-muted">→</button>
       </div>
 
       {/* Week strip */}
@@ -79,7 +79,7 @@ export function CalendarPage() {
               key={key}
               onClick={() => setSelectedDate(day)}
               className={`flex-1 text-center py-2 rounded-xl transition-all ${
-                isSelected ? 'bg-white shadow-sm' : 'hover:bg-surface'
+                isSelected ? 'bg-card shadow-sm' : 'hover:bg-surface'
               }`}
             >
               <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1">
@@ -160,7 +160,7 @@ function CalendarItem({ item }: { item: AtomItem }) {
   const typeColor = item.type ? getTypeColor(item.type) : '#8a8a8a';
 
   return (
-    <div className="flex items-center gap-2 p-1.5 px-2.5 mb-[3px] rounded-lg bg-white border border-[#e8e6df] text-[13px]">
+    <div className="flex items-center gap-2 p-1.5 px-2.5 mb-[3px] rounded-lg bg-card border border-border text-[13px]">
       <div className="w-[3px] h-[22px] rounded-sm shrink-0" style={{ background: moduleColor }} />
       <span className="flex-1 truncate">{item.title}</span>
       <span className="text-[10px] text-text-muted">{geo}</span>

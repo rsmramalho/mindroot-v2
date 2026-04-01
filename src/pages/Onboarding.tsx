@@ -76,8 +76,8 @@ export function OnboardingPage({ onComplete }: OnboardingProps) {
                 <button
                   key={m.key}
                   onClick={() => { setEntryMode(m.key); setStep(2); }}
-                  className={`w-full text-left bg-white border rounded-xl p-4 transition-all ${
-                    entryMode === m.key ? 'border-[#534AB7]' : 'border-[#e8e6df]'
+                  className={`w-full text-left bg-card border rounded-xl p-4 transition-all ${
+                    entryMode === m.key ? 'border-[#534AB7]' : 'border-border'
                   }`}
                 >
                   <div className="text-[15px] font-medium mb-0.5">{m.label}</div>
@@ -167,7 +167,7 @@ function DomainStep({ domain, inputs, onAdd, onNext, onBack, current, total }: {
           <button
             key={ex}
             onClick={() => { onAdd(ex); }}
-            className="text-xs px-3 py-1.5 rounded-xl border border-[#e8e6df] bg-white text-[#8C7E5E] hover:border-[#7F77DD] transition-colors"
+            className="text-xs px-3 py-1.5 rounded-xl border border-border bg-card text-[#8C7E5E] hover:border-[#7F77DD] transition-colors"
           >
             {ex}
           </button>
@@ -181,7 +181,7 @@ function DomainStep({ domain, inputs, onAdd, onNext, onBack, current, total }: {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && add()}
           placeholder="escreva algo..."
-          className="flex-1 border border-[#e8e6df] rounded-xl px-4 py-3 text-sm bg-white outline-none focus:border-[#7F77DD]"
+          className="flex-1 border border-border rounded-xl px-4 py-3 text-sm bg-card text-text outline-none focus:border-[#7F77DD]"
         />
         <button onClick={add} disabled={!text.trim()} className="px-4 py-3 bg-[#534AB7] text-white rounded-xl text-sm disabled:opacity-30">+</button>
       </div>
@@ -190,7 +190,7 @@ function DomainStep({ domain, inputs, onAdd, onNext, onBack, current, total }: {
       {inputs.length > 0 && (
         <div className="space-y-1 mb-4">
           {inputs.map((item, i) => (
-            <div key={i} className="flex items-center gap-2 text-[13px] py-1.5 px-3 bg-white border border-[#e8e6df] rounded-lg">
+            <div key={i} className="flex items-center gap-2 text-[13px] py-1.5 px-3 bg-card border border-border rounded-lg">
               <span className="text-[#7F77DD]">·</span>
               <span>{item}</span>
             </div>

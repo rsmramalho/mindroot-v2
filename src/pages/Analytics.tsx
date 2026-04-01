@@ -46,7 +46,7 @@ export function AnalyticsPage() {
             key={t}
             onClick={() => setTab(t)}
             className={`flex-1 text-center py-2 text-[13px] rounded-lg transition-all ${
-              tab === t ? 'bg-white font-medium text-text-heading shadow-sm' : 'text-text-muted'
+              tab === t ? 'bg-card font-medium text-text-heading shadow-sm' : 'text-text-muted'
             }`}
           >
             {t}
@@ -123,7 +123,7 @@ export function AnalyticsPage() {
 
 function MetricCard({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="bg-white border border-[#e8e6df] rounded-xl p-3 px-3.5">
+    <div className="bg-card border border-border rounded-xl p-3 px-3.5">
       <div className={`text-2xl font-medium ${highlight ? 'text-[#D85A30]' : 'text-text-heading'}`}>{value}</div>
       <div className="text-[11px] text-text-muted mt-0.5">{label}</div>
     </div>

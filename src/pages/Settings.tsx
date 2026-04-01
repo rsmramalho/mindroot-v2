@@ -20,7 +20,7 @@ export function SettingsPage() {
       </div>
 
       {/* Profile */}
-      <div className="bg-white border border-[#e8e6df] rounded-xl p-4 mb-4">
+      <div className="bg-card border border-border rounded-xl p-4 mb-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-[#EEEDFE] flex items-center justify-center text-lg text-[#534AB7] font-medium">
             {name.charAt(0).toUpperCase()}
@@ -34,7 +34,7 @@ export function SettingsPage() {
 
       {/* Ritual times */}
       <SectionLabel>rituais</SectionLabel>
-      <div className="bg-white border border-[#e8e6df] rounded-xl overflow-hidden mb-4">
+      <div className="bg-card border border-border rounded-xl overflow-hidden mb-4">
         {RITUAL_PERIODS.map((p) => (
           <div key={p.key} className="flex items-center justify-between px-4 py-3 border-b border-surface last:border-0">
             <div className="flex items-center gap-2">
@@ -48,7 +48,7 @@ export function SettingsPage() {
 
       {/* Modules */}
       <SectionLabel>modulos</SectionLabel>
-      <div className="bg-white border border-[#e8e6df] rounded-xl overflow-hidden mb-4">
+      <div className="bg-card border border-border rounded-xl overflow-hidden mb-4">
         {MODULES.map((m) => (
           <div key={m.key} className="flex items-center justify-between px-4 py-3 border-b border-surface last:border-0">
             <div className="flex items-center gap-2">
@@ -62,7 +62,7 @@ export function SettingsPage() {
 
       {/* Integrations placeholder */}
       <SectionLabel>integracoes</SectionLabel>
-      <div className="bg-white border border-[#e8e6df] rounded-xl p-4 mb-4">
+      <div className="bg-card border border-border rounded-xl p-4 mb-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[13px]">Google Calendar</span>
           <span className="text-[10px] px-2 py-px rounded-lg bg-surface text-text-muted">em breve</span>
@@ -75,7 +75,7 @@ export function SettingsPage() {
 
       {/* About */}
       <SectionLabel>sobre</SectionLabel>
-      <div className="bg-white border border-[#e8e6df] rounded-xl p-4 text-center">
+      <div className="bg-card border border-border rounded-xl p-4 text-center">
         <div className="text-sm font-medium mb-0.5">MindRoot v2</div>
         <div className="text-xs text-text-muted">Genesis v5.0.1 · PHI spiral</div>
       </div>

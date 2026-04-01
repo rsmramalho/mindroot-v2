@@ -15,7 +15,7 @@ export function InboxPreview({ items }: InboxPreviewProps) {
   if (count === 0) return null;
 
   return (
-    <div className="bg-white border border-[#e8e6df] rounded-xl p-3 px-3.5">
+    <div className="bg-card border border-border rounded-xl p-3 px-3.5">
       <div className="flex justify-between items-center">
         <div className="text-[13px] font-medium">
           <span className="text-[#D85A30]">{count}</span> aguardando triage

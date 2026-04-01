@@ -91,7 +91,7 @@ function ProjectCard({ project, childCount, onClick }: { project: AtomItem; chil
   return (
     <button
       onClick={onClick}
-      className="w-full text-left bg-white border border-[#e8e6df] rounded-xl p-3.5 px-4 mb-2 relative overflow-hidden"
+      className="w-full text-left bg-card border border-border rounded-xl p-3.5 px-4 mb-2 relative overflow-hidden"
       style={{ borderLeftWidth: '3px', borderLeftColor: moduleColor }}
     >
       <div className="flex justify-between items-start mb-1">
@@ -146,7 +146,7 @@ function ProjectDetail({ project, children, onBack }: { project: AtomItem; child
           const stageColor = STAGE_COLORS[item.genesis_stage] ?? '#6b6b6b';
           const typeColor = item.type ? getTypeColor(item.type) : '#8a8a8a';
           return (
-            <div key={item.id} className="bg-white border border-[#e8e6df] rounded-lg p-2.5 px-3 mb-1.5 flex items-center gap-2.5 text-[13px]">
+            <div key={item.id} className="bg-card border border-border rounded-lg p-2.5 px-3 mb-1.5 flex items-center gap-2.5 text-[13px]">
               <span style={{ color: stageColor }}>{geo}</span>
               <span className="flex-1 truncate">{item.title}</span>
               {item.type && (

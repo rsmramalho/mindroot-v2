@@ -42,7 +42,7 @@ export function LibraryPage() {
       </div>
 
       {/* Search */}
-      <div className="bg-white border border-border rounded-xl px-3.5 py-2.5 flex items-center gap-2 mb-3">
+      <div className="bg-card border border-border rounded-xl px-3.5 py-2.5 flex items-center gap-2 mb-3">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0 text-text-muted">
           <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.2" />
           <line x1="9.5" y1="9.5" x2="12" y2="12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
@@ -96,7 +96,7 @@ function LibraryCard({ item }: { item: AtomItem }) {
   const typeColor = item.type ? getTypeColor(item.type) : '#8a8a8a';
 
   return (
-    <div className="bg-white border border-[#e8e6df] rounded-xl p-3 px-3.5">
+    <div className="bg-card border border-border rounded-xl p-3 px-3.5">
       <div className="flex items-start justify-between mb-1">
         <span className="text-sm font-medium flex-1">{item.title}</span>
         {item.type && (

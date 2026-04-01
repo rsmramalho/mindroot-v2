@@ -23,7 +23,7 @@ export function ItemCard({ item, onClick }: ItemCardProps) {
   return (
     <div
       onClick={onClick}
-      className="bg-white border border-[#e8e6df] rounded-xl py-2.5 px-3.5 flex items-center gap-3 relative overflow-hidden cursor-pointer hover:border-border transition-colors"
+      className="bg-card border border-border rounded-xl py-2.5 px-3.5 flex items-center gap-3 relative overflow-hidden cursor-pointer hover:border-border transition-colors"
     >
       {/* Module accent bar */}
       <div

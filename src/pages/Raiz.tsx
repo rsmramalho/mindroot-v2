@@ -44,7 +44,7 @@ export function RaizPage() {
       </div>
 
       {/* Health score */}
-      <div className="bg-white border border-[#e8e6df] rounded-xl p-4 flex items-center gap-4 mb-4">
+      <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-4 mb-4">
         <div className="relative w-16 h-16 shrink-0">
           <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
             <circle cx="18" cy="18" r="15.5" fill="none" stroke="#e8e6df" strokeWidth="3" />
@@ -84,7 +84,7 @@ export function RaizPage() {
           const statusColor = d.status === 'ok' ? '#639922' : d.status === 'stale' ? '#EF9F27' : '#b4b2a9';
 
           return (
-            <div key={d.key} className="bg-white border border-[#e8e6df] rounded-xl p-3 px-3.5 flex items-center gap-3">
+            <div key={d.key} className="bg-card border border-border rounded-xl p-3 px-3.5 flex items-center gap-3">
               <div className="w-3 h-8 rounded-sm" style={{ background: color }} />
               <div className="flex-1 min-w-0">
                 <div className="text-[13px] font-medium">{d.label}</div>

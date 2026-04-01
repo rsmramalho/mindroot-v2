@@ -5,6 +5,7 @@
 @theme {
   /* Background */
   --color-bg: #FDFCF9;
+  --color-card: #FFFFFF;
   --color-surface: #F5F3EE;
   --color-border: #E8E4DC;
 
@@ -57,6 +58,7 @@
 @media (prefers-color-scheme: dark) {
   @theme {
     --color-bg: #111318;
+    --color-card: #1e2024;
     --color-surface: #1a1d24;
     --color-border: #2a2d34;
     --color-text: #d4d0cc;

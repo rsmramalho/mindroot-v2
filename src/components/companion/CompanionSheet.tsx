@@ -115,7 +115,7 @@ export function CompanionSheet({ open, onClose }: CompanionSheetProps) {
                   <button
                     key={qr}
                     onClick={() => handleQuickReply(qr)}
-                    className="text-xs px-3 py-1.5 rounded-xl border border-[#7F77DD]/30 text-[#534AB7] bg-white hover:bg-[#F0EFFE] transition-colors"
+                    className="text-xs px-3 py-1.5 rounded-xl border border-[#7F77DD]/30 text-[#534AB7] bg-card hover:bg-[#F0EFFE] transition-colors"
                   >
                     {qr}
                   </button>
@@ -130,7 +130,7 @@ export function CompanionSheet({ open, onClose }: CompanionSheetProps) {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && send()}
                 placeholder="digitar..."
-                className="flex-1 bg-surface rounded-xl px-3.5 py-2.5 text-sm outline-none placeholder:text-text-muted"
+                className="flex-1 bg-surface text-text rounded-xl px-3.5 py-2.5 text-sm outline-none placeholder:text-text-muted"
               />
               <button
                 onClick={send}

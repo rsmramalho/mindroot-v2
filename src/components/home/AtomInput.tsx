@@ -19,7 +19,7 @@ export function AtomInput({ placeholder = 'o que esta na cabeca?', onSubmit }: A
   };
 
   return (
-    <div className="bg-white border border-border rounded-xl px-4 py-3 flex items-center gap-2.5">
+    <div className="bg-card border border-border rounded-xl px-4 py-3 flex items-center gap-2.5">
       {/* Point geometry */}
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0 opacity-35">
         <circle cx="7" cy="7" r="2.5" fill="currentColor" />

@@ -172,7 +172,7 @@ function SoulStep({ emotions, setEmotions, energy, setEnergy }: {
   };
 
   return (
-    <div className="bg-white border border-border rounded-xl p-4">
+    <div className="bg-card border border-border rounded-xl p-4">
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">como voce esta saindo hoje?</div>
       <div className="flex flex-wrap gap-1.5 mt-2">
         {EMOTIONS.map((e) => (
@@ -180,7 +180,7 @@ function SoulStep({ emotions, setEmotions, energy, setEnergy }: {
             key={e}
             onClick={() => toggleEmotion(e)}
             className={`px-3 py-1 rounded-2xl border text-xs transition-all ${
-              emotions.includes(e) ? 'border-[#7F77DD] bg-[#EEEDFE] text-[#534AB7]' : 'border-border bg-white text-text-muted'
+              emotions.includes(e) ? 'border-[#7F77DD] bg-[#EEEDFE] text-[#534AB7]' : 'border-border bg-card text-text-muted'
             }`}
           >
             {e}
@@ -194,7 +194,7 @@ function SoulStep({ emotions, setEmotions, energy, setEnergy }: {
             key={e}
             onClick={() => setEnergy(e)}
             className={`px-3 py-1 rounded-xl border text-xs transition-all ${
-              energy === e ? 'border-[#7F77DD] bg-[#EEEDFE] text-[#534AB7]' : 'border-border bg-white'
+              energy === e ? 'border-[#7F77DD] bg-[#EEEDFE] text-[#534AB7]' : 'border-border bg-card'
             }`}
           >
             {e}
@@ -207,7 +207,7 @@ function SoulStep({ emotions, setEmotions, energy, setEnergy }: {
 
 function ItemsStep({ created, modified }: { created: any[]; modified: any[] }) {
   return (
-    <div className="bg-white border border-border rounded-xl p-4">
+    <div className="bg-card border border-border rounded-xl p-4">
       <div className="text-xs font-medium text-text-muted pb-1.5 border-b border-border mb-1">criados hoje</div>
       {created.length === 0 ? (
         <p className="text-xs text-text-muted py-2">nenhum item criado hoje</p>
@@ -248,7 +248,7 @@ function DecidedStep({ decisions, setDecisions, newDecision, setNewDecision }: {
   };
 
   return (
-    <div className="bg-white border border-border rounded-xl p-4">
+    <div className="bg-card border border-border rounded-xl p-4">
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">decisoes</div>
       {decisions.map((d, i) => (
         <div key={i} className="py-2 border-b border-surface last:border-0 flex items-center gap-2.5">
@@ -259,7 +259,7 @@ function DecidedStep({ decisions, setDecisions, newDecision, setNewDecision }: {
         </div>
       ))}
       <input
-        className="w-full border border-border rounded-lg px-3 py-2 text-[13px] bg-white outline-none focus:border-[#7F77DD] mt-2"
+        className="w-full border border-border rounded-lg px-3 py-2 text-[13px] bg-card text-text outline-none focus:border-[#7F77DD] mt-2"
         placeholder="+ adicionar decisao..."
         value={newDecision}
         onChange={(e) => setNewDecision(e.target.value)}
@@ -271,7 +271,7 @@ function DecidedStep({ decisions, setDecisions, newDecision, setNewDecision }: {
 
 function ConnectionsStep() {
   return (
-    <div className="bg-white border border-border rounded-xl p-4">
+    <div className="bg-card border border-border rounded-xl p-4">
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">connections</div>
       <p className="text-xs text-text-muted py-4 text-center">conexoes serao sugeridas pelo agente na Fase 5</p>
     </div>
@@ -280,7 +280,7 @@ function ConnectionsStep() {
 
 function SeedsStep() {
   return (
-    <div className="bg-white border border-border rounded-xl p-4">
+    <div className="bg-card border border-border rounded-xl p-4">
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">entropia</div>
       <p className="text-xs text-text-muted py-4 text-center">items inativos serao detectados na Fase 5</p>
     </div>
@@ -289,7 +289,7 @@ function SeedsStep() {
 
 function AuditStep({ audit }: { audit: any }) {
   return (
-    <div className="bg-white border border-border rounded-xl p-4">
+    <div className="bg-card border border-border rounded-xl p-4">
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">saude do sistema</div>
       <AuditRow label="inbox" value={audit.inbox_count} ok={audit.inbox_count === 0} />
       <AuditRow label="abaixo do piso" value={audit.below_floor} ok={audit.below_floor === 0} />
@@ -353,7 +353,7 @@ function CommitStep({ created, modified, decisions, audit, nextSteps, setNextSte
         {nextSteps.map((s, i) => (
           <input
             key={i}
-            className="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] bg-white outline-none focus:border-[#7F77DD] mb-1.5"
+            className="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] bg-card text-text outline-none focus:border-[#7F77DD] mb-1.5"
             value={s}
             onChange={(e) => updateStep(i, e.target.value)}
             placeholder="+ adicionar..."
