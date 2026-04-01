@@ -48,10 +48,10 @@ export function RaizPage() {
       <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-4 mb-4">
         <div className="relative w-16 h-16 shrink-0">
           <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-            <circle cx="18" cy="18" r="15.5" fill="none" stroke="#e8e6df" strokeWidth="3" />
+            <circle cx="18" cy="18" r="15.5" fill="none" className="stroke-border" strokeWidth="3" />
             <motion.circle
               cx="18" cy="18" r="15.5" fill="none"
-              stroke={healthPct >= 70 ? '#639922' : healthPct >= 40 ? '#EF9F27' : '#D85A30'}
+              className={healthPct >= 70 ? 'stroke-mod-finance' : healthPct >= 40 ? 'stroke-mod-purpose' : 'stroke-mod-family'}
               strokeWidth="3"
               strokeLinecap="round"
               initial={{ strokeDasharray: '0 100' }}
@@ -71,7 +71,7 @@ export function RaizPage() {
       {regressions.length > 0 && (
         <div className="mb-4">
           {regressions.map((d) => (
-            <div key={d.key} className="bg-[#FCEBEB] border border-[#f0c0c0] rounded-lg px-3.5 py-2.5 mb-1.5 flex items-center gap-2 text-xs text-[#A32D2D]">
+            <div key={d.key} className="bg-surface border border-border rounded-lg px-3.5 py-2.5 mb-1.5 flex items-center gap-2 text-xs text-mod-family">
               <span>!</span>
               <span><b>{d.label}</b> — {d.oldest}d sem atividade</span>
             </div>
@@ -84,7 +84,7 @@ export function RaizPage() {
       <div className="space-y-1.5">
         {domainHealth.map((d) => {
           const color = MODULE_COLORS[d.module];
-          const statusColor = d.status === 'ok' ? '#639922' : d.status === 'stale' ? '#EF9F27' : '#b4b2a9';
+          const statusClass = d.status === 'ok' ? 'bg-mod-finance' : d.status === 'stale' ? 'bg-mod-purpose' : 'bg-text-muted';
 
           return (
             <div key={d.key} className="bg-card border border-border rounded-xl p-3 px-3.5 flex items-center gap-3">
@@ -94,7 +94,7 @@ export function RaizPage() {
                 <div className="text-[11px] text-text-muted">{d.count} items · mod-{d.module}</div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ background: statusColor }} />
+                <div className={`w-2 h-2 rounded-full ${statusClass}`} />
                 <span className="text-xs text-text-muted">
                   {d.status === 'empty' ? 'vazio' : d.status === 'stale' ? `${d.oldest}d` : 'ok'}
                 </span>
