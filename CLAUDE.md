@@ -1,10 +1,24 @@
 # MindRoot
 
-Emotional productivity system. Emotion precedes action, reflection closes the loop.
+Emotional productivity system — the face of Atom OS. Emotion precedes action, reflection closes the loop.
+
+MindRoot is NOT a separate product — it is the UI layer for Atom OS (one vertex of the Pentágono).
 
 ## Version
 
-v1.0.0-alpha.26 — Full migration to Atom Engine Schema v2 (Genesis v4.2.1).
+v1.0.0-alpha.26 — Full migration to Atom Engine Schema v2 (Genesis v5.0.1).
+
+Branch `ui-v2` has Phases 0-3 implemented:
+- **Phase 0**: Design system tokens + 6 atom components
+- **Phase 1**: Home page (SoulCard, WrapBanner)
+- **Phase 2**: Pipeline + Triage (7-stage funnel)
+- **Phase 3**: Wrap + FSM engines
+- **Phase 4-5**: Pendente (specs no atom-engine-core)
+
+## Relation with atom-engine-core
+
+Roadmaps, wireframes, and specs live in `atom-engine-core`. This repo is the code.
+Do NOT create roadmap/spec docs here. Operational docs live in atom-engine-core.
 
 ## Stack
 
@@ -45,16 +59,15 @@ supabase/        # Migrations, edge functions, seeds
 5. **No emoji in UI**: use word-based labels, font-mono icons.
 6. **Language**: code/comments in English, UI strings in Brazilian Portuguese.
 7. **Before delivering**: always run `npx tsc --noEmit && npm run build`. Zero errors.
+8. **No roadmap/spec docs here**: Operational docs (roadmaps, wireframes, specs) live in `atom-engine-core`. This repo is code only.
 
-## Design System
+## Design System (Genesis v5.0.1)
 
-- Fonts: Cormorant Garamond (serif), Inter (sans), JetBrains Mono (mono)
-- Background: `bg` #111318, `surface` #1a1d24, `border` #2a2d34
-- Text: `light` #e8e0d4, `mind` #c4a882, `muted` #a89478
-- Accent colors: `heart` #d4856a, `soul` #8a9e7a
-- Ritual periods: `aurora` #f0c674, `zenite` #e8e0d4, `crepusculo` #8a6e5a
+- Font: DM Sans (weights: 300, 400, 500) — single font family for all text
+- Background: light-first `#FDFCF9` (dark theme available via toggle)
+- Ritual periods: `aurora`, `zenite`, `crepusculo` (tokens in tailwind.config.ts)
 - Module colors: work, body, mind, family, purpose, bridge, finance, social (see tailwind.config.ts)
-- Style: dark/light theme (toggle in Settings), minimalist, no emoji
+- Style: light-first, minimalist, no emoji
 
 ## Key Types (src/types/item.ts) — Schema v2
 
@@ -139,7 +152,7 @@ app-store (navigation, filters, soul state, user), ritual-store (period, check-i
 
 Supabase project: avvwjkzkzklloyfugzer (deployed 29 Mar 2026)
 
-3 tables (Schema v2 — Genesis v4.2.1):
+3 tables (Schema v2 — Genesis v5.0.1):
 - `items` — nodes (AtomItem core + body JSONB for extensions)
 - `item_connections` — edges (source_id, target_id, relation, note)
 - `atom_events` — propagation + audit trail
@@ -203,7 +216,7 @@ VITE_SUPABASE_ANON_KEY=...
 | alpha.25 | 11/03/2026 | Landing page editorial redesign — hero full viewport, períodos Aurora/Zenite/Crepúsculo, orb animado (467 tests) |
 | alpha.25.1 | 11/03/2026 | Landing polish — hero spacing, botão #b8976e, scroll hint refinement, remove hover re-renders (467 tests) |
 | alpha.25.2 | 11/03/2026 | Border-radius botão 4px, scroll hint visível (467 tests) |
-| alpha.26 | 29/03/2026 | **BREAKING: Full migration to Atom Engine Schema v2 (Genesis v4.2.1).** Types rewritten (AtomItem, 23 AtomTypes, 8 modules, state machine). Service layer rewritten (itemService + connectionService + eventService). 65 files migrated, 707→0 TS errors. Supabase Schema v2 deployed (3 tables, enums, triggers, RLS). |
+| alpha.26 | 29/03/2026 | **BREAKING: Full migration to Atom Engine Schema v2 (Genesis v5.0.1).** Types rewritten (AtomItem, 23 AtomTypes, 8 modules, state machine). Service layer rewritten (itemService + connectionService + eventService). 65 files migrated, 707→0 TS errors. Supabase Schema v2 deployed (3 tables, enums, triggers, RLS). |
 
 ## Google OAuth Setup (manual)
 
