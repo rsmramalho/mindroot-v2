@@ -6,11 +6,16 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useItems } from '@/hooks/useItems';
 import { usePipeline } from '@/hooks/usePipeline';
+import { useTriage } from '@/hooks/useTriage';
+import { getConfidenceBand } from '@/service/triage-service';
+import type { TriageResult } from '@/service/triage-service';
 import { GENESIS_STAGES } from '@/types/item';
-import type { AtomItem } from '@/types/item';
+import type { AtomItem, AtomModule } from '@/types/item';
 import { STAGE_COLORS, MODULE_COLORS } from '@/components/atoms/tokens';
 import { getTypeColor } from '@/components/atoms/tokens';
+import { ConfidenceBar } from '@/components/atoms/ConfidenceBar';
 import { getBelowFloor } from '@/engine/fsm';
+import { toast } from '@/store/toast-store';
 
 type Tab = 'pipeline' | 'triage';
 
@@ -184,9 +189,16 @@ function StageItem({ item }: { item: AtomItem }) {
 
 // ─── Triage View ───────────────────────────────────────
 
+const BAND_COLORS = {
+  auto:    { bg: '#EAF3DE', text: '#3B6D11', label: 'auto' },
+  suggest: { bg: '#FAEEDA', text: '#854F0B', label: 'sugerir' },
+  manual:  { bg: '#FAECE7', text: '#A32D2D', label: 'manual' },
+} as const;
+
 function TriageView() {
   const { items } = useItems();
   const { classify } = usePipeline();
+  const { classify: aiClassify, isClassifying, result: triageResult, reset: resetTriage } = useTriage();
   const [currentIdx, setCurrentIdx] = useState(0);
 
   const inboxItems = useMemo(
@@ -207,20 +219,38 @@ function TriageView() {
     );
   }
 
-  const handleConfirm = () => {
-    if (current) {
-      // Quick classify with suggested type/module (placeholder — real AI triage in Fase 5)
-      classify(current.id, 'note', 'mind');
+  const handleClassify = async () => {
+    if (!current) return;
+    try {
+      const result = await aiClassify({ input: current.title });
+      const band = getConfidenceBand(result);
+      if (band === 'auto') {
+        await classify(current.id, result.type as AtomItem['type'], result.module as AtomModule);
+        toast.success('auto-classificado ✓');
+        next();
+      }
+      // 'suggest' and 'manual' stay on card for user action
+    } catch {
+      toast.error('Erro na classificacao AI');
     }
+  };
+
+  const handleAccept = async (result: TriageResult) => {
+    if (!current) return;
+    await classify(current.id, result.type as AtomItem['type'], result.module as AtomModule);
     next();
   };
 
   const handleSkip = () => next();
 
   const next = () => {
+    resetTriage();
     if (currentIdx < total - 1) setCurrentIdx((i) => i + 1);
     else setCurrentIdx(0);
   };
+
+  const band = triageResult ? getConfidenceBand(triageResult) : null;
+  const bandStyle = band ? BAND_COLORS[band] : null;
 
   return (
     <div>
@@ -245,7 +275,7 @@ function TriageView() {
         ))}
       </div>
 
-      {/* Swipe card */}
+      {/* Triage card */}
       {current && (
         <AnimatePresence mode="wait">
           <motion.div
@@ -261,31 +291,69 @@ function TriageView() {
               style={{ background: current.module ? MODULE_COLORS[current.module] : '#9C9A92' }}
             />
 
-            {/* Raw text */}
-            <div className="text-lg leading-relaxed mb-5">
+            {/* Title */}
+            <div className="text-lg leading-relaxed mb-4">
               <span className="text-sm text-text-muted mr-1.5">·</span>
               {current.title}
             </div>
 
-            {/* AI suggestion placeholder */}
-            <div className="bg-surface rounded-xl p-3.5 mb-4">
-              <div className="flex items-center gap-1.5 mb-2.5">
-                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#7F77DD] to-[#378ADD] flex items-center justify-center text-[10px] text-white font-medium">
-                  A
-                </div>
-                <span className="text-xs text-text-muted">sugestao do triage</span>
-              </div>
-              <div className="flex gap-1.5 flex-wrap">
-                <span className="text-[13px] font-medium px-3 py-1.5 rounded-lg bg-[#E6F1FB] text-[#185FA5]">
-                  task
-                </span>
-                <span className="text-[13px] font-medium px-3 py-1.5 rounded-lg bg-[#EEEDFE] text-[#534AB7]">
-                  work
-                </span>
-              </div>
-            </div>
+            {/* AI Result or classify button */}
+            {triageResult ? (
+              <div className="bg-surface rounded-xl p-3.5 mb-3">
+                {/* Confidence bar */}
+                <ConfidenceBar value={triageResult.confidence} className="mb-3" />
 
-            {/* Notes */}
+                {/* Band chip */}
+                {bandStyle && (
+                  <span
+                    className="text-[10px] font-medium px-2 py-0.5 rounded-lg inline-block mb-2.5"
+                    style={{ background: bandStyle.bg, color: bandStyle.text }}
+                  >
+                    {bandStyle.label}
+                  </span>
+                )}
+
+                {/* Suggestion */}
+                <div className="flex items-center gap-1.5 mb-2">
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#7F77DD] to-[#378ADD] flex items-center justify-center text-[10px] text-white font-medium shrink-0">
+                    A
+                  </div>
+                  <span className="text-xs text-text-muted">sugestao do triage</span>
+                </div>
+                <div className="flex gap-1.5 flex-wrap mb-2">
+                  <TypeChip type={triageResult.type} />
+                  <ModuleChip module={triageResult.module} />
+                </div>
+
+                {/* Reasoning */}
+                {triageResult.reasoning && (
+                  <p className="text-[11px] text-text-muted italic leading-relaxed mt-1.5">
+                    "{triageResult.reasoning}"
+                  </p>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={handleClassify}
+                disabled={isClassifying}
+                className="w-full bg-surface rounded-xl p-3.5 mb-3 text-center text-[13px] text-text-muted hover:bg-border/50 transition-colors disabled:opacity-50"
+              >
+                {isClassifying ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-3 h-3 rounded-full border-2 border-[#7F77DD] border-t-transparent animate-spin" />
+                    classificando...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#7F77DD] to-[#378ADD] flex items-center justify-center text-[10px] text-white font-medium shrink-0">
+                      A
+                    </div>
+                    classificar com AI
+                  </span>
+                )}
+              </button>
+            )}
+
             {current.notes && (
               <p className="text-xs text-text-muted mb-2">{current.notes}</p>
             )}
@@ -302,18 +370,53 @@ function TriageView() {
         >
           ←
         </button>
-        <button
-          onClick={handleConfirm}
-          className="w-14 h-14 rounded-full bg-[#1D9E75] text-white flex items-center justify-center text-xl shadow-lg shadow-[#1D9E75]/25"
-          aria-label="Confirmar"
-        >
-          ✓
-        </button>
+        {triageResult ? (
+          <button
+            onClick={() => handleAccept(triageResult)}
+            className="w-14 h-14 rounded-full bg-[#1D9E75] text-white flex items-center justify-center text-xl shadow-lg shadow-[#1D9E75]/25"
+            aria-label="Aceitar classificacao"
+          >
+            ✓
+          </button>
+        ) : (
+          <button
+            onClick={handleClassify}
+            disabled={isClassifying}
+            className="w-14 h-14 rounded-full bg-[#1D9E75] text-white flex items-center justify-center text-xl shadow-lg shadow-[#1D9E75]/25 disabled:opacity-50"
+            aria-label="Classificar"
+          >
+            ▸
+          </button>
+        )}
       </div>
       <div className="flex justify-center gap-9 text-[10px] text-text-muted mt-1.5">
         <span>pular</span>
-        <span>confirmar</span>
+        <span>{triageResult ? 'aceitar' : 'classificar'}</span>
       </div>
     </div>
+  );
+}
+
+function TypeChip({ type }: { type: string }) {
+  const color = getTypeColor(type as import('@/types/item').AtomType);
+  return (
+    <span
+      className="text-[13px] font-medium px-3 py-1.5 rounded-lg"
+      style={{ background: `${color}18`, color }}
+    >
+      {type}
+    </span>
+  );
+}
+
+function ModuleChip({ module }: { module: string }) {
+  const color = MODULE_COLORS[module as keyof typeof MODULE_COLORS] ?? '#8a8a8a';
+  return (
+    <span
+      className="text-[13px] font-medium px-3 py-1.5 rounded-lg"
+      style={{ background: `${color}18`, color }}
+    >
+      {module}
+    </span>
   );
 }
