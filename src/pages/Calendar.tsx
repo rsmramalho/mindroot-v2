@@ -3,7 +3,7 @@
 // Week strip with day dots, ritual blocks (aurora/zenite/crepúsculo), items by period
 
 import { useState, useMemo } from 'react';
-import { format, startOfWeek, addDays, isSameDay, parseISO, isToday as isDateToday } from 'date-fns';
+import { format, startOfWeek, addDays, isSameDay, isToday as isDateToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useItems } from '@/hooks/useItems';
 import type { AtomItem } from '@/types/item';
@@ -144,7 +144,7 @@ function RitualBlock({ period, color, bgClass, items, habits, showWrap }: {
       </div>
 
       {items.map((item) => <CalendarItem key={item.id} item={item} />)}
-      {habits.map((item) => <CalendarItem key={item.id} item={item} isHabit />)}
+      {habits.map((item) => <CalendarItem key={item.id} item={item} />)}
       {showWrap && (
         <div className="flex items-center gap-2 p-1.5 px-2.5 rounded-lg bg-[rgba(127,119,221,0.08)] border border-[rgba(127,119,221,0.15)] text-[13px] text-[#534AB7]">
           <span>○</span> wrap
@@ -154,7 +154,7 @@ function RitualBlock({ period, color, bgClass, items, habits, showWrap }: {
   );
 }
 
-function CalendarItem({ item, isHabit }: { item: AtomItem; isHabit?: boolean }) {
+function CalendarItem({ item }: { item: AtomItem }) {
   const moduleColor = item.module ? MODULE_COLORS[item.module] : '#8a8a8a';
   const geo = STAGE_GEOMETRIES[item.genesis_stage] ?? '·';
   const typeColor = item.type ? getTypeColor(item.type) : '#8a8a8a';

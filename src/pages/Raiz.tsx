@@ -7,7 +7,6 @@ import { useItems } from '@/hooks/useItems';
 import { RAIZ_DOMAINS } from '@/config/raiz';
 import { MODULE_COLORS } from '@/components/atoms/tokens';
 import { differenceInDays, parseISO } from 'date-fns';
-import type { AtomItem } from '@/types/item';
 
 export function RaizPage() {
   const { items } = useItems();

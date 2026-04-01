@@ -4,7 +4,6 @@
 
 import { useState, useMemo } from 'react';
 import { useItems } from '@/hooks/useItems';
-import type { AtomItem } from '@/types/item';
 import { GENESIS_STAGES, MODULES } from '@/types/item';
 import { STAGE_COLORS, MODULE_COLORS } from '@/components/atoms/tokens';
 import { computeAudit } from '@/engine/wrap';

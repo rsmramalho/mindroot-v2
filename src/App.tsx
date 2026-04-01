@@ -1,18 +1,13 @@
 // App.tsx — MindRoot v2
-// Shell + auth + page router. Fase 3: Geometria.
+// Landing → Auth → Onboarding → Shell + pages
 
+import { useState, useLayoutEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { useRealtime } from '@/hooks/useRealtime';
 import { useAppStore } from '@/store/app-store';
 import { AppShell } from '@/components/shell/AppShell';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { retry: 1, refetchOnWindowFocus: false },
-  },
-});
 
 import { HomePage } from '@/pages/Home';
 import { PipelinePage } from '@/pages/Pipeline';
@@ -23,17 +18,15 @@ import { AnalyticsPage } from '@/pages/Analytics';
 import { LibraryPage } from '@/pages/Library';
 import { SettingsPage } from '@/pages/Settings';
 import { RaizPage } from '@/pages/Raiz';
+import { AuthPage } from '@/pages/Auth';
+import { LandingPage } from '@/pages/Landing';
+import { OnboardingPage } from '@/pages/Onboarding';
 
-// ─── Placeholder pages ────────────────────────────────
-
-function PlaceholderPage({ name }: { name: string }) {
-  return (
-    <div className="p-6">
-      <h2 className="text-lg font-medium text-text-heading mb-2">{name}</h2>
-      <p className="text-sm text-text-muted">Em construcao</p>
-    </div>
-  );
-}
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { retry: 1, refetchOnWindowFocus: false },
+  },
+});
 
 // ─── Page Router ──────────────────────────────────────
 
@@ -88,24 +81,51 @@ function AuthenticatedApp() {
 
 function AppContent() {
   const { user, loading } = useAuth();
+  const [showAuth, setShowAuth] = useState(false);
+  const [onboardingDone, setOnboardingDone] = useState(false);
+
+  // Reset showAuth when user logs out
+  useLayoutEffect(() => {
+    if (!user) setShowAuth(false);
+  }, [user]);
+
+  // Check localStorage for onboarding
+  useLayoutEffect(() => {
+    if (user) {
+      const key = `mindroot_onboarding_${user.id}`;
+      setOnboardingDone(localStorage.getItem(key) === 'done');
+    }
+  }, [user]);
+
+  const completeOnboarding = () => {
+    if (user) {
+      localStorage.setItem(`mindroot_onboarding_${user.id}`, 'done');
+    }
+    setOnboardingDone(true);
+  };
 
   if (loading) {
     return (
       <div className="min-h-dvh flex items-center justify-center bg-bg">
-        <p className="text-sm text-text-muted font-light">Carregando...</p>
+        <div className="text-center">
+          <div className="text-2xl font-medium text-text-heading tracking-tight">MindRoot</div>
+          <div className="mt-4 flex justify-center gap-1.5">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="w-1.5 h-1.5 rounded-full bg-text-muted/40 animate-pulse" style={{ animationDelay: `${i * 200}ms` }} />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!user) {
-    return (
-      <div className="min-h-dvh flex items-center justify-center bg-bg">
-        <div className="text-center space-y-4">
-          <h1 className="text-2xl font-medium text-text-heading">MindRoot</h1>
-          <p className="text-sm text-text-muted">Auth page — Fase 4</p>
-        </div>
-      </div>
-    );
+    if (showAuth) return <AuthPage onBack={() => setShowAuth(false)} />;
+    return <LandingPage onLogin={() => setShowAuth(true)} />;
+  }
+
+  if (!onboardingDone) {
+    return <OnboardingPage onComplete={completeOnboarding} />;
   }
 
   return <AuthenticatedApp />;

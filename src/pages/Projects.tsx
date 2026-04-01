@@ -4,16 +4,14 @@
 // Detail: back button, items list, connections, links
 
 import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useItems } from '@/hooks/useItems';
-import { useAppStore } from '@/store/app-store';
 import type { AtomItem } from '@/types/item';
 import { MODULE_COLORS, STAGE_COLORS, STAGE_GEOMETRIES } from '@/components/atoms/tokens';
 import { getTypeColor } from '@/components/atoms/tokens';
 
 export function ProjectsPage() {
   const { items } = useItems();
-  const currentPage = useAppStore((s) => s.currentPage);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const projects = useMemo(
