@@ -93,13 +93,17 @@ function AuthenticatedApp() {
     <AppShell onOpenSettings={() => useAppStore.getState().navigate('settings')}>
       <PageRouter />
       {/* FAB for companion */}
-      <button
+      <motion.button
         onClick={() => setCompanionOpen(true)}
         className="fixed bottom-20 right-5 w-12 h-12 rounded-full bg-gradient-to-br from-[#7F77DD] via-[#378ADD] to-[#1D9E75] text-white flex items-center justify-center text-lg font-light shadow-lg shadow-[#534AB7]/20 z-30"
         aria-label="Abrir companion"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.3 }}
+        whileTap={{ scale: 0.9 }}
       >
         ○
-      </button>
+      </motion.button>
       <CompanionSheet open={companionOpen} onClose={() => setCompanionOpen(false)} />
     </AppShell>
   );

@@ -3,6 +3,7 @@
 // Domain matrix, health score, regression alerts
 
 import { useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { useItems } from '@/hooks/useItems';
 import { RAIZ_DOMAINS } from '@/config/raiz';
 import { MODULE_COLORS } from '@/components/atoms/tokens';
@@ -48,12 +49,14 @@ export function RaizPage() {
         <div className="relative w-16 h-16 shrink-0">
           <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
             <circle cx="18" cy="18" r="15.5" fill="none" stroke="#e8e6df" strokeWidth="3" />
-            <circle
+            <motion.circle
               cx="18" cy="18" r="15.5" fill="none"
               stroke={healthPct >= 70 ? '#639922' : healthPct >= 40 ? '#EF9F27' : '#D85A30'}
               strokeWidth="3"
-              strokeDasharray={`${healthPct} ${100 - healthPct}`}
               strokeLinecap="round"
+              initial={{ strokeDasharray: '0 100' }}
+              animate={{ strokeDasharray: `${healthPct} ${100 - healthPct}` }}
+              transition={{ duration: 1, ease: 'easeOut' }}
             />
           </svg>
           <span className="absolute inset-0 flex items-center justify-center text-lg font-medium">{healthPct}%</span>

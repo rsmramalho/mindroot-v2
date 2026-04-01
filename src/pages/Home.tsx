@@ -10,12 +10,15 @@ import { usePipeline } from '@/hooks/usePipeline';
 import { useAppStore } from '@/store/app-store';
 import { getCurrentPeriod } from '@/types/ui';
 import { getCreatedToday, getModifiedToday, computeAudit } from '@/engine/wrap';
+import { motion } from 'framer-motion';
 import { SoulCard } from '@/components/home/SoulCard';
 import { WrapBanner } from '@/components/home/WrapBanner';
 import { AtomInput } from '@/components/home/AtomInput';
 import { ItemCard } from '@/components/shared/ItemCard';
 import { InboxPreview } from '@/components/home/InboxPreview';
 import { AuditBar } from '@/components/home/AuditBar';
+import { SoulCardSkeleton, CardSkeleton } from '@/components/shared/Skeleton';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 export function HomePage() {
   const { items, isLoading: loading } = useItems();
@@ -53,10 +56,12 @@ export function HomePage() {
 
   if (loading) {
     return (
-      <div className="p-5 space-y-3">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-16 bg-surface rounded-xl animate-pulse" />
-        ))}
+      <div className="px-5 pt-6 space-y-3">
+        <div className="h-8 bg-surface rounded w-48 animate-pulse mb-4" />
+        <SoulCardSkeleton />
+        <CardSkeleton />
+        <CardSkeleton />
+        <CardSkeleton />
       </div>
     );
   }
@@ -109,16 +114,29 @@ export function HomePage() {
       </div>
 
       {/* Active items */}
-      {activeItems.length > 0 && (
+      {activeItems.length > 0 ? (
         <div className="mt-3">
           <SectionLabel>items ativos</SectionLabel>
           <div className="space-y-1.5">
-            {activeItems.slice(0, 5).map((item) => (
-              <ItemCard key={item.id} item={item} />
+            {activeItems.slice(0, 5).map((item, i) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05, duration: 0.2 }}
+              >
+                <ItemCard item={item} />
+              </motion.div>
             ))}
           </div>
         </div>
-      )}
+      ) : items.length === 0 ? (
+        <EmptyState
+          geometry="·"
+          title="Seu dia comeca aqui."
+          subtitle="Capture algo no campo acima."
+        />
+      ) : null}
 
       {/* Inbox */}
       {inboxItems.length > 0 && (

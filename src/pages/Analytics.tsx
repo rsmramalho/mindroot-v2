@@ -54,7 +54,14 @@ export function AnalyticsPage() {
         ))}
       </div>
 
-      {tab === 'pipeline' && (
+      {tab === 'pipeline' && active.length === 0 && (
+        <div className="text-center py-16">
+          <div className="text-4xl text-text-muted/40 mb-4">△</div>
+          <div className="text-sm text-text-muted">Dados aparecem depois do primeiro wrap.</div>
+        </div>
+      )}
+
+      {tab === 'pipeline' && active.length > 0 && (
         <div>
           {/* KPI cards */}
           <div className="grid grid-cols-2 gap-2 mb-4">

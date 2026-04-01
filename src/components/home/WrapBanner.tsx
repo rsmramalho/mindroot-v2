@@ -1,6 +1,7 @@
 // home/WrapBanner.tsx — Wrap call-to-action banner (crepúsculo)
 // Wireframe: purple gradient, "hora do wrap ○", stats, "iniciar" button
 
+import { motion } from 'framer-motion';
 import { useAppStore } from '@/store/app-store';
 
 interface WrapBannerProps {
@@ -12,7 +13,12 @@ export function WrapBanner({ createdCount, modifiedCount }: WrapBannerProps) {
   const navigate = useAppStore((s) => s.navigate);
 
   return (
-    <div className="bg-gradient-to-br from-[#7F77DD] to-[#534AB7] rounded-xl p-3.5 px-4 mt-3 flex items-center justify-between">
+    <motion.div
+      className="bg-gradient-to-br from-[#7F77DD] to-[#534AB7] rounded-xl p-3.5 px-4 mt-3 flex items-center justify-between"
+      initial={{ opacity: 0, y: -12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+    >
       <div>
         <div className="text-white text-sm font-medium">hora do wrap ○</div>
         <div className="text-white/70 text-xs mt-0.5">
@@ -25,6 +31,6 @@ export function WrapBanner({ createdCount, modifiedCount }: WrapBannerProps) {
       >
         iniciar
       </button>
-    </div>
+    </motion.div>
   );
 }

@@ -91,9 +91,12 @@ function PipelineView() {
           return (
             <div key={s.stage} className="flex-1 flex flex-col items-center gap-1">
               <span className="text-[10px] font-medium text-text-muted">{count}</span>
-              <div
+              <motion.div
                 className="w-full rounded-t"
-                style={{ height: `${height}px`, background: STAGE_COLORS[s.stage] }}
+                initial={{ height: 0 }}
+                animate={{ height: `${height}px` }}
+                transition={{ delay: s.stage * 0.06, duration: 0.4, ease: 'easeOut' }}
+                style={{ background: STAGE_COLORS[s.stage] }}
               />
               <span className="text-[9px] text-text-muted">{s.geometry}</span>
             </div>
