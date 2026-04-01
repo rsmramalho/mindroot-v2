@@ -4,7 +4,7 @@
 import type { AtomItem, AtomModule, Emotion, RitualSlot, Priority, AtomType, SoulExtension, OperationsExtension } from '@/types/item';
 import { MODULES, EMOTIONS } from '@/types/item';
 import { RITUAL_PERIODS } from '@/types/ui';
-import { isToday, isThisWeek, isPast, isFuture, startOfDay, parseISO } from 'date-fns';
+import { isToday, isThisWeek, isPast, isFuture, startOfDay } from 'date-fns';
 
 // ━━━ Types ━━━
 
@@ -40,7 +40,6 @@ export const EMPTY_FILTERS: SearchFilters = {
 
 // ━━━ Filter prefix definitions ━━━
 
-const MODULE_KEYS = MODULES.map((m) => m.key);
 const MODULE_LABELS_MAP: Record<string, AtomModule> = {};
 for (const m of MODULES) {
   MODULE_LABELS_MAP[normalize(m.label)] = m.key;

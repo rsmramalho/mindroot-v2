@@ -2,7 +2,7 @@
 // Pure logic for wrap (daily close) operations.
 
 import { isToday, parseISO, differenceInDays } from 'date-fns';
-import type { AtomItem, Emotion, EnergyLevel, AtomModule } from '@/types/item';
+import type { AtomItem, Emotion, EnergyLevel } from '@/types/item';
 import { getBelowFloor, getOrphans } from './fsm';
 
 // ─── Query helpers ──────────────────────────────────────

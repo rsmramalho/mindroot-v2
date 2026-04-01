@@ -4,7 +4,7 @@
 
 import { supabase } from './supabase';
 import { itemService } from './item-service';
-import { canAdvance, advance, getItemState } from '@/engine/fsm';
+import { canAdvance, advance } from '@/engine/fsm';
 import { getFloorStage, getTypeSchema } from '@/config/types';
 import type { AtomType } from '@/config/types';
 import type { AtomItem, AtomModule, UpdateItemPayload } from '@/types/item';
