@@ -9,14 +9,14 @@ import { useItems } from '@/hooks/useItems';
 import { usePipeline } from '@/hooks/usePipeline';
 import { useAppStore } from '@/store/app-store';
 import { getCurrentPeriod } from '@/types/ui';
-import { getCreatedToday, getModifiedToday, computeAudit } from '@/engine/wrap';
+import { getCreatedToday, getModifiedToday } from '@/engine/wrap';
 import { motion } from 'framer-motion';
 import { SoulCard } from '@/components/home/SoulCard';
 import { WrapBanner } from '@/components/home/WrapBanner';
 import { AtomInput } from '@/components/home/AtomInput';
 import { ItemCard } from '@/components/shared/ItemCard';
 import { InboxPreview } from '@/components/home/InboxPreview';
-import { AuditBar } from '@/components/home/AuditBar';
+import { HealthBar } from '@/components/audit/HealthBar';
 import { SoulCardSkeleton, CardSkeleton } from '@/components/shared/Skeleton';
 import { EmptyState } from '@/components/shared/EmptyState';
 
@@ -45,9 +45,6 @@ export function HomePage() {
 
   const createdToday = useMemo(() => getCreatedToday(items), [items]);
   const modifiedToday = useMemo(() => getModifiedToday(items), [items]);
-
-  const audit = useMemo(() => computeAudit(items), [items]);
-  const healthyCount = audit.total_active - audit.inbox_count - audit.below_floor - audit.orphans - audit.stale;
 
   // Use first active item title as intention proxy
   const intention = activeItems[0]?.title ?? null;
@@ -149,7 +146,7 @@ export function HomePage() {
       )}
 
       {/* Audit */}
-      <AuditBar totalItems={audit.total_active} healthyItems={Math.max(0, healthyCount)} />
+      <HealthBar />
     </div>
   );
 }

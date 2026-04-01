@@ -6,8 +6,10 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWrap } from '@/hooks/useWrap';
 import { useItems } from '@/hooks/useItems';
+import { useFullAudit } from '@/hooks/useAudit';
 import { useAppStore } from '@/store/app-store';
 import { getCreatedToday, getModifiedToday, computeAudit } from '@/engine/wrap';
+import { StageBadge } from '@/components/atoms/StageBadge';
 import { EMOTIONS } from '@/types/item';
 import type { Emotion, EnergyLevel } from '@/types/item';
 
@@ -38,6 +40,7 @@ export function WrapPage() {
   const created = useMemo(() => getCreatedToday(items), [items]);
   const modified = useMemo(() => getModifiedToday(items), [items]);
   const audit = useMemo(() => computeAudit(items), [items]);
+  const { data: fullAudit, isLoading: auditLoading } = useFullAudit();
 
   useEffect(() => { startWrap(); }, []);
 
@@ -133,7 +136,7 @@ export function WrapPage() {
             {step === 2 && <DecidedStep decisions={decisions} setDecisions={setDecisions} newDecision={newDecision} setNewDecision={setNewDecision} />}
             {step === 3 && <ConnectionsStep />}
             {step === 4 && <SeedsStep />}
-            {step === 5 && <AuditStep audit={audit} />}
+            {step === 5 && <AuditStep audit={audit} fullAudit={fullAudit ?? null} auditLoading={auditLoading} />}
             {step === 6 && <CommitStep created={created} modified={modified} decisions={decisions} audit={audit} nextSteps={nextSteps} setNextSteps={setNextSteps} />}
           </motion.div>
         </AnimatePresence>
@@ -287,25 +290,71 @@ function SeedsStep() {
   );
 }
 
-function AuditStep({ audit }: { audit: any }) {
+function AuditStep({ audit, fullAudit, auditLoading }: {
+  audit: any;
+  fullAudit: import('@/service/audit-service').AuditReport | null;
+  auditLoading: boolean;
+}) {
+  // Prefer real Supabase data, fall back to local computeAudit counts
+  const inboxCount = fullAudit?.inbox_count ?? audit.inbox_count;
+  const belowFloor = fullAudit?.below_floor ?? [];
+  const orphans = fullAudit?.orphans ?? [];
+  const stale = fullAudit?.stale ?? [];
+
   return (
     <div className="bg-card border border-border rounded-xl p-4">
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">saude do sistema</div>
-      <AuditRow label="inbox" value={audit.inbox_count} ok={audit.inbox_count === 0} />
-      <AuditRow label="abaixo do piso" value={audit.below_floor} ok={audit.below_floor === 0} />
-      <AuditRow label="orfaos" value={audit.orphans} ok={audit.orphans === 0} />
-      <AuditRow label="stale" value={audit.stale} ok={audit.stale === 0} />
+      {auditLoading && (
+        <div className="space-y-2 mb-2">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-6 bg-surface rounded animate-pulse" />
+          ))}
+        </div>
+      )}
+      {!auditLoading && (
+        <>
+          <AuditRow label="inbox" value={inboxCount} ok={inboxCount === 0} />
+          <AuditRow
+            label="abaixo do piso"
+            value={belowFloor.length}
+            ok={belowFloor.length === 0}
+            detail={belowFloor.map((i) => (
+              <div key={i.id} className="flex items-center gap-1.5 text-[11px] text-text-muted py-0.5">
+                <span className="truncate flex-1">{i.title}</span>
+                <StageBadge stage={i.genesis_stage} />
+                <span>→</span>
+                <StageBadge stage={i.required_floor} />
+              </div>
+            ))}
+          />
+          <AuditRow label="orfaos" value={orphans.length} ok={orphans.length === 0} />
+          <AuditRow
+            label="stale"
+            value={stale.length}
+            ok={stale.length === 0}
+            detail={stale.map((i) => (
+              <div key={i.id} className="flex items-center gap-1.5 text-[11px] text-text-muted py-0.5">
+                <span className="truncate flex-1">{i.title}</span>
+                <span className="text-[10px] font-medium px-1 rounded bg-[#FAECE7] text-[#A32D2D]">{i.days_in_inbox}d</span>
+              </div>
+            ))}
+          />
+        </>
+      )}
     </div>
   );
 }
 
-function AuditRow({ label, value, ok }: { label: string; value: number; ok: boolean }) {
+function AuditRow({ label, value, ok, detail }: { label: string; value: number; ok: boolean; detail?: React.ReactNode }) {
   return (
-    <div className="flex justify-between py-1.5 border-b border-surface last:border-0 text-[13px]">
-      <span>{label}</span>
-      <span className={`font-medium ${ok ? 'text-[#639922]' : 'text-[#EF9F27]'}`}>
-        {value} {ok ? '✓' : '!'}
-      </span>
+    <div className="border-b border-surface last:border-0">
+      <div className="flex justify-between py-1.5 text-[13px]">
+        <span>{label}</span>
+        <span className={`font-medium ${ok ? 'text-[#639922]' : 'text-[#EF9F27]'}`}>
+          {value} {ok ? '✓' : '!'}
+        </span>
+      </div>
+      {!ok && detail && <div className="pb-1.5">{detail}</div>}
     </div>
   );
 }
