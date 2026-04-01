@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindRoot — Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8; --bg-card: #FFFFFF; --bg-surface: #F5F4F0;
+    --text-primary: #1A1A18; --text-secondary: #6B6A65; --text-tertiary: #9C9A92;
+    --border: rgba(0,0,0,0.08); --border-strong: rgba(0,0,0,0.14);
+    --mod-work: #378ADD; --mod-purpose: #7F77DD; --mod-body: #D85A30;
+    --mod-mind: #1D9E75; --mod-family: #D4537E; --mod-bridge: #888780;
+    --mod-finance: #639922; --mod-social: #BA7517;
+    --aurora: #EF9F27; --crepusculo: #7F77DD; --zenite: #378ADD;
+    --success: #1D9E75; --success-bg: #E1F5EE;
+    --warning: #854F0B; --warning-bg: #FAEEDA;
+    --danger: #A32D2D; --danger-bg: #FCEBEB;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1A1A18; --bg-card: #2C2C2A; --bg-surface: #222220;
+      --text-primary: #E8E6DE; --text-secondary: #9C9A92; --text-tertiary: #6B6A65;
+      --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.14);
+      --success-bg: #1E3530; --warning-bg: #3D3520; --danger-bg: #3D2020;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif; background: #1A1A18;
+    display: flex; justify-content: center; align-items: flex-start;
+    min-height: 100vh; padding: 20px;
+  }
+  .phone-frame {
+    width: 375px; height: 812px; background: var(--bg);
+    border-radius: 40px; overflow: hidden; position: relative;
+    box-shadow: 0 0 0 8px #333, 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .status-bar {
+    height: 54px; padding: 14px 24px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 14px; font-weight: 500; color: var(--text-primary);
+  }
+  .screen {
+    height: calc(100% - 54px - 68px);
+    overflow-y: auto; scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  .header { padding: 8px 20px 16px; }
+  .header h1 {
+    font-size: 24px; font-weight: 500;
+    color: var(--text-primary); letter-spacing: -0.5px;
+  }
+
+  /* ═══ Profile card ═══ */
+  .profile-card {
+    margin: 0 20px 20px; padding: 16px;
+    background: var(--bg-card); border: 0.5px solid var(--border);
+    border-radius: 14px; display: flex; align-items: center; gap: 14px;
+  }
+  .profile-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--mod-purpose), var(--mod-work));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 500; color: white; flex-shrink: 0;
+  }
+  .profile-info { flex: 1; }
+  .profile-name { font-size: 16px; font-weight: 500; color: var(--text-primary); }
+  .profile-email { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+  .profile-edit {
+    font-size: 12px; color: var(--text-secondary);
+    padding: 6px 12px; border-radius: 8px;
+    background: var(--bg-surface); cursor: pointer;
+  }
+
+  /* ═══ Settings sections ═══ */
+  .settings-section {
+    margin: 0 20px 20px;
+  }
+  .section-label {
+    font-size: 10px; color: var(--text-tertiary);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 8px; padding-left: 4px;
+  }
+  .settings-group {
+    background: var(--bg-card); border: 0.5px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+  }
+
+  .setting-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px;
+    border-bottom: 0.5px solid var(--border);
+    cursor: pointer; transition: background 0.15s;
+  }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-row:hover { background: var(--bg-surface); }
+  .setting-row:active { background: var(--bg-surface); }
+
+  .sr-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .sr-content { flex: 1; min-width: 0; }
+  .sr-title { font-size: 14px; color: var(--text-primary); }
+  .sr-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
+  .sr-value {
+    font-size: 12px; color: var(--text-tertiary); flex-shrink: 0;
+  }
+  .sr-arrow {
+    font-size: 12px; color: var(--text-tertiary); flex-shrink: 0; opacity: 0.5;
+  }
+
+  /* Toggle switch */
+  .toggle {
+    position: relative; width: 40px; height: 22px;
+    flex-shrink: 0;
+  }
+  .toggle input {
+    opacity: 0; width: 100%; height: 100%;
+    position: absolute; cursor: pointer; z-index: 1; margin: 0;
+  }
+  .toggle-track {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--border-strong); border-radius: 11px;
+    transition: background 0.2s;
+  }
+  .toggle input:checked + .toggle-track {
+    background: var(--success);
+  }
+  .toggle-thumb {
+    position: absolute; top: 2px; left: 2px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: white; transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    pointer-events: none;
+  }
+  .toggle input:checked ~ .toggle-thumb {
+    transform: translateX(18px);
+  }
+
+  /* Integration status badges */
+  .int-status {
+    font-size: 10px; font-weight: 500; padding: 3px 8px;
+    border-radius: 6px; flex-shrink: 0;
+  }
+  .int-connected { background: var(--success-bg); color: var(--success); }
+  .int-pending { background: var(--warning-bg); color: var(--warning); }
+  .int-off { background: var(--bg-surface); color: var(--text-tertiary); }
+
+  /* Ritual time editor */
+  .ritual-times {
+    padding: 12px 16px;
+  }
+  .ritual-time-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; border-bottom: 0.5px solid var(--border);
+  }
+  .ritual-time-row:last-child { border-bottom: none; }
+  .rt-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .rt-name {
+    font-size: 13px; color: var(--text-primary); width: 80px;
+  }
+  .rt-range {
+    font-size: 12px; color: var(--text-secondary);
+    flex: 1; text-align: right;
+  }
+  .rt-edit {
+    font-size: 11px; color: var(--text-tertiary);
+    padding: 3px 8px; border-radius: 6px;
+    background: var(--bg-surface); cursor: pointer;
+  }
+
+  /* Module config */
+  .mod-config-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px; border-bottom: 0.5px solid var(--border);
+  }
+  .mod-config-row:last-child { border-bottom: none; }
+  .mc-dot {
+    width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0;
+  }
+  .mc-name {
+    font-size: 13px; color: var(--text-primary); flex: 1;
+  }
+  .mc-count {
+    font-size: 11px; color: var(--text-tertiary);
+  }
+
+  /* Theme selector */
+  .theme-row {
+    display: flex; gap: 8px; padding: 12px 16px;
+  }
+  .theme-option {
+    flex: 1; padding: 12px; border-radius: 10px;
+    border: 1.5px solid transparent; cursor: pointer;
+    text-align: center; transition: all 0.15s;
+  }
+  .theme-option.active {
+    border-color: var(--text-primary);
+  }
+  .theme-preview {
+    width: 100%; height: 28px; border-radius: 6px;
+    margin-bottom: 6px; border: 0.5px solid var(--border);
+  }
+  .theme-label { font-size: 11px; color: var(--text-secondary); }
+
+  /* Data section */
+  .data-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 13px 16px; border-bottom: 0.5px solid var(--border);
+    cursor: pointer;
+  }
+  .data-row:last-child { border-bottom: none; }
+  .dr-icon {
+    font-size: 14px; width: 20px; text-align: center;
+    color: var(--text-secondary);
+  }
+  .dr-title { font-size: 13px; color: var(--text-primary); flex: 1; }
+
+  /* About / version */
+  .about-card {
+    margin: 0 20px 20px; padding: 20px;
+    background: var(--bg-card); border: 0.5px solid var(--border);
+    border-radius: 14px; text-align: center;
+  }
+  .about-logo {
+    font-size: 28px; margin-bottom: 8px; letter-spacing: 2px;
+  }
+  .about-version {
+    font-size: 12px; color: var(--text-tertiary); margin-bottom: 4px;
+  }
+  .about-genesis {
+    font-size: 11px; color: var(--text-tertiary);
+    display: flex; align-items: center; justify-content: center;
+    gap: 4px; margin-top: 8px;
+  }
+  .about-geos {
+    letter-spacing: 3px; font-size: 10px; color: var(--text-tertiary);
+  }
+
+  /* ═══ Bottom nav ═══ */
+  .bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 68px;
+    background: var(--bg-card); border-top: 0.5px solid var(--border);
+    display: flex; padding: 8px 0 20px;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 3px; cursor: pointer;
+    font-size: 10px; color: var(--text-tertiary);
+  }
+  .nav-item.active { color: var(--text-primary); }
+  .nav-icon { font-size: 16px; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="status-bar">
+    <span>17:55</span>
+    <span style="font-size:12px;letter-spacing:1px">····</span>
+    <span style="font-size:12px">85%</span>
+  </div>
+
+  <div class="screen">
+    <div class="header"><h1>settings</h1></div>
+
+    <!-- Profile -->
+    <div class="profile-card">
+      <div class="profile-avatar">RR</div>
+      <div class="profile-info">
+        <div class="profile-name">Rick Ramalho</div>
+        <div class="profile-email">r@ramalho.au</div>
+      </div>
+      <div class="profile-edit">editar</div>
+    </div>
+
+    <!-- Ritual times -->
+    <div class="settings-section">
+      <div class="section-label">ritual do dia</div>
+      <div class="settings-group">
+        <div class="ritual-times">
+          <div class="ritual-time-row">
+            <div class="rt-dot" style="background:var(--aurora)"></div>
+            <div class="rt-name">aurora</div>
+            <div class="rt-range">05:00 — 08:00</div>
+            <div class="rt-edit">editar</div>
+          </div>
+          <div class="ritual-time-row">
+            <div class="rt-dot" style="background:var(--zenite)"></div>
+            <div class="rt-name">zênite</div>
+            <div class="rt-range">08:00 — 17:00</div>
+            <div class="rt-edit">editar</div>
+          </div>
+          <div class="ritual-time-row">
+            <div class="rt-dot" style="background:var(--crepusculo)"></div>
+            <div class="rt-name">crepúsculo</div>
+            <div class="rt-range">17:00 →</div>
+            <div class="rt-edit">editar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modules -->
+    <div class="settings-section">
+      <div class="section-label">módulos ativos</div>
+      <div class="settings-group">
+        <div class="mod-config-row">
+          <div class="mc-dot" style="background:var(--mod-work)"></div>
+          <div class="mc-name">work</div>
+          <div class="mc-count">14 atoms</div>
+          <div class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="mod-config-row">
+          <div class="mc-dot" style="background:var(--mod-body)"></div>
+          <div class="mc-name">body</div>
+          <div class="mc-count">7 atoms</div>
+          <div class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="mod-config-row">
+          <div class="mc-dot" style="background:var(--mod-mind)"></div>
+          <div class="mc-name">mind</div>
+          <div class="mc-count">5 atoms</div>
+          <div class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="mod-config-row">
+          <div class="mc-dot" style="background:var(--mod-purpose)"></div>
+          <div class="mc-name">purpose</div>
+          <div class="mc-count">3 atoms</div>
+          <div class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="mod-config-row">
+          <div class="mc-dot" style="background:var(--mod-family)"></div>
+          <div class="mc-name">family</div>
+          <div class="mc-count">1 atom</div>
+          <div class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="mod-config-row">
+          <div class="mc-dot" style="background:var(--mod-bridge)"></div>
+          <div class="mc-name">bridge</div>
+          <div class="mc-count">2 atoms</div>
+          <div class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="mod-config-row">
+          <div class="mc-dot" style="background:var(--mod-finance)"></div>
+          <div class="mc-name">finance</div>
+          <div class="mc-count">0 atoms</div>
+          <div class="toggle"><input type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="mod-config-row">
+          <div class="mc-dot" style="background:var(--mod-social)"></div>
+          <div class="mc-name">social</div>
+          <div class="mc-count">0 atoms</div>
+          <div class="toggle"><input type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Integrations -->
+    <div class="settings-section">
+      <div class="section-label">integrações</div>
+      <div class="settings-group">
+        <div class="setting-row">
+          <div class="sr-icon" style="background:#E6F1FB;color:#4285F4;font-size:12px;font-weight:500">G</div>
+          <div class="sr-content">
+            <div class="sr-title">Google Calendar</div>
+            <div class="sr-sub">r@ramalho.au · sync ativo</div>
+          </div>
+          <span class="int-status int-connected">conectado</span>
+          <span class="sr-arrow">›</span>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon" style="background:#E6F1FB;color:#4285F4;font-size:12px;font-weight:500">D</div>
+          <div class="sr-content">
+            <div class="sr-title">Google Drive</div>
+            <div class="sr-sub">Atom Drive · via Claude Code MCP</div>
+          </div>
+          <span class="int-status int-connected">conectado</span>
+          <span class="sr-arrow">›</span>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon" style="background:var(--success-bg);color:var(--success);font-size:11px;font-weight:500">S</div>
+          <div class="sr-content">
+            <div class="sr-title">Supabase</div>
+            <div class="sr-sub">3 tabelas · items, connections, events</div>
+          </div>
+          <span class="int-status int-connected">conectado</span>
+          <span class="sr-arrow">›</span>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon" style="background:#EEEDFE;color:#534AB7;font-size:12px">◈</div>
+          <div class="sr-content">
+            <div class="sr-title">Obsidian</div>
+            <div class="sr-sub">graph view · sync manual via Drive</div>
+          </div>
+          <span class="int-status int-pending">parcial</span>
+          <span class="sr-arrow">›</span>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon" style="background:var(--bg-surface);color:var(--text-tertiary);font-size:12px">n8n</div>
+          <div class="sr-content">
+            <div class="sr-title">n8n automation</div>
+            <div class="sr-sub">inbox automation · sprint 5</div>
+          </div>
+          <span class="int-status int-off">planejado</span>
+          <span class="sr-arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="settings-section">
+      <div class="section-label">notificações</div>
+      <div class="settings-group">
+        <div class="setting-row">
+          <div class="sr-icon" style="background:rgba(239,159,39,0.12);color:var(--aurora);font-size:12px">☀</div>
+          <div class="sr-content">
+            <div class="sr-title">ritual aurora</div>
+            <div class="sr-sub">lembrete diário às 05:00</div>
+          </div>
+          <div class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon" style="background:rgba(127,119,221,0.12);color:var(--crepusculo);font-size:12px">◗</div>
+          <div class="sr-content">
+            <div class="sr-title">wrap crepúsculo</div>
+            <div class="sr-sub">lembrete diário às 17:00</div>
+          </div>
+          <div class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon" style="background:var(--warning-bg);color:var(--warning);font-size:12px">⚠</div>
+          <div class="sr-content">
+            <div class="sr-title">inbox stale</div>
+            <div class="sr-sub">alerta quando item fica +7 dias no inbox</div>
+          </div>
+          <div class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon" style="background:var(--danger-bg);color:var(--danger);font-size:12px">◇</div>
+          <div class="sr-content">
+            <div class="sr-title">below floor</div>
+            <div class="sr-sub">alerta semanal de items abaixo do piso</div>
+          </div>
+          <div class="toggle"><input type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon" style="background:var(--bg-surface);color:var(--text-secondary);font-size:12px">⏱</div>
+          <div class="sr-content">
+            <div class="sr-title">deadlines</div>
+            <div class="sr-sub">notificar 3 dias antes + no dia</div>
+          </div>
+          <div class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Theme -->
+    <div class="settings-section">
+      <div class="section-label">aparência</div>
+      <div class="settings-group">
+        <div class="theme-row">
+          <div class="theme-option" onclick="selectTheme(this)">
+            <div class="theme-preview" style="background:#FAFAF8"></div>
+            <div class="theme-label">light</div>
+          </div>
+          <div class="theme-option active" onclick="selectTheme(this)">
+            <div class="theme-preview" style="background:#1A1A18"></div>
+            <div class="theme-label">dark</div>
+          </div>
+          <div class="theme-option" onclick="selectTheme(this)">
+            <div class="theme-preview" style="background:linear-gradient(90deg, #FAFAF8 50%, #1A1A18 50%)"></div>
+            <div class="theme-label">auto</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data -->
+    <div class="settings-section">
+      <div class="section-label">dados</div>
+      <div class="settings-group">
+        <div class="data-row">
+          <span class="dr-icon">↓</span>
+          <span class="dr-title">exportar todos os atoms (JSON)</span>
+          <span class="sr-arrow">›</span>
+        </div>
+        <div class="data-row">
+          <span class="dr-icon">↓</span>
+          <span class="dr-title">exportar wraps (Markdown)</span>
+          <span class="sr-arrow">›</span>
+        </div>
+        <div class="data-row">
+          <span class="dr-icon">⟲</span>
+          <span class="dr-title">backup Supabase → Drive</span>
+          <span class="sr-value">último: hoje 05:30</span>
+        </div>
+        <div class="data-row">
+          <span class="dr-icon" style="color:var(--danger)">⌫</span>
+          <span class="dr-title" style="color:var(--danger)">limpar dados locais</span>
+          <span class="sr-arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="about-card">
+      <div class="about-logo">MindRoot</div>
+      <div class="about-version">alpha.26 · schema v2</div>
+      <div class="about-version">Genesis v4.2.1 · Marco Zero v1.3</div>
+      <div class="about-genesis">
+        <span class="about-geos">· — △ □ ⬠ ⬡ ○</span>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--text-tertiary)">
+        built from the inside out
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:8px 0 24px;font-size:11px;color:var(--text-tertiary)">
+      feito com presença, não produtividade
+    </div>
+
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">⌂</div><span>home</span></div>
+    <div class="nav-item"><div class="nav-icon">◇</div><span>pipeline</span></div>
+    <div class="nav-item"><div class="nav-icon">▪</div><span>projects</span></div>
+    <div class="nav-item"><div class="nav-icon">◫</div><span>calendar</span></div>
+  </div>
+</div>
+
+<script>
+  function selectTheme(el) {
+    el.parentElement.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

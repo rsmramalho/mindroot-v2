@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindRoot — Library & Search</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --bg-card: #FFFFFF;
+    --bg-surface: #F5F4F0;
+    --text-primary: #1A1A18;
+    --text-secondary: #6B6A65;
+    --text-tertiary: #9C9A92;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.14);
+
+    --mod-work: #378ADD; --mod-purpose: #7F77DD; --mod-body: #D85A30;
+    --mod-mind: #1D9E75; --mod-family: #D4537E; --mod-bridge: #888780;
+    --mod-finance: #639922; --mod-social: #BA7517;
+
+    --type-spec-bg: #EEEDFE; --type-spec: #534AB7;
+    --type-task-bg: #E6F1FB; --type-task: #185FA5;
+    --type-note-bg: #EAF3DE; --type-note: #3B6D11;
+    --type-reflection-bg: #FBEAF0; --type-reflection: #993556;
+    --type-reco-bg: #FAEEDA; --type-reco: #854F0B;
+    --type-project-bg: #E1F5EE; --type-project: #0F6E56;
+    --type-habit-bg: #FAEEDA; --type-habit: #854F0B;
+    --type-recipe-bg: #FAECE7; --type-recipe: #993C1D;
+    --type-workout-bg: #FAECE7; --type-workout: #993C1D;
+    --type-podcast-bg: #E1F5EE; --type-podcast: #0F6E56;
+    --type-article-bg: #E1F5EE; --type-article: #0F6E56;
+    --type-ritual-bg: #EEEDFE; --type-ritual: #534AB7;
+
+    --stage-1: #9C9A92; --stage-2: #BA7517; --stage-3: #D85A30;
+    --stage-4: #185FA5; --stage-5: #534AB7; --stage-6: #0F6E56; --stage-7: #1D9E75;
+
+    --aurora: #EF9F27; --crepusculo: #7F77DD;
+    --warning: #854F0B; --danger: #A32D2D;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1A1A18; --bg-card: #2C2C2A; --bg-surface: #222220;
+      --text-primary: #E8E6DE; --text-secondary: #9C9A92; --text-tertiary: #6B6A65;
+      --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.14);
+      --type-spec-bg: #2A283D; --type-task-bg: #1E2D3D; --type-note-bg: #253520;
+      --type-reflection-bg: #3D2030; --type-reco-bg: #3D3520; --type-project-bg: #1E3530;
+      --type-recipe-bg: #3D2A20; --type-workout-bg: #3D2A20;
+      --type-podcast-bg: #1E3530; --type-article-bg: #1E3530; --type-ritual-bg: #2A283D;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #1A1A18;
+    display: flex; justify-content: center; align-items: flex-start;
+    min-height: 100vh; padding: 20px; gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .phone-frame {
+    width: 375px; height: 812px; background: var(--bg);
+    border-radius: 40px; overflow: hidden; position: relative;
+    box-shadow: 0 0 0 8px #333, 0 20px 60px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+  }
+  .status-bar {
+    height: 54px; padding: 14px 24px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 14px; font-weight: 500; color: var(--text-primary);
+  }
+  .screen {
+    height: calc(100% - 54px - 68px);
+    overflow-y: auto; scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* ═══ Header ═══ */
+  .header { padding: 8px 20px 12px; }
+  .header h1 {
+    font-size: 24px; font-weight: 500;
+    color: var(--text-primary); letter-spacing: -0.5px;
+  }
+
+  /* ═══ Search bar ═══ */
+  .search-bar {
+    margin: 0 20px 12px; display: flex; align-items: center;
+    background: var(--bg-surface); border-radius: 12px;
+    padding: 10px 14px; gap: 8px; cursor: text;
+    border: 1px solid transparent; transition: all 0.2s;
+  }
+  .search-bar:focus-within {
+    border-color: var(--border-strong);
+    background: var(--bg-card);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .search-icon { font-size: 14px; color: var(--text-tertiary); flex-shrink: 0; }
+  .search-input {
+    flex: 1; border: none; background: none; outline: none;
+    font-family: inherit; font-size: 14px; color: var(--text-primary);
+  }
+  .search-input::placeholder { color: var(--text-tertiary); }
+  .search-shortcut {
+    font-size: 10px; color: var(--text-tertiary);
+    background: var(--bg-card); border: 0.5px solid var(--border);
+    padding: 2px 6px; border-radius: 4px; flex-shrink: 0;
+  }
+
+  /* ═══ Filter pills ═══ */
+  .filter-row {
+    display: flex; gap: 5px; padding: 0 20px; margin-bottom: 6px;
+    overflow-x: auto; scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-pill {
+    padding: 5px 12px; border-radius: 20px; font-size: 11px;
+    color: var(--text-tertiary); background: var(--bg-surface);
+    white-space: nowrap; cursor: pointer; transition: all 0.15s;
+    flex-shrink: 0; user-select: none; border: 1px solid transparent;
+  }
+  .filter-pill.active {
+    color: var(--text-primary); font-weight: 500;
+    border-color: var(--border-strong);
+    background: var(--bg-card);
+  }
+  .filter-pill .pill-dot {
+    display: inline-block; width: 6px; height: 6px;
+    border-radius: 50%; margin-right: 4px; vertical-align: middle;
+  }
+  .filter-label {
+    font-size: 10px; color: var(--text-tertiary);
+    padding: 0 20px; margin-bottom: 4px; letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* ═══ Sort bar ═══ */
+  .sort-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 20px 10px;
+  }
+  .sort-count { font-size: 12px; color: var(--text-tertiary); }
+  .sort-options { display: flex; gap: 4px; }
+  .sort-opt {
+    font-size: 11px; padding: 4px 10px; border-radius: 6px;
+    color: var(--text-tertiary); cursor: pointer; transition: all 0.15s;
+  }
+  .sort-opt.active {
+    background: var(--bg-surface); color: var(--text-primary); font-weight: 500;
+  }
+
+  /* ═══ Library cards ═══ */
+  .lib-cards { padding: 0 20px 20px; }
+
+  .lib-card {
+    background: var(--bg-card); border: 0.5px solid var(--border);
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 8px;
+    position: relative; overflow: hidden; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .lib-card:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .lib-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  }
+
+  .lc-top {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+  }
+  .lc-geo {
+    font-size: 11px; color: var(--text-tertiary); flex-shrink: 0;
+  }
+  .lc-title {
+    flex: 1; font-size: 14px; font-weight: 500;
+    color: var(--text-primary); white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .lc-type {
+    font-size: 10px; font-weight: 500; padding: 2px 8px;
+    border-radius: 6px; flex-shrink: 0;
+  }
+
+  .lc-preview {
+    font-size: 12px; color: var(--text-secondary);
+    line-height: 1.5; margin-bottom: 8px;
+    display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  .lc-meta {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 10px; color: var(--text-tertiary);
+    flex-wrap: wrap;
+  }
+  .lc-meta-sep { opacity: 0.4; }
+  .lc-tag {
+    padding: 1px 6px; border-radius: 4px;
+    background: var(--bg-surface); font-size: 10px;
+  }
+
+  /* Type-specific card styles */
+  .lib-card.card-recipe .lc-body-preview {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;
+  }
+  .recipe-stat {
+    font-size: 10px; padding: 3px 8px; border-radius: 6px;
+    background: var(--bg-surface); color: var(--text-secondary);
+  }
+
+  .lib-card.card-workout .workout-tags {
+    display: flex; gap: 4px; margin-bottom: 8px;
+  }
+  .workout-tag {
+    font-size: 10px; padding: 2px 8px; border-radius: 6px;
+    background: rgba(216,90,48,0.08); color: var(--mod-body);
+  }
+
+  .lib-card.card-reflection .reflection-soul {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 8px; font-size: 11px;
+  }
+  .soul-badge {
+    padding: 3px 10px; border-radius: 20px; font-size: 11px;
+  }
+
+  .lib-card.card-podcast .podcast-meta,
+  .lib-card.card-article .article-meta {
+    font-size: 11px; color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
+  /* ═══ Search overlay ═══ */
+  .search-overlay {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--bg); z-index: 100;
+    display: none; flex-direction: column;
+  }
+  .search-overlay.active { display: flex; }
+
+  .so-header {
+    padding: 60px 20px 12px; display: flex; align-items: center; gap: 10px;
+  }
+  .so-input-wrap {
+    flex: 1; display: flex; align-items: center;
+    background: var(--bg-surface); border-radius: 12px;
+    padding: 10px 14px; gap: 8px;
+    border: 1px solid var(--border-strong);
+  }
+  .so-input {
+    flex: 1; border: none; background: none; outline: none;
+    font-family: inherit; font-size: 15px; color: var(--text-primary);
+  }
+  .so-cancel {
+    font-size: 13px; color: var(--text-secondary); cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .so-body { flex: 1; overflow-y: auto; padding: 0 20px; }
+
+  .so-section-title {
+    font-size: 11px; color: var(--text-tertiary);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin: 16px 0 8px;
+  }
+
+  .so-result {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 0.5px solid var(--border);
+    cursor: pointer;
+  }
+  .so-result:last-child { border-bottom: none; }
+  .so-result .sor-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: white; flex-shrink: 0;
+  }
+  .so-result .sor-info { flex: 1; min-width: 0; }
+  .so-result .sor-title {
+    font-size: 13px; color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .so-result .sor-title mark {
+    background: rgba(239,159,39,0.25); color: inherit;
+    border-radius: 2px; padding: 0 1px;
+  }
+  .so-result .sor-meta {
+    font-size: 11px; color: var(--text-tertiary); margin-top: 1px;
+  }
+  .so-result .sor-geo {
+    font-size: 11px; color: var(--text-tertiary); flex-shrink: 0;
+  }
+
+  /* Quick filters in search */
+  .so-quick-filters {
+    display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0;
+  }
+  .so-qf {
+    padding: 6px 12px; border-radius: 8px;
+    font-size: 12px; color: var(--text-secondary);
+    background: var(--bg-surface); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .so-qf:hover { background: var(--bg-card); border: 0.5px solid var(--border); }
+
+  /* ═══ Reflexões tab (inside search/library) ═══ */
+  .reflexoes-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 0 12px;
+  }
+  .reflexoes-header .rh-icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--type-reflection-bg); color: var(--type-reflection);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .reflexoes-header .rh-title {
+    font-size: 15px; font-weight: 500; color: var(--text-primary);
+  }
+  .reflexoes-header .rh-count {
+    font-size: 12px; color: var(--text-tertiary); margin-left: auto;
+  }
+
+  .reflexao-card {
+    background: var(--bg-card); border: 0.5px solid var(--border);
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 8px;
+    border-left: 3px solid var(--mod-mind); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reflexao-card:hover { transform: translateY(-1px); }
+  .rc-date {
+    font-size: 10px; color: var(--text-tertiary); margin-bottom: 6px;
+  }
+  .rc-text {
+    font-size: 13px; color: var(--text-primary); line-height: 1.5;
+    display: -webkit-box; -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical; overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .rc-soul {
+    display: flex; align-items: center; gap: 6px; font-size: 11px;
+  }
+  .rc-emotion {
+    padding: 2px 8px; border-radius: 10px;
+    background: var(--type-reflection-bg); color: var(--type-reflection);
+    font-size: 10px; font-weight: 500;
+  }
+  .rc-energy {
+    font-size: 10px; color: var(--text-tertiary);
+  }
+
+  /* ═══ Bottom nav ═══ */
+  .bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 68px;
+    background: var(--bg-card); border-top: 0.5px solid var(--border);
+    display: flex; padding: 8px 0 20px;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 3px; cursor: pointer;
+    font-size: 10px; color: var(--text-tertiary);
+  }
+  .nav-item.active { color: var(--text-primary); }
+  .nav-icon { font-size: 16px; }
+  .fab {
+    position: absolute; bottom: 80px; right: 20px;
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--text-primary); color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 300;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    cursor: pointer; z-index: 10;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 1: LIBRARY                              -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="phone-frame">
+  <div class="status-bar">
+    <span>16:22</span>
+    <span style="font-size:12px;letter-spacing:1px">····</span>
+    <span style="font-size:12px">88%</span>
+  </div>
+
+  <div class="screen">
+    <div class="header"><h1>library</h1></div>
+
+    <!-- Search bar -->
+    <div class="search-bar" onclick="openSearch(0)">
+      <span class="search-icon">⌕</span>
+      <input class="search-input" placeholder="buscar atoms..." readonly>
+      <span class="search-shortcut">⌘K</span>
+    </div>
+
+    <!-- Filters: module -->
+    <div class="filter-label">módulo</div>
+    <div class="filter-row">
+      <div class="filter-pill active" onclick="toggleFilter(this)">todos</div>
+      <div class="filter-pill" onclick="toggleFilter(this)"><span class="pill-dot" style="background:var(--mod-work)"></span>work</div>
+      <div class="filter-pill" onclick="toggleFilter(this)"><span class="pill-dot" style="background:var(--mod-body)"></span>body</div>
+      <div class="filter-pill" onclick="toggleFilter(this)"><span class="pill-dot" style="background:var(--mod-mind)"></span>mind</div>
+      <div class="filter-pill" onclick="toggleFilter(this)"><span class="pill-dot" style="background:var(--mod-purpose)"></span>purpose</div>
+      <div class="filter-pill" onclick="toggleFilter(this)"><span class="pill-dot" style="background:var(--mod-family)"></span>family</div>
+      <div class="filter-pill" onclick="toggleFilter(this)"><span class="pill-dot" style="background:var(--mod-finance)"></span>finance</div>
+    </div>
+
+    <!-- Filters: type -->
+    <div class="filter-label" style="margin-top:8px">tipo</div>
+    <div class="filter-row">
+      <div class="filter-pill active">todos</div>
+      <div class="filter-pill">spec</div>
+      <div class="filter-pill">task</div>
+      <div class="filter-pill">recipe</div>
+      <div class="filter-pill">workout</div>
+      <div class="filter-pill">note</div>
+      <div class="filter-pill">reflection</div>
+      <div class="filter-pill">podcast</div>
+      <div class="filter-pill">recommendation</div>
+    </div>
+
+    <!-- Sort bar -->
+    <div class="sort-bar">
+      <div class="sort-count">28 items</div>
+      <div class="sort-options">
+        <div class="sort-opt active">recentes</div>
+        <div class="sort-opt" onclick="this.parentElement.querySelector('.active').classList.remove('active');this.classList.add('active')">stage</div>
+        <div class="sort-opt" onclick="this.parentElement.querySelector('.active').classList.remove('active');this.classList.add('active')">módulo</div>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="lib-cards">
+
+      <!-- Recipe card -->
+      <div class="lib-card card-recipe" style="border-left-color:var(--mod-body)">
+        <div class="lc-top">
+          <span class="lc-geo">□</span>
+          <span class="lc-title">carbonara clássica</span>
+          <span class="lc-type" style="background:var(--type-recipe-bg);color:var(--type-recipe)">recipe</span>
+        </div>
+        <div class="lc-body-preview">
+          <span class="recipe-stat">🕐 25 min</span>
+          <span class="recipe-stat">serves 2</span>
+          <span class="recipe-stat">italiana</span>
+        </div>
+        <div class="lc-meta">
+          <span>mod-body</span><span class="lc-meta-sep">·</span>
+          <span>29 mar</span><span class="lc-meta-sep">·</span>
+          <span class="lc-tag">#who:de</span>
+        </div>
+      </div>
+
+      <!-- Spec card -->
+      <div class="lib-card" style="border-left-color:var(--mod-work)">
+        <div class="lc-top">
+          <span class="lc-geo">⬡</span>
+          <span class="lc-title">Auto-Triage Engine spec v1</span>
+          <span class="lc-type" style="background:var(--type-spec-bg);color:var(--type-spec)">spec</span>
+        </div>
+        <div class="lc-preview">Motor de IA que analisa texto bruto e aplica classificação com 3 faixas de confiança. Threshold diferente para tipos acionáveis vs passivos.</div>
+        <div class="lc-meta">
+          <span>mod-work</span><span class="lc-meta-sep">·</span>
+          <span>28 mar</span><span class="lc-meta-sep">·</span>
+          <span>4 connections</span>
+        </div>
+      </div>
+
+      <!-- Workout card -->
+      <div class="lib-card card-workout" style="border-left-color:var(--mod-body)">
+        <div class="lc-top">
+          <span class="lc-geo">□</span>
+          <span class="lc-title">calistenia básica</span>
+          <span class="lc-type" style="background:var(--type-workout-bg);color:var(--type-workout)">workout</span>
+        </div>
+        <div class="workout-tags">
+          <span class="workout-tag">full body</span>
+          <span class="workout-tag">3x/semana</span>
+          <span class="workout-tag">30 min</span>
+        </div>
+        <div class="lc-meta">
+          <span>mod-body</span><span class="lc-meta-sep">·</span>
+          <span>streak: 3 dias</span><span class="lc-meta-sep">·</span>
+          <span class="lc-tag">#location:fazendinha</span>
+        </div>
+      </div>
+
+      <!-- Reflection card -->
+      <div class="lib-card card-reflection" style="border-left-color:var(--mod-mind)">
+        <div class="lc-top">
+          <span class="lc-geo">△</span>
+          <span class="lc-title">reflexão sobre medo</span>
+          <span class="lc-type" style="background:var(--type-reflection-bg);color:var(--type-reflection)">reflection</span>
+        </div>
+        <div class="lc-preview">O medo de não conseguir não é sobre capacidade — é sobre tempo. A pressão do relógio. O sistema existe pra mostrar que o relógio tá do meu lado.</div>
+        <div class="reflection-soul">
+          <span class="soul-badge" style="background:var(--type-reflection-bg);color:var(--type-reflection)">ansioso → determinado</span>
+          <span style="color:var(--text-tertiary);font-size:10px">energy: medium</span>
+        </div>
+        <div class="lc-meta">
+          <span>mod-mind</span><span class="lc-meta-sep">·</span>
+          <span>27 mar</span><span class="lc-meta-sep">·</span>
+          <span class="lc-tag">#mood:ansioso</span>
+        </div>
+      </div>
+
+      <!-- Podcast card -->
+      <div class="lib-card card-podcast" style="border-left-color:var(--mod-mind)">
+        <div class="lc-top">
+          <span class="lc-geo">—</span>
+          <span class="lc-title">podcast sobre estoicismo</span>
+          <span class="lc-type" style="background:var(--type-podcast-bg);color:var(--type-podcast)">podcast</span>
+        </div>
+        <div class="podcast-meta">Huberman Lab · ep. 127 · filosofia prática</div>
+        <div class="lc-preview">Técnicas estóicas aplicadas à rotina moderna. Controle o que é controlável.</div>
+        <div class="lc-meta">
+          <span>mod-mind</span><span class="lc-meta-sep">·</span>
+          <span>26 mar</span>
+        </div>
+      </div>
+
+      <!-- Recommendation card -->
+      <div class="lib-card" style="border-left-color:var(--mod-body)">
+        <div class="lc-top">
+          <span class="lc-geo">□</span>
+          <span class="lc-title">ramen do centro</span>
+          <span class="lc-type" style="background:var(--type-reco-bg);color:var(--type-reco)">reco</span>
+        </div>
+        <div class="lc-preview">Experimentar aquele ramen do centro. Curiosidade pessoal.</div>
+        <div class="lc-meta">
+          <span>mod-body</span><span class="lc-meta-sep">·</span>
+          <span>31 mar</span><span class="lc-meta-sep">·</span>
+          <span class="lc-tag">#location:centro</span>
+        </div>
+      </div>
+
+      <!-- Task card -->
+      <div class="lib-card" style="border-left-color:var(--mod-work)">
+        <div class="lc-top">
+          <span class="lc-geo">□</span>
+          <span class="lc-title">deploy Supabase triggers</span>
+          <span class="lc-type" style="background:var(--type-task-bg);color:var(--type-task)">task</span>
+        </div>
+        <div class="lc-preview">Implementar os 3 triggers (sync genesis_stage, orphan downgrade, updated_at) no Supabase production.</div>
+        <div class="lc-meta">
+          <span>mod-work</span><span class="lc-meta-sep">·</span>
+          <span>deadline: 3 abr</span><span class="lc-meta-sep">·</span>
+          <span class="lc-tag">#project:atom-engine</span>
+        </div>
+      </div>
+
+      <!-- Ritual card -->
+      <div class="lib-card" style="border-left-color:var(--mod-purpose)">
+        <div class="lc-top">
+          <span class="lc-geo">⬠</span>
+          <span class="lc-title">ritual aurora</span>
+          <span class="lc-type" style="background:var(--type-ritual-bg);color:var(--type-ritual)">ritual</span>
+        </div>
+        <div class="lc-preview">Café. 5 min silêncio. Abrir Project Atom. "Bom dia." Decidir foco.</div>
+        <div class="lc-meta">
+          <span>mod-purpose</span><span class="lc-meta-sep">·</span>
+          <span>diário 05:15</span><span class="lc-meta-sep">·</span>
+          <span class="lc-tag">#ritual:aurora</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Search overlay -->
+  <div class="search-overlay" id="search-0">
+    <div class="so-header">
+      <div class="so-input-wrap">
+        <span style="font-size:14px;color:var(--text-tertiary)">⌕</span>
+        <input class="so-input" placeholder="buscar atoms..." value="carbon" autofocus>
+      </div>
+      <span class="so-cancel" onclick="closeSearch(0)">cancelar</span>
+    </div>
+    <div class="so-body">
+      <!-- Quick filters -->
+      <div class="so-quick-filters">
+        <div class="so-qf">reflexões</div>
+        <div class="so-qf">receitas</div>
+        <div class="so-qf">specs</div>
+        <div class="so-qf">this week</div>
+        <div class="so-qf">mod-body</div>
+        <div class="so-qf">below floor</div>
+      </div>
+
+      <div class="so-section-title">resultados</div>
+
+      <div class="so-result">
+        <div class="sor-icon" style="background:var(--mod-body)">□</div>
+        <div class="sor-info">
+          <div class="sor-title"><mark>carbon</mark>ara clássica</div>
+          <div class="sor-meta">recipe · mod-body · 29 mar</div>
+        </div>
+        <span class="sor-geo">□</span>
+      </div>
+
+      <div class="so-section-title">tags</div>
+
+      <div class="so-result">
+        <div class="sor-icon" style="background:var(--bg-surface);color:var(--text-secondary);font-size:10px">#</div>
+        <div class="sor-info">
+          <div class="sor-title">#project:atom-engine</div>
+          <div class="sor-meta">8 items</div>
+        </div>
+      </div>
+
+      <div class="so-section-title">recentes</div>
+      <div class="so-result">
+        <div class="sor-icon" style="background:var(--mod-work)">△</div>
+        <div class="sor-info">
+          <div class="sor-title">UX wireframes — Triage/Pipeline</div>
+          <div class="sor-meta">task · mod-work · hoje</div>
+        </div>
+        <span class="sor-geo">△</span>
+      </div>
+      <div class="so-result">
+        <div class="sor-icon" style="background:var(--mod-mind)">△</div>
+        <div class="sor-info">
+          <div class="sor-title">reflexão sobre medo</div>
+          <div class="sor-meta">reflection · mod-mind · 27 mar</div>
+        </div>
+        <span class="sor-geo">△</span>
+      </div>
+      <div class="so-result">
+        <div class="sor-icon" style="background:var(--mod-body)">□</div>
+        <div class="sor-info">
+          <div class="sor-title">calistenia básica</div>
+          <div class="sor-meta">workout · mod-body · 30 mar</div>
+        </div>
+        <span class="sor-geo">□</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="fab">·</div>
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">⌂</div><span>home</span></div>
+    <div class="nav-item"><div class="nav-icon">◇</div><span>pipeline</span></div>
+    <div class="nav-item"><div class="nav-icon">▪</div><span>projects</span></div>
+    <div class="nav-item"><div class="nav-icon">◫</div><span>calendar</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 2: REFLEXÕES                            -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="phone-frame">
+  <div class="status-bar">
+    <span>21:14</span>
+    <span style="font-size:12px;letter-spacing:1px">····</span>
+    <span style="font-size:12px">72%</span>
+  </div>
+
+  <div class="screen">
+    <div class="header"><h1>reflexões</h1></div>
+
+    <div style="padding:0 20px 12px;font-size:13px;color:var(--text-secondary)">
+      seu diário emocional — tudo que passou pelo soul layer
+    </div>
+
+    <!-- Filter by emotion -->
+    <div class="filter-row" style="margin-bottom:14px">
+      <div class="filter-pill active">todas</div>
+      <div class="filter-pill">ansioso</div>
+      <div class="filter-pill">satisfeito</div>
+      <div class="filter-pill">motivado</div>
+      <div class="filter-pill">cansado</div>
+      <div class="filter-pill">grato</div>
+    </div>
+
+    <!-- Soul summary -->
+    <div style="margin:0 20px 16px;padding:14px 16px;background:var(--bg-card);border:0.5px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:14px">
+      <div>
+        <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:4px">shift mais comum</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="soul-badge" style="background:var(--type-reco-bg);color:var(--warning);font-size:12px;padding:4px 10px;border-radius:8px">ansioso</span>
+          <span style="color:var(--text-tertiary)">→</span>
+          <span class="soul-badge" style="background:var(--type-project-bg);color:var(--type-project);font-size:12px;padding:4px 10px;border-radius:8px">satisfeito</span>
+        </div>
+      </div>
+      <div style="margin-left:auto;text-align:center">
+        <div style="font-size:24px;font-weight:500;color:var(--text-primary);line-height:1">7</div>
+        <div style="font-size:10px;color:var(--text-tertiary)">reflexões</div>
+      </div>
+    </div>
+
+    <!-- Reflexão cards (timeline) -->
+    <div style="padding:0 20px 20px">
+
+      <!-- Today -->
+      <div style="font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-left:4px">hoje — 31 março</div>
+
+      <div class="reflexao-card">
+        <div class="rc-date">aurora · 05:18</div>
+        <div class="rc-text">Acordei com a cabeça cheia. Muitos paralelos abertos. Mas o sistema tá me segurando — sei exatamente onde parei ontem. Isso muda tudo.</div>
+        <div class="rc-soul">
+          <span class="rc-emotion">ansioso</span>
+          <span class="rc-energy">energy: high</span>
+          <span style="margin-left:auto;font-size:10px;color:var(--text-tertiary)">wrap #5</span>
+        </div>
+      </div>
+
+      <!-- Yesterday -->
+      <div style="font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;padding-left:4px">30 março</div>
+
+      <div class="reflexao-card">
+        <div class="rc-date">crepúsculo · 17:22</div>
+        <div class="rc-text">Dia produtivo. Wireframes da Home e Wrap ficaram lindos. A geometria Genesis funcionando na UI é outra coisa — ver o · virar ○ dá uma sensação real de completude.</div>
+        <div class="rc-soul">
+          <span class="rc-emotion" style="background:var(--type-project-bg);color:var(--type-project)">satisfeito</span>
+          <span class="rc-energy">energy: medium</span>
+          <span style="margin-left:auto;font-size:10px;color:var(--text-tertiary)">shift: ansioso → satisfeito</span>
+        </div>
+      </div>
+
+      <div class="reflexao-card">
+        <div class="rc-date">aurora · 05:05</div>
+        <div class="rc-text">Sonhei com o Mt Samson. Acordei com saudade do futuro — da casa pronta, do espaço, das crianças correndo. Tá perto.</div>
+        <div class="rc-soul">
+          <span class="rc-emotion" style="background:var(--type-project-bg);color:var(--type-project)">esperançoso</span>
+          <span class="rc-energy">energy: high</span>
+        </div>
+      </div>
+
+      <!-- 28 mar -->
+      <div style="font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;padding-left:4px">28 março</div>
+
+      <div class="reflexao-card">
+        <div class="rc-date">crepúsculo · 17:45</div>
+        <div class="rc-text">Schema v2 migration completa. 707 erros → 0. Quando vi zero, chorei. Não é código — é prova de que consigo construir algo grande sozinho.</div>
+        <div class="rc-soul">
+          <span class="rc-emotion" style="background:var(--type-project-bg);color:var(--type-project)">realizado</span>
+          <span class="rc-energy">energy: low</span>
+          <span style="margin-left:auto;font-size:10px;color:var(--text-tertiary)">shift: cansado → realizado</span>
+        </div>
+      </div>
+
+      <!-- 27 mar -->
+      <div style="font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;padding-left:4px">27 março</div>
+
+      <div class="reflexao-card">
+        <div class="rc-date">reflexão dedicada · 06:30</div>
+        <div class="rc-text">O medo de não conseguir não é sobre capacidade — é sobre tempo. A pressão do relógio. O sistema existe pra mostrar que o relógio tá do meu lado. Cada nó no grafo é prova.</div>
+        <div class="rc-soul">
+          <span class="rc-emotion">ansioso</span>
+          <span style="color:var(--text-tertiary);font-size:10px">→</span>
+          <span class="rc-emotion" style="background:var(--type-task-bg);color:var(--type-task)">determinado</span>
+          <span class="rc-energy">energy: medium</span>
+        </div>
+      </div>
+
+      <div class="reflexao-card">
+        <div class="rc-date">aurora · 05:12</div>
+        <div class="rc-text">Dia pesado ontem com Atlas. Fornecedor atrasou de novo. Mas separei: Atlas é Atlas, Atom é Atom. Não deixei contaminar.</div>
+        <div class="rc-soul">
+          <span class="rc-emotion" style="background:var(--type-reco-bg);color:var(--warning)">frustrado</span>
+          <span class="rc-energy">energy: medium</span>
+        </div>
+      </div>
+
+      <div style="text-align:center;padding:20px 0;font-size:12px;color:var(--text-tertiary)">
+        início do registro soul · 25 março 2026
+      </div>
+    </div>
+  </div>
+
+  <div class="fab">·</div>
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">⌂</div><span>home</span></div>
+    <div class="nav-item"><div class="nav-icon">◇</div><span>pipeline</span></div>
+    <div class="nav-item"><div class="nav-icon">▪</div><span>projects</span></div>
+    <div class="nav-item"><div class="nav-icon">◫</div><span>calendar</span></div>
+  </div>
+</div>
+
+<script>
+  function openSearch(n) {
+    document.getElementById('search-' + n).classList.add('active');
+    setTimeout(() => document.getElementById('search-' + n).querySelector('.so-input')?.focus(), 100);
+  }
+  function closeSearch(n) {
+    document.getElementById('search-' + n).classList.remove('active');
+  }
+
+  function toggleFilter(el) {
+    const row = el.parentElement;
+    if (el.textContent.trim() === 'todos' || el.textContent.trim() === 'todas') {
+      row.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+    } else {
+      row.querySelector('.filter-pill:first-child').classList.remove('active');
+      el.classList.toggle('active');
+      if (!row.querySelector('.filter-pill.active')) {
+        row.querySelector('.filter-pill:first-child').classList.add('active');
+      }
+    }
+  }
+</script>
+
+</body>
+</html>

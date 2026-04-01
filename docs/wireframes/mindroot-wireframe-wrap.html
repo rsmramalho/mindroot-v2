@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindRoot — Wrap Stepper Wireframe (7 passos)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f0eee8;display:flex;flex-direction:column;align-items:center;padding:32px 16px;font-family:'DM Sans',sans-serif;min-height:100vh}
+@media(prefers-color-scheme:dark){body{background:#111}}
+
+.label{text-align:center;font-size:12px;color:#888;margin-bottom:16px;font-weight:500;letter-spacing:1px;text-transform:uppercase}
+
+:root{--bg:#F9F7F4;--card:#fff;--bdr:#e8e6df;--t1:#2c2c2a;--t2:#888780;--t3:#b4b2a9;--acc:#534AB7;--acc2:#7F77DD;--acc3:#AFA9EC;--acc4:#EEEDFE;--grn:#639922;--wrn:#EF9F27;--red:#D85A30;--ff:'DM Sans',sans-serif}
+@media(prefers-color-scheme:dark){:root{--bg:#18171a;--card:#201e24;--bdr:#302d38;--t1:#e0dde8;--t2:#8a86a0;--t3:#6e6a84;--acc4:#2d2840}}
+
+.frame{width:375px;height:812px;border-radius:40px;border:2px solid #d3d1c7;overflow:hidden;margin:0 auto;background:var(--bg);font-family:var(--ff);color:var(--t1);display:flex;flex-direction:column}
+@media(prefers-color-scheme:dark){.frame{border-color:#444}}
+
+.sc{height:100%;display:flex;flex-direction:column}
+.top{padding:52px 20px 12px;border-bottom:.5px solid var(--bdr);display:flex;justify-content:space-between;align-items:flex-end}
+.top h1{font-size:18px;font-weight:500}
+.top p{font-size:12px;color:var(--t2);margin-top:2px}
+.top span{font-size:12px;color:var(--t2)}
+.dots{display:flex;gap:6px;padding:12px 20px 6px}
+.d{width:8px;height:8px;border-radius:50%;background:var(--bdr);cursor:pointer;transition:all .3s}
+.d.on{background:var(--acc2);width:24px;border-radius:4px}
+.d.dn{background:var(--acc3)}
+.hd{padding:4px 20px 6px;display:flex;align-items:baseline;gap:8px}
+.hd .n{font-size:11px;color:var(--acc3);font-weight:500}
+.hd .nm{font-size:15px;font-weight:500}
+.hd .opt{font-size:11px;color:var(--t3);margin-left:auto}
+.mid{flex:1;overflow-y:auto;padding:0 20px 12px}
+.cd{background:var(--card);border:.5px solid var(--bdr);border-radius:14px;padding:16px}
+.lb{font-size:11px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--t2);margin-bottom:8px}
+.bot{padding:10px 20px 32px;background:var(--bg);border-top:.5px solid var(--bdr);display:flex;justify-content:space-between;align-items:center}
+.bk{background:none;border:none;font-size:14px;color:var(--acc);font-family:var(--ff);cursor:pointer;padding:12px 0}
+.nxt{background:var(--acc);color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:14px;font-weight:500;font-family:var(--ff);cursor:pointer}
+.nxt:active{opacity:.9}
+.inp{width:100%;border:.5px solid var(--bdr);border-radius:12px;padding:12px 14px;font-size:14px;font-family:var(--ff);background:var(--card);color:var(--t1);resize:none;outline:none}
+.inp:focus{border-color:var(--acc2)}
+.cps{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cp{padding:4px 12px;border-radius:16px;border:.5px solid var(--bdr);font-size:12px;cursor:pointer;background:var(--card);color:var(--t2);transition:all .15s}
+.cp.on{border-color:var(--acc2);background:var(--acc4);color:var(--acc)}
+.er{display:flex;gap:8px;align-items:center;margin-top:12px}
+.er>span:first-child{font-size:12px;color:var(--t2);width:50px}
+.eo{padding:4px 12px;border-radius:14px;border:.5px solid var(--bdr);font-size:12px;cursor:pointer;background:var(--card);transition:all .15s}
+.eo.on{border-color:var(--acc2);background:var(--acc4);color:var(--acc)}
+.shft{margin-top:14px;background:var(--acc4);border-radius:12px;padding:14px 16px}
+.shft-top{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.shft-row{display:flex;justify-content:space-between;align-items:center}
+.shft-l{font-size:14px;font-weight:500;color:#BA7517}
+.shft-r{font-size:14px;font-weight:500;color:var(--acc);text-align:right}
+.shft-mid{flex:1;display:flex;justify-content:center;padding:0 12px}
+.sh{font-size:12px;font-weight:500;color:var(--t2);padding:10px 0 6px;border-bottom:.5px solid var(--bdr);margin-bottom:2px}
+.rw{padding:9px 0;border-bottom:.5px solid var(--bdr);display:flex;align-items:center;gap:10px}
+.rw:last-child{border:none}
+.ck{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .15s}
+.ck.on{background:var(--acc2);border-color:var(--acc2)}
+.ck svg{transition:opacity .15s}
+.rw-g{font-size:12px;width:18px;text-align:center;flex-shrink:0}
+.rw-t{font-size:13px;flex:1;min-width:0}
+.rw-d{font-size:11px;color:var(--t2);margin-top:1px}
+.rw-p{font-size:9px;padding:1px 7px;border-radius:8px;font-weight:500;flex-shrink:0}
+.eg{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:var(--acc4);margin-bottom:6px;font-size:12px;flex-wrap:wrap}
+.eg-a{color:var(--acc2)}
+.eg-r{font-size:10px;color:var(--t2)}
+.sd{padding:10px 12px;border-radius:10px;background:var(--acc4);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.sd-t{font-size:13px;flex:1;font-style:italic}
+.sb{font-size:11px;padding:4px 10px;border-radius:8px;border:.5px solid var(--bdr);background:var(--card);font-family:var(--ff);cursor:pointer}
+.sb-y{border-color:var(--grn);color:var(--grn)}
+.sb-n{border-color:var(--t3);color:var(--t2)}
+.ar{display:flex;justify-content:space-between;padding:7px 0;border-bottom:.5px solid var(--bdr);font-size:13px}
+.ar:last-child{border:none}
+.a-ok{color:var(--grn);font-weight:500}
+.a-w{color:var(--wrn);font-weight:500}
+.al{margin-top:10px;padding:10px 12px;border-radius:10px;background:#FFF8F0;border:.5px solid #F0D8B8;font-size:12px;color:#854F0B}
+@media(prefers-color-scheme:dark){.al{background:#2d2318;border-color:#3a3020;color:#FAC775}}
+.cm{background:var(--acc4);border:.5px solid var(--bdr);border-radius:14px;padding:24px 20px;text-align:center}
+.cm h2{font-size:20px;font-weight:500;margin-bottom:6px}
+.cm p{font-size:13px;color:var(--t2);line-height:1.5}
+.cm-st{display:flex;justify-content:center;gap:24px;margin-top:18px}
+.cm-n{font-size:22px;font-weight:500;color:var(--acc)}
+.cm-l{font-size:10px;color:var(--t2);margin-top:2px}
+.ni{width:100%;border:.5px solid var(--bdr);border-radius:10px;padding:9px 12px;font-size:13px;font-family:var(--ff);background:var(--card);color:var(--t1);outline:none;margin-bottom:6px}
+.ni:focus{border-color:var(--acc2)}
+#geo-box{height:80px;margin-bottom:16px;display:flex;justify-content:center;align-items:center}
+.done-screen{text-align:center;padding:48px 20px}
+.done-screen h2{font-size:20px;font-weight:500;margin:16px 0 6px}
+.done-screen p{font-size:13px;color:var(--t2)}
+.done-screen .bye{margin-top:24px;font-size:15px;color:var(--acc);font-weight:500}
+</style>
+</head>
+<body>
+
+<div class="label">MindRoot — Wrap stepper wireframe · 7 passos · 31 Mar 2026</div>
+<div class="frame" id="app"></div>
+
+<script>
+var step=0;
+var totalSteps=7;
+var stepData=[
+  {name:'soul',n:'01',o:''},
+  {name:'items',n:'02',o:'4+2'},
+  {name:'decided',n:'03',o:'3'},
+  {name:'connections',n:'04',o:'2 edges'},
+  {name:'seeds',n:'05',o:'opcional'},
+  {name:'audit',n:'06',o:'auto'},
+  {name:'commit',n:'07',o:''}
+];
+
+function getStepHTML(i){
+  if(i===0) return '<div class="cd"><div class="lb">como voc\u00ea est\u00e1 saindo hoje?</div><textarea class="inp" id="si" rows="1" placeholder="em uma palavra ou frase..."></textarea><div class="cps" id="chips"><span class="cp" data-v="satisfeito">satisfeito</span><span class="cp" data-v="cansado">cansado</span><span class="cp" data-v="aliviado">aliviado</span><span class="cp" data-v="grato">grato</span><span class="cp" data-v="frustrado">frustrado</span><span class="cp" data-v="meio bosta">meio bosta</span></div><div class="er"><span>energy</span><span class="eo" data-e="high">high</span><span class="eo" data-e="medium">medium</span><span class="eo on" data-e="low">low</span></div><div class="shft"><div class="shft-top"><span>aurora</span><span>crep\u00fasculo</span></div><div class="shft-row"><div class="shft-l">focado, ansioso</div><div class="shft-mid"><svg width="48" height="16" viewBox="0 0 48 16"><path d="M0 8Q12 2 24 8Q36 14 48 8" stroke="#b4b2a9" stroke-width="1" fill="none"/><circle cx="0" cy="8" r="3.5" fill="#EF9F27"/><circle cx="48" cy="8" r="3.5" fill="#7F77DD"/></svg></div><div class="shft-r" id="shft-out">...</div></div></div></div>';
+  if(i===1) return '<div class="cd"><div class="sh">criados hoje</div><div class="rw"><div class="ck on"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#fff" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div><span class="rw-g" style="color:#534AB7">\u2B20</span><span class="rw-t">UX Wireframes \u2014 Home</span><span class="rw-p" style="background:#EEEDFE;color:#534AB7">spec</span></div><div class="rw"><div class="ck on"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#fff" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div><span class="rw-g" style="color:#534AB7">\u2B20</span><span class="rw-t">UX Wireframes \u2014 Wrap</span><span class="rw-p" style="background:#EEEDFE;color:#534AB7">spec</span></div><div class="rw"><div class="ck on"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#fff" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div><span class="rw-g" style="color:#639922">\u25B3</span><span class="rw-t">Phi ratio no dashboard</span><span class="rw-p" style="background:#EAF3DE;color:#3B6D11">note</span></div><div class="rw"><div class="ck on"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#fff" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div><span class="rw-g" style="color:#BA7517">\u2014</span><span class="rw-t">Ramen do centro</span><span class="rw-p" style="background:#FAEEDA;color:#854F0B">reco</span></div><div class="sh" style="margin-top:8px">modificados</div><div class="rw"><div class="ck on"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#fff" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div><div class="rw-t"><div>Build FSM engine</div><div class="rw-d">progress: 20% \u2192 35%</div></div><span class="rw-p" style="background:#E6F1FB;color:#185FA5">task</span></div><div class="rw"><div class="ck on"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#fff" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div><div class="rw-t"><div>UX Decisions</div><div class="rw-d">39 \u2192 42 decis\u00f5es</div></div><span class="rw-p" style="background:#EEEDFE;color:#534AB7">spec</span></div><div style="margin-top:8px;font-size:11px;color:var(--t3)">tap pra excluir do wrap</div></div>';
+  if(i===2) return '<div class="cd"><div class="lb">decis\u00f5es</div><div class="rw"><div class="ck on"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#fff" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div><div class="rw-t">\u201CSoul card com orbe de energia\u201D</div></div><div class="rw"><div class="ck on"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#fff" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div><div class="rw-t">\u201CM\u00f3dulo como cor, n\u00e3o texto\u201D</div></div><div class="rw"><div class="ck on"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#fff" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div><div class="rw-t">\u201CWrap: 7 passos = 7 est\u00e1gios\u201D</div></div><textarea class="inp" rows="1" placeholder="+ adicionar decis\u00e3o..." style="margin-top:8px;font-size:13px"></textarea></div>';
+  if(i===3) return '<div class="cd"><div class="lb">connections</div><div class="eg"><b>UX Wireframes</b><span class="eg-a">\u2192</span><span class="eg-r">references</span><span class="eg-a">\u2192</span><span>UX Decisions</span></div><div class="eg"><b>Ramen do centro</b><span class="eg-a">\u2192</span><span class="eg-r">belongs_to</span><span class="eg-a">\u2192</span><span>Meal plan</span></div><div style="font-size:11px;color:var(--t3);margin-top:8px">sugeridas pelo agente \u00b7 confirmadas por voc\u00ea</div></div>';
+  if(i===4) return '<div class="cd"><div class="lb">entropia</div><div style="font-size:13px;color:var(--t2);margin-bottom:10px">items inativos h\u00e1 30+ dias</div><div class="sd"><span style="font-size:14px">\uD83C\uDF31</span><div class="sd-t">\u201CCurso de Rust \u2014 ainda quer?\u201D</div><div style="display:flex;gap:4px"><button class="sb sb-y">sim</button><button class="sb sb-n">n\u00e3o</button></div></div><div class="sd"><span style="font-size:14px">\uD83C\uDF31</span><div class="sd-t">\u201CArtigo stoicism \u2014 reler?\u201D</div><div style="display:flex;gap:4px"><button class="sb sb-y">sim</button><button class="sb sb-n">n\u00e3o</button></div></div></div>';
+  if(i===5) return '<div class="cd"><div class="lb">sa\u00fade do sistema</div><div class="ar"><span>inbox</span><span class="a-ok">0 \u2713</span></div><div class="ar"><span>abaixo do piso</span><span class="a-w">2 !</span></div><div class="ar"><span>\u00f3rf\u00e3os</span><span class="a-ok">0 \u2713</span></div><div class="ar"><span>stale</span><span class="a-ok">0 \u2713</span></div><div class="ar"><span>naming</span><span class="a-ok">100% \u2713</span></div><div class="al">\u26A0 2 specs abaixo do piso 5: <b>RM-MUDA</b>, <b>RM-YUGAR</b></div></div>';
+  if(i===6) return '<div class="cm" id="cm-area"><div id="geo-box"></div><div id="geo-lbl" style="font-size:10px;color:var(--t2);letter-spacing:1px;margin-bottom:16px"></div><h2 id="cm-title" style="opacity:0;transition:opacity .4s">wrap completo</h2><p id="cm-sub" style="opacity:0;transition:opacity .4s .2s">4 criados \u00b7 2 modificados \u00b7 3 decis\u00f5es<br>2 connections \u00b7 1 seed \u00b7 audit ok</p><div class="cm-st" id="cm-stats" style="opacity:0;transition:opacity .4s .4s"><div style="text-align:center"><div class="cm-n">\u25CB</div><div class="cm-l">completude</div></div><div style="text-align:center"><div class="cm-n">6</div><div class="cm-l">items</div></div><div style="text-align:center"><div class="cm-n">78%</div><div class="cm-l">sa\u00fade</div></div></div></div><div style="margin-top:14px"><div class="lb">pr\u00f3ximos passos</div><input class="ni" value="[ ] Wireframes: Projects page"><input class="ni" value="[ ] Plano t\u00e9cnico FSM engine"><input class="ni" placeholder="+ adicionar..."></div>';
+  return '';
+}
+
+function draw(){
+  var s=stepData[step];
+  var dotsH='';
+  for(var i=0;i<totalSteps;i++){
+    var cls='d';if(i===step)cls+=' on';else if(i<step)cls+=' dn';
+    dotsH+='<div class="'+cls+'" onclick="goTo('+i+')"></div>';
+  }
+  var bkVis=step===0?'hidden':'visible';
+  var nxtTxt=step===totalSteps-1?'commitar \u25CB':'pr\u00f3ximo';
+  var nxtBg=step===totalSteps-1?'var(--grn)':'var(--acc)';
+  document.getElementById('app').innerHTML='<div class="sc"><div class="top"><div><h1>wrap \u00b7 31 mar</h1><p>crep\u00fasculo</p></div><span>'+(step+1)+'/7</span></div><div class="dots">'+dotsH+'</div><div class="hd"><span class="n">'+s.n+'</span><span class="nm">'+s.name+'</span><span class="opt">'+s.o+'</span></div><div class="mid" id="mid">'+getStepHTML(step)+'</div><div class="bot"><button class="bk" style="visibility:'+bkVis+'" onclick="goBack()">voltar</button><button class="nxt" style="background:'+nxtBg+'" onclick="goNext()">'+nxtTxt+'</button></div></div>';
+  bindEvents();
+  if(step===6)runGeo();
+}
+
+function drawDone(){
+  var dotsH='';for(var i=0;i<totalSteps;i++)dotsH+='<div class="d dn"></div>';
+  document.getElementById('app').innerHTML='<div class="sc"><div class="top"><div><h1>wrap \u00b7 31 mar</h1><p>crep\u00fasculo</p></div><span>\u25CB</span></div><div class="dots">'+dotsH+'</div><div class="hd"><span class="n">\u25CB</span><span class="nm">done</span><span class="opt"></span></div><div class="mid"><div class="done-screen"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="none" stroke="#534AB7" stroke-width="3"/><path d="M22 32l6 6 14-14" stroke="#534AB7" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><h2>wrap commitado</h2><p>31 mar 2026 \u00b7 crep\u00fasculo<br>Drive + Supabase sincronizados</p><div class="bye">boa noite, Rick. \u25CB</div></div></div><div class="bot"></div></div>';
+}
+
+function bindEvents(){
+  document.querySelectorAll('.cp').forEach(function(el){
+    el.addEventListener('click',function(){
+      this.classList.toggle('on');
+      var inp=document.getElementById('si');
+      var shft=document.getElementById('shft-out');
+      if(inp&&shft){var sel=[];document.querySelectorAll('.cp.on').forEach(function(c){sel.push(c.dataset.v)});inp.value=sel.join(', ');shft.textContent=inp.value||'...';}
+    });
+  });
+  document.querySelectorAll('.eo').forEach(function(el){
+    el.addEventListener('click',function(){document.querySelectorAll('.eo').forEach(function(e){e.classList.remove('on')});this.classList.add('on');});
+  });
+  document.querySelectorAll('.ck').forEach(function(el){
+    el.addEventListener('click',function(){this.classList.toggle('on');});
+  });
+  var si=document.getElementById('si');
+  if(si)si.addEventListener('input',function(){var s=document.getElementById('shft-out');if(s)s.textContent=this.value||'...';});
+}
+
+function runGeo(){
+  var box=document.getElementById('geo-box');
+  var lbl=document.getElementById('geo-lbl');
+  if(!box||!lbl)return;
+  var shapes=[
+    {type:'circle',cx:0,cy:0,r:4,fill:'#888780',name:'ponto'},
+    {type:'line',x1:-10,y1:0,x2:10,y2:0,stroke:'#888780',name:'linha'},
+    {type:'path',d:'M0,-10L9,6L-9,6Z',fill:'#639922',name:'tri\u00e2ngulo'},
+    {type:'rect',x:-8,y:-8,w:16,h:16,rx:2,fill:'#378ADD',name:'quadrado'},
+    {type:'path',d:'M0,-11L10.5,-3.5L6.5,9L-6.5,9L-10.5,-3.5Z',fill:'#7F77DD',name:'pent\u00e1gono'},
+    {type:'path',d:'M0,-11L9.5,-5.5L9.5,5.5L0,11L-9.5,5.5L-9.5,-5.5Z',fill:'#BA7517',name:'hex\u00e1gono'},
+    {type:'circle',cx:0,cy:0,r:13,fill:'none',stroke:'#534AB7',sw:2.5,name:'c\u00edrculo'}
+  ];
+  var pos=[30,70,110,150,190,230,270];
+  var ns='http://www.w3.org/2000/svg';
+  var svg=document.createElementNS(ns,'svg');
+  svg.setAttribute('width','300');svg.setAttribute('height','80');svg.setAttribute('viewBox','0 0 300 80');
+  var groups=[];
+  for(var i=0;i<shapes.length;i++){
+    var g=document.createElementNS(ns,'g');
+    g.setAttribute('transform','translate('+pos[i]+',40)');
+    g.style.opacity='0';g.dataset.idx=i;
+    var s=shapes[i];var el;
+    if(s.type==='circle'){el=document.createElementNS(ns,'circle');el.setAttribute('cx',s.cx);el.setAttribute('cy',s.cy);el.setAttribute('r',s.r);el.setAttribute('fill',s.fill||'none');if(s.stroke){el.setAttribute('stroke',s.stroke);el.setAttribute('stroke-width',s.sw);el.setAttribute('fill','none')}}
+    else if(s.type==='line'){el=document.createElementNS(ns,'line');el.setAttribute('x1',s.x1);el.setAttribute('y1',s.y1);el.setAttribute('x2',s.x2);el.setAttribute('y2',s.y2);el.setAttribute('stroke',s.stroke);el.setAttribute('stroke-width','2.5');el.setAttribute('stroke-linecap','round')}
+    else if(s.type==='rect'){el=document.createElementNS(ns,'rect');el.setAttribute('x',s.x);el.setAttribute('y',s.y);el.setAttribute('width',s.w);el.setAttribute('height',s.h);el.setAttribute('rx',s.rx);el.setAttribute('fill',s.fill)}
+    else if(s.type==='path'){el=document.createElementNS(ns,'path');el.setAttribute('d',s.d);el.setAttribute('fill',s.fill||'none')}
+    g.appendChild(el);svg.appendChild(g);groups.push(g);
+  }
+  box.appendChild(svg);
+  var names=shapes.map(function(s){return s.name});
+  var idx=0;
+  function showNext(){
+    if(idx>=groups.length)return;
+    groups[idx].style.transition='opacity .35s ease';
+    groups[idx].style.opacity='1';
+    lbl.textContent=names.slice(0,idx+1).join(' \u2192 ');
+    if(idx===groups.length-1)setTimeout(function(){
+      var t=document.getElementById('cm-title');var s=document.getElementById('cm-sub');var st=document.getElementById('cm-stats');
+      if(t)t.style.opacity='1';if(s)s.style.opacity='1';if(st)st.style.opacity='1';
+    },400);
+    idx++;if(idx<groups.length)setTimeout(showNext,350);
+  }
+  setTimeout(showNext,300);
+}
+
+function goTo(i){step=i;draw()}
+function goNext(){if(step<totalSteps-1){step++;draw()}else drawDone()}
+function goBack(){if(step>0){step--;draw()}}
+draw();
+</script>
+</body>
+</html>

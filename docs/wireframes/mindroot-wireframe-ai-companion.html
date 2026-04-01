@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindRoot — AI Companion UX</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --bg-card: #FFFFFF;
+    --bg-surface: #F5F4F0;
+    --text-primary: #1A1A18;
+    --text-secondary: #6B6A65;
+    --text-tertiary: #9C9A92;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.14);
+
+    --mod-work: #378ADD;
+    --mod-purpose: #7F77DD;
+    --mod-body: #D85A30;
+    --mod-mind: #1D9E75;
+    --mod-family: #D4537E;
+    --mod-bridge: #888780;
+    --mod-finance: #639922;
+    --mod-social: #BA7517;
+
+    --type-task-bg: #E6F1FB; --type-task: #185FA5;
+    --type-note-bg: #EAF3DE; --type-note: #3B6D11;
+    --type-reflection-bg: #FBEAF0; --type-reflection: #993556;
+    --type-reco-bg: #FAEEDA; --type-reco: #854F0B;
+
+    --stage-1: #9C9A92; --stage-2: #BA7517; --stage-3: #D85A30;
+    --stage-4: #185FA5; --stage-5: #534AB7; --stage-6: #0F6E56; --stage-7: #1D9E75;
+
+    --conf-high: #1D9E75;
+    --conf-mid: #BA7517;
+    --conf-low: #E24B4A;
+
+    --companion-gradient: linear-gradient(135deg, #7F77DD 0%, #378ADD 50%, #1D9E75 100%);
+    --companion-glow: rgba(127,119,221,0.15);
+    --companion-surface: #F8F7FF;
+    --companion-bubble: #F0EFFE;
+
+    --aurora: #EF9F27;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1A1A18; --bg-card: #2C2C2A; --bg-surface: #222220;
+      --text-primary: #E8E6DE; --text-secondary: #9C9A92; --text-tertiary: #6B6A65;
+      --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.14);
+      --companion-surface: #252335; --companion-bubble: #2D2B40;
+      --companion-glow: rgba(127,119,221,0.2);
+      --type-task-bg: #1E2D3D; --type-note-bg: #253520;
+      --type-reflection-bg: #3D2030; --type-reco-bg: #3D3520;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #1A1A18;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .scene {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .scene-label {
+    color: #888;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-align: center;
+    max-width: 375px;
+  }
+  .scene-desc {
+    color: #666;
+    font-size: 11px;
+    text-align: center;
+    max-width: 375px;
+    line-height: 1.4;
+  }
+
+  .phone-frame {
+    width: 375px;
+    height: 812px;
+    background: var(--bg);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 0 8px #333, 0 20px 60px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+  }
+
+  .status-bar {
+    height: 54px;
+    padding: 14px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .screen {
+    height: calc(100% - 54px - 68px);
+    overflow-y: auto;
+    scrollbar-width: none;
+    position: relative;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* ═══ Bottom nav ═══ */
+  .bottom-nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 68px;
+    background: var(--bg-card);
+    border-top: 0.5px solid var(--border);
+    display: flex;
+    padding: 8px 0 20px;
+    z-index: 5;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    font-size: 10px;
+    color: var(--text-tertiary);
+  }
+  .nav-item.active { color: var(--text-primary); }
+  .nav-icon { font-size: 16px; }
+
+  /* ═══ Home header (simplified) ═══ */
+  .home-header {
+    padding: 8px 20px 0;
+  }
+  .home-header h1 {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+  .home-header .greeting-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* ═══ Soul card mini ═══ */
+  .soul-card-mini {
+    margin: 16px 20px 12px;
+    padding: 14px 16px;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .soul-orb {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--aurora), #D85A30);
+    opacity: 0.8;
+    flex-shrink: 0;
+  }
+  .soul-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.3;
+  }
+  .soul-text strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  /* ═══ AtomInput — state 1: collapsed ═══ */
+  .atom-input {
+    margin: 0 20px 16px;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: text;
+    transition: all 0.3s ease;
+  }
+  .atom-input .input-geo {
+    font-size: 16px;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+  }
+  .atom-input .input-placeholder {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    flex: 1;
+  }
+  .atom-input .companion-hint {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--companion-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: white;
+    flex-shrink: 0;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+  }
+
+  /* ═══ AtomInput — state 2: expanded (typing) ═══ */
+  .atom-input.expanded {
+    border-radius: 16px;
+    padding: 16px;
+    border-color: var(--border-strong);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  }
+  .atom-input.expanded .companion-hint {
+    opacity: 1;
+  }
+  .input-typing {
+    font-size: 14px;
+    color: var(--text-primary);
+    flex: 1;
+    line-height: 1.4;
+  }
+  .input-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 16px;
+    background: var(--text-primary);
+    animation: blink 1s infinite;
+    vertical-align: middle;
+    margin-left: 1px;
+  }
+  @keyframes blink {
+    0%,50% { opacity: 1; }
+    51%,100% { opacity: 0; }
+  }
+
+  /* ═══ Placeholder items ═══ */
+  .items-section {
+    padding: 0 20px;
+  }
+  .section-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .placeholder-card {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .placeholder-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .ph-title {
+    font-size: 13px;
+    color: var(--text-primary);
+    flex: 1;
+  }
+  .ph-chip {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  /* ═══ Bottom sheet overlay ═══ */
+  .sheet-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 10;
+    opacity: 1;
+  }
+
+  /* ═══ Bottom sheet ═══ */
+  .companion-sheet {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg);
+    border-radius: 20px 20px 0 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -8px 30px rgba(0,0,0,0.12);
+  }
+  .companion-sheet.half { height: 65%; }
+  .companion-sheet.tall { height: 80%; }
+  .companion-sheet.full { height: calc(100% - 54px); }
+
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-strong);
+    margin: 10px auto 0;
+    flex-shrink: 0;
+  }
+
+  .sheet-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px 10px;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .companion-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--companion-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .companion-avatar .geo-inner {
+    font-size: 12px;
+    color: white;
+    font-weight: 400;
+  }
+  .companion-avatar .pulse {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(127,119,221,0.3);
+    animation: pulse-ring 2s infinite;
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.15); opacity: 0; }
+    100% { transform: scale(1); opacity: 0; }
+  }
+  .sheet-context {
+    flex: 1;
+  }
+  .sheet-context .ctx-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .sheet-context .ctx-sub {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 1px;
+  }
+  .sheet-close {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    flex-shrink: 0;
+    border: none;
+    font-family: inherit;
+  }
+
+  .sheet-divider {
+    height: 0.5px;
+    background: var(--border);
+    margin: 0 20px;
+  }
+
+  /* ═══ Chat area ═══ */
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scrollbar-width: none;
+  }
+  .chat-area::-webkit-scrollbar { display: none; }
+
+  .chat-bubble {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+  .bubble-companion {
+    background: var(--companion-bubble);
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+  }
+  .bubble-user {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-bottom-right-radius: 4px;
+    align-self: flex-end;
+  }
+
+  .companion-typing {
+    align-self: flex-start;
+    display: flex;
+    gap: 4px;
+    padding: 12px 16px;
+    background: var(--companion-bubble);
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+  }
+  .typing-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text-tertiary);
+    animation: typing-bounce 1.2s infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes typing-bounce {
+    0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  /* Quick reply chips */
+  .quick-replies {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-self: flex-end;
+  }
+  .qr-chip {
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .qr-chip:hover {
+    border-color: var(--mod-purpose);
+    color: var(--mod-purpose);
+  }
+  .qr-chip.primary {
+    background: var(--companion-bubble);
+    border-color: rgba(127,119,221,0.25);
+    color: var(--mod-purpose);
+    font-weight: 500;
+  }
+
+  /* ═══ Chat input ═══ */
+  .chat-input-bar {
+    padding: 10px 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    background: var(--bg);
+    border-top: 0.5px solid var(--border);
+  }
+  .chat-input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 20px;
+    background: var(--bg-surface);
+    border: 0.5px solid var(--border);
+    font-size: 14px;
+    color: var(--text-tertiary);
+  }
+  .chat-send {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--companion-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    border: none;
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+  .chat-send.active { opacity: 1; }
+
+  /* ═══ Inline suggestion in chat ═══ */
+  .inline-suggestion {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-top: 4px;
+    align-self: flex-start;
+    max-width: 90%;
+  }
+  .is-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+  .is-header .ai-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--companion-gradient);
+  }
+  .is-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .is-chip {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .is-confidence {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+  .is-bar {
+    flex: 1; height: 3px;
+    border-radius: 2px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .is-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+  .is-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .is-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .is-btn.confirm { background: rgba(29,158,117,0.12); color: var(--conf-high); }
+  .is-btn.edit { background: var(--bg-surface); color: var(--text-secondary); }
+
+  /* ═══ Soul inline ═══ */
+  .soul-inline {
+    background: var(--companion-bubble);
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+    padding: 14px 16px;
+    align-self: flex-start;
+    max-width: 85%;
+  }
+  .soul-question {
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .energy-toggle {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .energy-opt {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .energy-opt.selected {
+    border-color: var(--conf-high);
+    color: var(--conf-high);
+    background: rgba(29,158,117,0.08);
+  }
+  .soul-skip {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+  }
+
+  /* ═══ FAB "me guia" ═══ */
+  .fab-companion {
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--companion-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: white;
+    box-shadow: 0 4px 16px rgba(127,119,221,0.3);
+    cursor: pointer;
+    z-index: 8;
+    transition: transform 0.15s;
+  }
+  .fab-companion:hover { transform: scale(1.05); }
+  .fab-companion .fab-label {
+    position: absolute;
+    right: 56px;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  /* ═══ Context badge in sheet ═══ */
+  .context-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .context-badge .cb-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+
+  /* ═══ Annotation layer ═══ */
+  .annotation {
+    position: absolute;
+    background: rgba(127,119,221,0.9);
+    color: white;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    z-index: 30;
+    pointer-events: none;
+    line-height: 1.3;
+    max-width: 140px;
+    text-align: center;
+  }
+  .annotation::after {
+    content: '';
+    position: absolute;
+    width: 8px; height: 8px;
+    background: rgba(127,119,221,0.9);
+    transform: rotate(45deg);
+  }
+  .annotation.arrow-left::after { left: -4px; top: 50%; margin-top: -4px; }
+  .annotation.arrow-right::after { right: -4px; top: 50%; margin-top: -4px; }
+  .annotation.arrow-down::after { bottom: -4px; left: 50%; margin-left: -4px; }
+  .annotation.arrow-up::after { top: -4px; left: 50%; margin-left: -4px; }
+
+  /* ═══ UX Notes panel ═══ */
+  .ux-notes {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+    color: #aaa;
+  }
+  .ux-notes h2 {
+    font-size: 18px;
+    color: #ccc;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .ux-notes h3 {
+    font-size: 14px;
+    color: #999;
+    margin: 20px 0 8px;
+    font-weight: 500;
+  }
+  .ux-notes p, .ux-notes li {
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+  .ux-notes ul { padding-left: 20px; }
+  .ux-notes .decision {
+    background: rgba(127,119,221,0.1);
+    border-left: 3px solid #7F77DD;
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-size: 12px;
+    color: #bbb;
+  }
+  .ux-notes .decision strong { color: #ccc; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCENE 1: AtomInput → Companion transition              -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="scene">
+  <div class="scene-label">1 · captura → conversa</div>
+  <div class="scene-desc">AtomInput detecta texto longo ou pergunta e ativa o companion como bottom sheet</div>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>05:32</span>
+      <span style="font-size:11px">◉ ◉ ◉</span>
+    </div>
+    <div class="screen">
+      <!-- Home context behind -->
+      <div class="home-header">
+        <h1>bom dia ☀</h1>
+        <div class="greeting-sub">terça-feira, 1 abril</div>
+      </div>
+
+      <div class="soul-card-mini">
+        <div class="soul-orb"></div>
+        <div class="soul-text">
+          <strong>energia alta</strong><br>
+          focado em fechar specs
+        </div>
+      </div>
+
+      <!-- AtomInput in expanded state — user typed a question -->
+      <div class="atom-input expanded">
+        <span class="input-geo">·</span>
+        <div class="input-typing">
+          tô com 5 ideias na cabeça e não sei qual priorizar, me ajuda?<span class="input-cursor"></span>
+        </div>
+        <div class="companion-hint" style="opacity:1">○</div>
+      </div>
+
+      <!-- Annotation: companion activates -->
+      <div class="annotation arrow-down" style="top:238px; right:24px;">
+        texto longo + "?"<br>= abre companion
+      </div>
+
+      <!-- Items behind (dimmed to show focus on input) -->
+      <div class="items-section" style="opacity:0.3">
+        <div class="section-label">recentes</div>
+        <div class="placeholder-card" style="--c:var(--mod-work)">
+          <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c)"></div>
+          <span class="ph-title">spec cockpit MindRoot</span>
+          <span class="ph-chip" style="background:var(--type-spec-bg);color:var(--type-spec)">spec</span>
+        </div>
+        <div class="placeholder-card" style="--c:var(--mod-mind)">
+          <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c)"></div>
+          <span class="ph-title">reflexão sobre presença</span>
+          <span class="ph-chip" style="background:var(--type-reflection-bg);color:var(--type-reflection)">reflection</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAB: "me guia" -->
+    <div class="fab-companion">
+      ○
+      <div class="fab-label">me guia</div>
+    </div>
+
+    <div class="annotation arrow-left" style="bottom:92px; right:80px;">
+      FAB abre companion<br>em qualquer tela
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active"><div class="nav-icon">⌂</div><span>home</span></div>
+      <div class="nav-item"><div class="nav-icon">◇</div><span>pipeline</span></div>
+      <div class="nav-item"><div class="nav-icon">▪</div><span>projects</span></div>
+      <div class="nav-item"><div class="nav-icon">◫</div><span>calendar</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCENE 2: Companion bottom sheet — open conversation    -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="scene">
+  <div class="scene-label">2 · companion aberto — "me ajuda a priorizar"</div>
+  <div class="scene-desc">Bottom sheet sobe com contexto da tela. Conversa contextual, não chat genérico</div>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>05:33</span>
+      <span style="font-size:11px">◉ ◉ ◉</span>
+    </div>
+
+    <!-- Dimmed background -->
+    <div class="sheet-overlay"></div>
+
+    <!-- Companion sheet -->
+    <div class="companion-sheet tall">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="companion-avatar">
+          <span class="geo-inner">○</span>
+          <div class="pulse"></div>
+        </div>
+        <div class="sheet-context">
+          <div class="ctx-title">companion</div>
+          <div class="ctx-sub">home · aurora</div>
+        </div>
+        <button class="sheet-close">✕</button>
+      </div>
+      <div class="sheet-divider"></div>
+
+      <div class="chat-area">
+        <!-- User message (forwarded from AtomInput) -->
+        <div class="chat-bubble bubble-user">
+          tô com 5 ideias na cabeça e não sei qual priorizar, me ajuda?
+        </div>
+
+        <!-- Companion response -->
+        <div class="chat-bubble bubble-companion">
+          claro. vamos lá — me conta as 5, pode ser em frases curtas. eu organizo depois.
+        </div>
+
+        <!-- User lists ideas -->
+        <div class="chat-bubble bubble-user">
+          1. landing page do constellation<br>
+          2. dashboard do raiz no mindroot<br>
+          3. proposta pro cliente atlas<br>
+          4. automatizar o inbox com n8n<br>
+          5. escrever sobre a jornada do atom
+        </div>
+
+        <!-- Companion structures -->
+        <div class="chat-bubble bubble-companion">
+          ok. olhando pelo que eu sei do seu momento:
+        </div>
+
+        <!-- Structured suggestion card -->
+        <div class="inline-suggestion">
+          <div class="is-header">
+            <div class="ai-dot"></div>
+            <span>sugestão de prioridade</span>
+          </div>
+          <div style="font-size:13px;color:var(--text-primary);line-height:1.6">
+            <strong>🔴 hoje:</strong> proposta atlas (deadline)<br>
+            <strong>🟡 esta semana:</strong> dashboard raiz, landing constellation<br>
+            <strong>⚪ someday:</strong> n8n, post jornada
+          </div>
+          <div class="is-actions">
+            <button class="is-btn confirm">aceitar</button>
+            <button class="is-btn edit">ajustar</button>
+          </div>
+        </div>
+
+        <div class="chat-bubble bubble-companion" style="font-size:13px">
+          a proposta do atlas tem urgência real. as outras duas são importantes mas podem rodar na semana. o n8n e o post são someday — capturo como seeds?
+        </div>
+
+        <!-- Quick replies -->
+        <div class="quick-replies">
+          <div class="qr-chip primary">boa, captura</div>
+          <div class="qr-chip">muda a ordem</div>
+          <div class="qr-chip">explica melhor</div>
+        </div>
+      </div>
+
+      <div class="chat-input-bar">
+        <div class="chat-input">digitar...</div>
+        <button class="chat-send">↑</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCENE 3: Soul check-in via companion (aurora)          -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="scene">
+  <div class="scene-label">3 · soul check-in — aurora</div>
+  <div class="scene-desc">Companion pergunta como você está chegando. Opcional, nunca forçado. Quick replies + linguagem livre</div>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>05:15</span>
+      <span style="font-size:11px">◉ ◉ ◉</span>
+    </div>
+
+    <div class="sheet-overlay"></div>
+
+    <div class="companion-sheet half">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="companion-avatar">
+          <span class="geo-inner">○</span>
+          <div class="pulse"></div>
+        </div>
+        <div class="sheet-context">
+          <div class="ctx-title">soul · aurora</div>
+          <div class="ctx-sub">check-in do dia</div>
+        </div>
+        <button class="sheet-close">✕</button>
+      </div>
+      <div class="sheet-divider"></div>
+
+      <div class="chat-area">
+        <div class="chat-bubble bubble-companion">
+          bom dia. como você tá chegando hoje?
+        </div>
+
+        <!-- Energy toggle -->
+        <div class="soul-inline">
+          <div class="soul-question">energia:</div>
+          <div class="energy-toggle">
+            <div class="energy-opt selected">alta ↑</div>
+            <div class="energy-opt">média →</div>
+            <div class="energy-opt">baixa ↓</div>
+          </div>
+        </div>
+
+        <div class="chat-bubble bubble-user">
+          ansioso mas motivado. muita coisa pra fazer
+        </div>
+
+        <div class="chat-bubble bubble-companion">
+          anotado. ansioso + motivado com energia alta. qual é o foco do dia?
+        </div>
+
+        <div class="quick-replies">
+          <div class="qr-chip primary">fechar specs</div>
+          <div class="qr-chip">atlas</div>
+          <div class="qr-chip">wireframes</div>
+        </div>
+
+        <div class="soul-inline" style="background:transparent;padding:4px 0;">
+          <div class="soul-skip">pular check-in →</div>
+        </div>
+      </div>
+
+      <div class="chat-input-bar">
+        <div class="chat-input">linguagem livre... "meio bosta" é válido</div>
+        <button class="chat-send">↑</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCENE 4: Triage ambíguo — companion no pipeline        -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="scene">
+  <div class="scene-label">4 · triage ambíguo — confiança &lt; 60%</div>
+  <div class="scene-desc">No pipeline, item ambíguo abre companion contextual pra resolver a classificação</div>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>05:45</span>
+      <span style="font-size:11px">◉ ◉ ◉</span>
+    </div>
+
+    <div class="sheet-overlay"></div>
+
+    <div class="companion-sheet half" style="height:55%">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="companion-avatar">
+          <span class="geo-inner">○</span>
+          <div class="pulse"></div>
+        </div>
+        <div class="sheet-context">
+          <div class="ctx-title">triage</div>
+          <div class="ctx-sub">item ambíguo · confiança 38%</div>
+        </div>
+        <button class="sheet-close">✕</button>
+      </div>
+      <div class="sheet-divider"></div>
+
+      <div class="chat-area">
+        <!-- Context badge -->
+        <div class="context-badge">
+          <div class="cb-dot" style="background:var(--stage-1)"></div>
+          inbox · captura
+        </div>
+
+        <!-- The raw item -->
+        <div class="inline-suggestion" style="border-color:var(--conf-low);border-width:1.5px">
+          <div style="font-size:14px;color:var(--text-primary);margin-bottom:8px;line-height:1.4">
+            <span style="color:var(--text-tertiary);font-size:12px">· </span>
+            "pensar em como organizar as fotos da De com a Flora"
+          </div>
+          <div class="is-confidence">
+            <span>confiança</span>
+            <div class="is-bar">
+              <div class="is-bar-fill" style="width:38%;background:var(--conf-low)"></div>
+            </div>
+            <span style="color:var(--conf-low);font-weight:500">38%</span>
+          </div>
+        </div>
+
+        <div class="chat-bubble bubble-companion">
+          não entendi bem esse item. pode ser uma task (organizar fotos), uma nota (lembrete pra pensar nisso), ou até um item do raiz (domínio memórias). o que faz mais sentido?
+        </div>
+
+        <div class="quick-replies">
+          <div class="qr-chip" style="border-color:var(--type-task);color:var(--type-task)">task · work</div>
+          <div class="qr-chip" style="border-color:var(--type-note);color:var(--type-note)">note · family</div>
+          <div class="qr-chip" style="border-color:var(--type-reco);color:var(--type-reco)">raiz · memórias</div>
+        </div>
+
+        <div class="chat-bubble bubble-companion" style="font-size:13px;color:var(--text-secondary)">
+          se tiver dúvida, nota é seguro — depois você reclassifica no wrap.
+        </div>
+      </div>
+
+      <div class="chat-input-bar">
+        <div class="chat-input">ou explica com mais contexto...</div>
+        <button class="chat-send">↑</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- UX DECISION NOTES                                      -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="ux-notes">
+  <h2>AI Companion — Decisões de UX</h2>
+
+  <div class="decision">
+    <strong>D49:</strong> Companion = bottom sheet contextual. Sobe de baixo com overlay semitransparente. 3 alturas: half (55%), tall (80%), full (100% - status bar). Swipe down pra fechar.
+  </div>
+
+  <div class="decision">
+    <strong>D50:</strong> AtomInput → Companion: texto curto (< 15 palavras, sem "?") = captura rápida inline. Texto longo ou pergunta = abre companion como bottom sheet. O "·" do companion hint no input pulsa quando detecta pergunta.
+  </div>
+
+  <div class="decision">
+    <strong>D51:</strong> Avatar do companion = gradiente circular (purpose→work→mind) com geometria "○" (círculo = completude, estágio 7). Pulse ring sutil quando ativo. Não é personagem, não tem rosto, não tem nome.
+  </div>
+
+  <div class="decision">
+    <strong>D52:</strong> Contexto automático: sheet header mostra onde o companion foi ativado (home·aurora, pipeline·triage, raiz·identidade). O companion sabe a tela, o período do dia, e o estado do item.
+  </div>
+
+  <div class="decision">
+    <strong>D53:</strong> Quick replies = chips arredondados abaixo da última mensagem do companion. Aparecem quando a pergunta tem respostas previsíveis. Chip "primary" = sugestão mais provável. Sempre há opção de digitar livremente.
+  </div>
+
+  <div class="decision">
+    <strong>D54:</strong> Soul check-in via companion, não via card estático. Aparece no bottom sheet durante aurora (sheet half). Energy toggle inline (alta/média/baixa). "Pular check-in →" sempre visível. Se o usuário diz "bora trabalhar" sem emoção, companion não insiste.
+  </div>
+
+  <div class="decision">
+    <strong>D55:</strong> Triage ambíguo (confiança < 60%): companion abre automaticamente com o item em destaque + opções de classificação como quick replies. "nota é seguro" como fallback gentil. O companion explica a ambiguidade sem jargão.
+  </div>
+
+  <div class="decision">
+    <strong>D56:</strong> FAB "me guia" = botão flutuante com gradiente do companion. Disponível em toda tela exceto quando companion já está aberto. Tooltip "me guia" aparece na primeira interação, depois desaparece.
+  </div>
+
+  <div class="decision">
+    <strong>D57:</strong> Inline suggestions = cards estruturados dentro da conversa (priorização, classificação, conexões sugeridas). Têm botões de ação (aceitar/ajustar). Permitem decisão em 1 toque sem sair da conversa.
+  </div>
+
+  <div class="decision">
+    <strong>D58:</strong> Companion NÃO é um chat persistente. Cada ativação é contextual e termina quando a tarefa termina. Histórico vive no wrap, não num "chat history". O companion é efêmero — a conversa serve ao momento.
+  </div>
+
+  <h3>Momentos conversacionais (companion aparece)</h3>
+  <ul>
+    <li><strong>Captura expandida:</strong> AtomInput → texto longo/pergunta</li>
+    <li><strong>Soul check-in:</strong> aurora (como você tá?) e crepúsculo (como foi?)</li>
+    <li><strong>Triage ambíguo:</strong> confiança < 60% no pipeline</li>
+    <li><strong>"Me guia":</strong> FAB em qualquer tela</li>
+    <li><strong>Raiz onboarding:</strong> primeiro contato (full-height)</li>
+    <li><strong>Raiz sessão:</strong> inventário/migração por domínio</li>
+    <li><strong>Decisão difícil:</strong> deletar conta, soltar algo do passado</li>
+    <li><strong>Wrap soul (step 1):</strong> "como você tá saindo hoje?"</li>
+    <li><strong>Conexão sugerida:</strong> estágio 4 → "se conecta com algo?"</li>
+  </ul>
+
+  <h3>Momentos de UI pura (sem conversa)</h3>
+  <ul>
+    <li>Pipeline drag entre estágios</li>
+    <li>Triage confirmação (confiança ≥ 60%)</li>
+    <li>Projects dashboard + detail</li>
+    <li>Calendar navegação</li>
+    <li>Analytics gráficos</li>
+    <li>Library browse</li>
+    <li>Settings</li>
+    <li>Wrap steps 2-7</li>
+  </ul>
+
+  <h3>Personality guidelines</h3>
+  <ul>
+    <li>Tom: gentil, direto, sem bajulação. Alinhado com os 7 princípios do Raiz.</li>
+    <li>Nunca diz "incrível!", "excelente!", "parabéns!". Celebra com sobriedade: "isso é progresso real."</li>
+    <li>Nunca pede pra focar. Oferece estrutura pra que o foco aconteça naturalmente.</li>
+    <li>"Meio bosta" é válido. Linguagem livre, sempre.</li>
+    <li>Se o usuário quer trabalhar sem conversa, o companion respeita e desaparece.</li>
+    <li>Não tem nome. É "o companion" internamente. Pro usuário, é parte do MindRoot.</li>
+  </ul>
+</div>
+
+</body>
+</html>

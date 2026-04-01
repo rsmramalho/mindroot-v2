@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindRoot — Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --bg-card: #FFFFFF;
+    --bg-surface: #F5F4F0;
+    --text-primary: #1A1A18;
+    --text-secondary: #6B6A65;
+    --text-tertiary: #9C9A92;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.14);
+
+    --mod-work: #378ADD;
+    --mod-purpose: #7F77DD;
+    --mod-body: #D85A30;
+    --mod-mind: #1D9E75;
+    --mod-family: #D4537E;
+    --mod-bridge: #888780;
+    --mod-finance: #639922;
+    --mod-social: #BA7517;
+
+    --type-task-bg: #E6F1FB; --type-task: #185FA5;
+    --type-spec-bg: #EEEDFE; --type-spec: #534AB7;
+    --type-habit-bg: #FAEEDA; --type-habit: #854F0B;
+    --type-ritual-bg: #EEEDFE; --type-ritual: #534AB7;
+    --type-project-bg: #E1F5EE; --type-project: #0F6E56;
+    --type-recipe-bg: #FAECE7; --type-recipe: #993C1D;
+
+    --aurora: #EF9F27;
+    --aurora-bg: rgba(239,159,39,0.06);
+    --aurora-border: rgba(239,159,39,0.15);
+    --zenite: #378ADD;
+    --zenite-bg: rgba(55,138,221,0.04);
+    --zenite-border: rgba(55,138,221,0.1);
+    --crepusculo: #7F77DD;
+    --crepusculo-bg: rgba(127,119,221,0.06);
+    --crepusculo-border: rgba(127,119,221,0.15);
+
+    --gcal: #4285F4;
+    --gcal-bg: rgba(66,133,244,0.08);
+
+    --today-accent: var(--text-primary);
+    --warning: #854F0B;
+    --warning-bg: #FAEEDA;
+    --danger: #A32D2D;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1A1A18;
+      --bg-card: #2C2C2A;
+      --bg-surface: #222220;
+      --text-primary: #E8E6DE;
+      --text-secondary: #9C9A92;
+      --text-tertiary: #6B6A65;
+      --border: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.14);
+      --aurora-bg: rgba(239,159,39,0.08);
+      --aurora-border: rgba(239,159,39,0.2);
+      --zenite-bg: rgba(55,138,221,0.06);
+      --zenite-border: rgba(55,138,221,0.15);
+      --crepusculo-bg: rgba(127,119,221,0.08);
+      --crepusculo-border: rgba(127,119,221,0.2);
+      --gcal-bg: rgba(66,133,244,0.12);
+      --warning-bg: #3D3520;
+      --type-task-bg: #1E2D3D; --type-spec-bg: #2A283D;
+      --type-habit-bg: #3D3520; --type-ritual-bg: #2A283D;
+      --type-project-bg: #1E3530; --type-recipe-bg: #3D2A20;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #1A1A18;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .phone-frame {
+    width: 375px;
+    height: 812px;
+    background: var(--bg);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 0 8px #333, 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .status-bar {
+    height: 54px;
+    padding: 14px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .screen {
+    height: calc(100% - 54px - 68px);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* ═══ Header ═══ */
+  .header {
+    padding: 8px 20px 4px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .header h1 {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+  .header-month {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  /* ═══ Week nav ═══ */
+  .week-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px 8px;
+  }
+  .week-nav-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 0.5px solid var(--border);
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+  .week-nav-btn:hover { background: var(--bg-surface); }
+  .week-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .week-label .sub {
+    font-weight: 400;
+    color: var(--text-tertiary);
+    font-size: 12px;
+  }
+
+  /* ═══ Week strip ═══ */
+  .week-strip {
+    display: flex;
+    padding: 0 12px;
+    gap: 2px;
+    margin-bottom: 16px;
+  }
+  .day-col {
+    flex: 1;
+    text-align: center;
+    padding: 8px 2px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .day-col:hover { background: var(--bg-surface); }
+  .day-col.selected {
+    background: var(--bg-card);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .day-col .day-name {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .day-col .day-num {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .day-col.today .day-num {
+    background: var(--today-accent);
+    color: var(--bg);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .day-col.past .day-num { color: var(--text-tertiary); }
+  .day-col.past .day-name { opacity: 0.5; }
+
+  /* Day dots (item indicators) */
+  .day-dots {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    min-height: 6px;
+  }
+  .day-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+
+  /* ═══ Day detail panel ═══ */
+  .day-detail {
+    margin: 0 20px 16px;
+  }
+
+  .day-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .day-detail-date {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .day-detail-date .weekday {
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
+  .day-detail-count {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  /* Ritual time blocks */
+  .ritual-block {
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    border: 0.5px solid transparent;
+    position: relative;
+  }
+  .ritual-block.aurora {
+    background: var(--aurora-bg);
+    border-color: var(--aurora-border);
+  }
+  .ritual-block.zenite {
+    background: var(--zenite-bg);
+    border-color: var(--zenite-border);
+  }
+  .ritual-block.crepusculo {
+    background: var(--crepusculo-bg);
+    border-color: var(--crepusculo-border);
+  }
+
+  .ritual-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .ritual-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .ritual-name {
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .ritual-time {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-left: auto;
+  }
+
+  /* Calendar items */
+  .cal-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    margin-bottom: 3px;
+    border-radius: 8px;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cal-item:hover { transform: translateY(-1px); }
+  .cal-item:last-child { margin-bottom: 0; }
+
+  .cal-item .mod-bar {
+    width: 3px;
+    height: 22px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .cal-item .ci-time {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    width: 36px;
+    flex-shrink: 0;
+  }
+  .cal-item .ci-title {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cal-item .ci-geo {
+    font-size: 10px;
+    color: var(--text-tertiary);
+  }
+  .cal-item .ci-chip {
+    font-size: 9px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  /* Google Calendar events — outlined style */
+  .cal-item.gcal {
+    border: 1px dashed rgba(66,133,244,0.3);
+    background: var(--gcal-bg);
+  }
+  .cal-item.gcal .ci-title {
+    color: var(--text-secondary);
+  }
+  .gcal-badge {
+    font-size: 8px;
+    font-weight: 500;
+    color: var(--gcal);
+    background: rgba(66,133,244,0.1);
+    padding: 1px 5px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    letter-spacing: 0.3px;
+  }
+
+  /* Habit streak indicator */
+  .habit-streak {
+    display: flex;
+    gap: 2px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .streak-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border-strong);
+  }
+  .streak-dot.done { background: var(--mod-mind); }
+  .streak-dot.today { border: 1.5px solid var(--mod-mind); background: none; }
+
+  /* ═══ Upcoming section ═══ */
+  .upcoming {
+    margin: 0 20px 20px;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .upcoming-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    margin-bottom: 4px;
+    border-radius: 10px;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+  }
+  .upcoming-item .ui-date {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    width: 44px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .upcoming-item .ui-date .ui-day {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+  .upcoming-item .ui-date .ui-month {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .upcoming-item .ui-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .upcoming-item .ui-title {
+    font-size: 13px;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .upcoming-item .ui-meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+  .upcoming-item .ui-urgency {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .urgency-soon { background: var(--warning-bg); color: var(--warning); }
+  .urgency-overdue { background: rgba(162,45,45,0.1); color: var(--danger); }
+
+  /* ═══ Ritual legend ═══ */
+  .ritual-legend {
+    display: flex;
+    gap: 12px;
+    padding: 0 20px;
+    margin-bottom: 16px;
+  }
+  .rl-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    color: var(--text-tertiary);
+  }
+  .rl-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* ═══ Empty ritual slot ═══ */
+  .ritual-empty {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-style: italic;
+    padding: 4px 0;
+  }
+
+  /* ═══ View toggle ═══ */
+  .view-toggle {
+    display: flex;
+    margin: 0 20px 12px;
+    background: var(--bg-surface);
+    border-radius: 10px;
+    padding: 3px;
+  }
+  .vt-btn {
+    flex: 1;
+    text-align: center;
+    padding: 7px 0;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .vt-btn.active {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  /* ═══ Month mini-calendar ═══ */
+  .month-view {
+    display: none;
+    padding: 0 20px 16px;
+  }
+  .month-view.active { display: block; }
+  .week-detail { display: block; }
+  .week-detail:not(.active) { display: none; }
+
+  .month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .month-grid .mg-header {
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 0 8px;
+  }
+  .month-grid .mg-day {
+    text-align: center;
+    padding: 6px 0;
+    font-size: 12px;
+    color: var(--text-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.15s;
+  }
+  .month-grid .mg-day:hover { background: var(--bg-surface); }
+  .month-grid .mg-day.today {
+    font-weight: 500;
+  }
+  .month-grid .mg-day.today span {
+    background: var(--today-accent);
+    color: var(--bg);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
+  .month-grid .mg-day.other-month { color: var(--text-tertiary); opacity: 0.4; }
+  .month-grid .mg-day.has-items::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--mod-work);
+  }
+  .month-grid .mg-day.has-items.has-multi::after {
+    width: 12px;
+    border-radius: 2px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--mod-work), var(--mod-purpose));
+  }
+  .month-grid .mg-day.selected {
+    background: var(--bg-surface);
+    font-weight: 500;
+  }
+
+  /* ═══ Bottom nav ═══ */
+  .bottom-nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 68px;
+    background: var(--bg-card);
+    border-top: 0.5px solid var(--border);
+    display: flex;
+    padding: 8px 0 20px;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    transition: color 0.15s;
+  }
+  .nav-item.active { color: var(--text-primary); }
+  .nav-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .fab {
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--text-primary);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 300;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: transform 0.15s;
+    z-index: 10;
+  }
+  .fab:hover { transform: scale(1.05); }
+
+  /* ═══ Animations ═══ */
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-in {
+    animation: fadeSlideIn 0.25s ease forwards;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="status-bar">
+    <span>06:12</span>
+    <span style="font-size:12px;letter-spacing:1px">····</span>
+    <span style="font-size:12px">97%</span>
+  </div>
+
+  <div class="screen" id="screen">
+
+    <!-- Header -->
+    <div class="header">
+      <h1>calendar</h1>
+      <span class="header-month">março 2026</span>
+    </div>
+
+    <!-- View toggle -->
+    <div class="view-toggle">
+      <div class="vt-btn active" id="vt-week" onclick="setView('week')">semana</div>
+      <div class="vt-btn" id="vt-month" onclick="setView('month')">mês</div>
+    </div>
+
+    <!-- ═══ WEEK VIEW ═══ -->
+    <div class="week-detail active" id="week-view">
+
+      <!-- Week navigation -->
+      <div class="week-nav">
+        <div class="week-nav-btn">‹</div>
+        <div class="week-label">30 mar — 5 abr <span class="sub">· semana 14</span></div>
+        <div class="week-nav-btn">›</div>
+      </div>
+
+      <!-- Week strip -->
+      <div class="week-strip">
+        <div class="day-col past" onclick="selectDay(this, 'mon')">
+          <div class="day-name">seg</div>
+          <div class="day-num">30</div>
+          <div class="day-dots">
+            <div class="day-dot" style="background:var(--mod-work)"></div>
+            <div class="day-dot" style="background:var(--mod-work)"></div>
+          </div>
+        </div>
+        <div class="day-col today selected" onclick="selectDay(this, 'tue')">
+          <div class="day-name">ter</div>
+          <div class="day-num">31</div>
+          <div class="day-dots">
+            <div class="day-dot" style="background:var(--mod-work)"></div>
+            <div class="day-dot" style="background:var(--mod-body)"></div>
+            <div class="day-dot" style="background:var(--gcal)"></div>
+          </div>
+        </div>
+        <div class="day-col" onclick="selectDay(this, 'wed')">
+          <div class="day-name">qua</div>
+          <div class="day-num">1</div>
+          <div class="day-dots">
+            <div class="day-dot" style="background:var(--mod-work)"></div>
+          </div>
+        </div>
+        <div class="day-col" onclick="selectDay(this, 'thu')">
+          <div class="day-name">qui</div>
+          <div class="day-num">2</div>
+          <div class="day-dots">
+            <div class="day-dot" style="background:var(--gcal)"></div>
+          </div>
+        </div>
+        <div class="day-col" onclick="selectDay(this, 'fri')">
+          <div class="day-name">sex</div>
+          <div class="day-num">3</div>
+          <div class="day-dots">
+            <div class="day-dot" style="background:var(--mod-work)"></div>
+            <div class="day-dot" style="background:var(--mod-purpose)"></div>
+          </div>
+        </div>
+        <div class="day-col" onclick="selectDay(this, 'sat')">
+          <div class="day-name">sáb</div>
+          <div class="day-num">4</div>
+          <div class="day-dots">
+            <div class="day-dot" style="background:var(--mod-body)"></div>
+          </div>
+        </div>
+        <div class="day-col" onclick="selectDay(this, 'sun')">
+          <div class="day-name">dom</div>
+          <div class="day-num">5</div>
+          <div class="day-dots"></div>
+        </div>
+      </div>
+
+      <!-- Ritual legend -->
+      <div class="ritual-legend">
+        <div class="rl-item"><div class="rl-dot" style="background:var(--aurora)"></div>aurora 5h-8h</div>
+        <div class="rl-item"><div class="rl-dot" style="background:var(--zenite)"></div>zênite 8h-17h</div>
+        <div class="rl-item"><div class="rl-dot" style="background:var(--crepusculo)"></div>crepúsculo 17h+</div>
+        <div class="rl-item" style="margin-left:auto"><div class="rl-dot" style="background:var(--gcal);opacity:0.6"></div>google cal</div>
+      </div>
+
+      <!-- ═══ Day detail: Terça 31 Mar (today) ═══ -->
+      <div class="day-detail" id="day-detail">
+        <div class="day-detail-header">
+          <div class="day-detail-date">31 de março <span class="weekday">· terça</span></div>
+          <div class="day-detail-count">6 items</div>
+        </div>
+
+        <!-- Aurora block -->
+        <div class="ritual-block aurora">
+          <div class="ritual-header">
+            <div class="ritual-icon" style="background:var(--aurora)">☀</div>
+            <div class="ritual-name" style="color:var(--aurora)">aurora</div>
+            <div class="ritual-time">05h — 08h</div>
+          </div>
+
+          <div class="cal-item">
+            <div class="mod-bar" style="background:var(--mod-work)"></div>
+            <div class="ci-time">05:30</div>
+            <div class="ci-title">UX wireframes — Triage/Pipeline</div>
+            <div class="ci-geo">△</div>
+            <div class="ci-chip" style="background:var(--type-task-bg);color:var(--type-task)">task</div>
+          </div>
+
+          <div class="cal-item">
+            <div class="mod-bar" style="background:var(--mod-mind)"></div>
+            <div class="ci-time">05:15</div>
+            <div class="ci-title">ritual aurora — bom dia</div>
+            <div class="ci-geo" style="color:var(--aurora)">○</div>
+            <div class="ci-chip" style="background:var(--type-ritual-bg);color:var(--type-ritual)">ritual</div>
+          </div>
+        </div>
+
+        <!-- Zênite block -->
+        <div class="ritual-block zenite">
+          <div class="ritual-header">
+            <div class="ritual-icon" style="background:var(--zenite)">◉</div>
+            <div class="ritual-name" style="color:var(--zenite)">zênite</div>
+            <div class="ritual-time">08h — 17h</div>
+          </div>
+
+          <div class="cal-item gcal">
+            <div class="ci-time">09:00</div>
+            <div class="ci-title">Atlas — reunião fornecedor aço</div>
+            <span class="gcal-badge">gcal</span>
+          </div>
+
+          <div class="cal-item">
+            <div class="mod-bar" style="background:var(--mod-body)"></div>
+            <div class="ci-time">12:00</div>
+            <div class="ci-title">calistenia básica</div>
+            <div class="ci-geo">□</div>
+            <div class="ci-chip" style="background:var(--type-recipe-bg);color:var(--type-recipe)">workout</div>
+            <div class="habit-streak">
+              <div class="streak-dot done"></div>
+              <div class="streak-dot done"></div>
+              <div class="streak-dot done"></div>
+              <div class="streak-dot today"></div>
+              <div class="streak-dot"></div>
+              <div class="streak-dot"></div>
+              <div class="streak-dot"></div>
+            </div>
+          </div>
+
+          <div class="cal-item gcal">
+            <div class="ci-time">14:00</div>
+            <div class="ci-title">dentista Flora</div>
+            <span class="gcal-badge">gcal</span>
+          </div>
+        </div>
+
+        <!-- Crepúsculo block -->
+        <div class="ritual-block crepusculo">
+          <div class="ritual-header">
+            <div class="ritual-icon" style="background:var(--crepusculo)">◗</div>
+            <div class="ritual-name" style="color:var(--crepusculo)">crepúsculo</div>
+            <div class="ritual-time">17h+</div>
+          </div>
+
+          <div class="cal-item">
+            <div class="mod-bar" style="background:var(--mod-bridge)"></div>
+            <div class="ci-time">17:00</div>
+            <div class="ci-title">atom wrap</div>
+            <div class="ci-geo" style="color:var(--crepusculo)">○</div>
+            <div class="ci-chip" style="background:var(--type-ritual-bg);color:var(--type-ritual)">ritual</div>
+          </div>
+
+          <div class="ritual-empty">sem mais items — família e descanso</div>
+        </div>
+      </div>
+
+      <!-- Upcoming deadlines -->
+      <div class="upcoming">
+        <div class="section-title">próximas deadlines</div>
+
+        <div class="upcoming-item">
+          <div class="ui-date">
+            <div class="ui-day">3</div>
+            <div class="ui-month">abr</div>
+          </div>
+          <div class="mod-bar" style="width:3px;height:32px;border-radius:2px;background:var(--mod-work);flex-shrink:0"></div>
+          <div class="ui-content">
+            <div class="ui-title">deploy Supabase triggers</div>
+            <div class="ui-meta">task · mod-work · □ validated</div>
+          </div>
+          <div class="ui-urgency urgency-soon">3 dias</div>
+        </div>
+
+        <div class="upcoming-item">
+          <div class="ui-date">
+            <div class="ui-day">5</div>
+            <div class="ui-month">abr</div>
+          </div>
+          <div class="mod-bar" style="width:3px;height:32px;border-radius:2px;background:var(--mod-work);flex-shrink:0"></div>
+          <div class="ui-content">
+            <div class="ui-title">Auto-Triage Engine spec v1</div>
+            <div class="ui-meta">spec · mod-work · ⬠ connected</div>
+          </div>
+          <div class="ui-urgency urgency-soon">5 dias</div>
+        </div>
+
+        <div class="upcoming-item">
+          <div class="ui-date">
+            <div class="ui-day">10</div>
+            <div class="ui-month">abr</div>
+          </div>
+          <div class="mod-bar" style="width:3px;height:32px;border-radius:2px;background:var(--mod-purpose);flex-shrink:0"></div>
+          <div class="ui-content">
+            <div class="ui-title">MindRoot alpha MVP</div>
+            <div class="ui-meta">project · mod-work · ⬠ connected</div>
+          </div>
+          <div class="ui-urgency" style="background:var(--bg-surface);color:var(--text-tertiary)">10 dias</div>
+        </div>
+
+        <div class="upcoming-item" style="border-color:rgba(162,45,45,0.2)">
+          <div class="ui-date">
+            <div class="ui-day" style="color:var(--danger)">28</div>
+            <div class="ui-month">mar</div>
+          </div>
+          <div class="mod-bar" style="width:3px;height:32px;border-radius:2px;background:var(--danger);flex-shrink:0"></div>
+          <div class="ui-content">
+            <div class="ui-title" style="color:var(--danger)">schema v2 migration review</div>
+            <div class="ui-meta">task · mod-work · ⬡ propagated</div>
+          </div>
+          <div class="ui-urgency urgency-overdue">-3 dias</div>
+        </div>
+      </div>
+
+      <div style="height:20px"></div>
+    </div>
+
+    <!-- ═══ MONTH VIEW ═══ -->
+    <div class="month-view" id="month-view">
+      <div style="padding:8px 0 12px;text-align:center">
+        <span style="font-size:16px;font-weight:500;color:var(--text-primary)">março 2026</span>
+      </div>
+
+      <div class="month-grid">
+        <div class="mg-header">seg</div>
+        <div class="mg-header">ter</div>
+        <div class="mg-header">qua</div>
+        <div class="mg-header">qui</div>
+        <div class="mg-header">sex</div>
+        <div class="mg-header">sáb</div>
+        <div class="mg-header">dom</div>
+
+        <div class="mg-day other-month">23</div>
+        <div class="mg-day other-month">24</div>
+        <div class="mg-day other-month">25</div>
+        <div class="mg-day other-month">26</div>
+        <div class="mg-day other-month">27</div>
+        <div class="mg-day other-month">28</div>
+        <div class="mg-day">1</div>
+
+        <div class="mg-day has-items">2</div>
+        <div class="mg-day has-items has-multi">3</div>
+        <div class="mg-day">4</div>
+        <div class="mg-day has-items">5</div>
+        <div class="mg-day">6</div>
+        <div class="mg-day has-items">7</div>
+        <div class="mg-day">8</div>
+
+        <div class="mg-day has-items">9</div>
+        <div class="mg-day has-items has-multi">10</div>
+        <div class="mg-day">11</div>
+        <div class="mg-day has-items">12</div>
+        <div class="mg-day">13</div>
+        <div class="mg-day">14</div>
+        <div class="mg-day">15</div>
+
+        <div class="mg-day has-items">16</div>
+        <div class="mg-day">17</div>
+        <div class="mg-day has-items">18</div>
+        <div class="mg-day">19</div>
+        <div class="mg-day has-items has-multi">20</div>
+        <div class="mg-day has-items">21</div>
+        <div class="mg-day has-items">22</div>
+
+        <div class="mg-day has-items has-multi">23</div>
+        <div class="mg-day">24</div>
+        <div class="mg-day has-items has-multi">25</div>
+        <div class="mg-day">26</div>
+        <div class="mg-day has-items">27</div>
+        <div class="mg-day has-items">28</div>
+        <div class="mg-day has-items has-multi">29</div>
+
+        <div class="mg-day has-items has-multi selected">30</div>
+        <div class="mg-day today has-items has-multi"><span>31</span></div>
+        <div class="mg-day other-month">1</div>
+        <div class="mg-day other-month">2</div>
+        <div class="mg-day other-month">3</div>
+        <div class="mg-day other-month">4</div>
+        <div class="mg-day other-month">5</div>
+      </div>
+
+      <!-- Compact day summary below month -->
+      <div style="margin-top:20px">
+        <div class="day-detail-header" style="margin-bottom:10px">
+          <div class="day-detail-date">31 de março <span class="weekday">· hoje</span></div>
+          <div class="day-detail-count">6 items</div>
+        </div>
+
+        <div class="cal-item">
+          <div class="mod-bar" style="background:var(--mod-work)"></div>
+          <div class="ci-time">05:30</div>
+          <div class="ci-title">UX wireframes — Triage/Pipeline</div>
+          <div class="ci-chip" style="background:var(--type-task-bg);color:var(--type-task)">task</div>
+        </div>
+        <div class="cal-item gcal">
+          <div class="ci-time">09:00</div>
+          <div class="ci-title">Atlas — reunião fornecedor aço</div>
+          <span class="gcal-badge">gcal</span>
+        </div>
+        <div class="cal-item">
+          <div class="mod-bar" style="background:var(--mod-body)"></div>
+          <div class="ci-time">12:00</div>
+          <div class="ci-title">calistenia básica</div>
+          <div class="ci-chip" style="background:var(--type-recipe-bg);color:var(--type-recipe)">workout</div>
+        </div>
+        <div class="cal-item gcal">
+          <div class="ci-time">14:00</div>
+          <div class="ci-title">dentista Flora</div>
+          <span class="gcal-badge">gcal</span>
+        </div>
+        <div class="cal-item">
+          <div class="mod-bar" style="background:var(--mod-bridge)"></div>
+          <div class="ci-time">17:00</div>
+          <div class="ci-title">atom wrap</div>
+          <div class="ci-chip" style="background:var(--type-ritual-bg);color:var(--type-ritual)">ritual</div>
+        </div>
+      </div>
+
+      <div style="height:20px"></div>
+    </div>
+
+  </div>
+
+  <div class="fab" title="quick capture">·</div>
+
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">⌂</div><span>home</span></div>
+    <div class="nav-item"><div class="nav-icon">◇</div><span>pipeline</span></div>
+    <div class="nav-item"><div class="nav-icon">▪</div><span>projects</span></div>
+    <div class="nav-item active"><div class="nav-icon">◫</div><span>calendar</span></div>
+  </div>
+</div>
+
+<script>
+  // View switching
+  function setView(view) {
+    document.getElementById('vt-week').classList.toggle('active', view === 'week');
+    document.getElementById('vt-month').classList.toggle('active', view === 'month');
+    document.getElementById('week-view').classList.toggle('active', view === 'week');
+    document.getElementById('month-view').classList.toggle('active', view === 'month');
+  }
+
+  // Day selection in week strip
+  function selectDay(el, day) {
+    document.querySelectorAll('.day-col').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+    // Animate day detail
+    const detail = document.getElementById('day-detail');
+    detail.style.opacity = '0';
+    detail.style.transform = 'translateY(6px)';
+    setTimeout(() => {
+      detail.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+      detail.style.opacity = '1';
+      detail.style.transform = 'translateY(0)';
+    }, 50);
+  }
+
+  // Entrance animations
+  setTimeout(() => {
+    document.querySelectorAll('.ritual-block').forEach((block, i) => {
+      block.style.opacity = '0';
+      block.style.transform = 'translateY(6px)';
+      block.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      setTimeout(() => {
+        block.style.opacity = '1';
+        block.style.transform = 'translateY(0)';
+      }, 120 * i);
+    });
+
+    document.querySelectorAll('.upcoming-item').forEach((item, i) => {
+      item.style.opacity = '0';
+      item.style.transform = 'translateY(4px)';
+      item.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+      setTimeout(() => {
+        item.style.opacity = '1';
+        item.style.transform = 'translateY(0)';
+      }, 400 + 80 * i);
+    });
+  }, 100);
+</script>
+
+</body>
+</html>

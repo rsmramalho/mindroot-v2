@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindRoot — Raiz Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --bg-card: #FFFFFF;
+    --bg-surface: #F5F4F0;
+    --text-primary: #1A1A18;
+    --text-secondary: #6B6A65;
+    --text-tertiary: #9C9A92;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.14);
+
+    --mod-work: #378ADD; --mod-purpose: #7F77DD; --mod-body: #D85A30;
+    --mod-mind: #1D9E75; --mod-family: #D4537E; --mod-bridge: #888780;
+    --mod-finance: #639922; --mod-social: #BA7517;
+
+    --stage-1: #9C9A92; --stage-2: #BA7517; --stage-3: #D85A30;
+    --stage-4: #185FA5; --stage-5: #534AB7; --stage-6: #0F6E56; --stage-7: #1D9E75;
+
+    --companion-gradient: linear-gradient(135deg, #7F77DD 0%, #378ADD 50%, #1D9E75 100%);
+    --companion-bubble: #F0EFFE;
+    --companion-glow: rgba(127,119,221,0.15);
+
+    --raiz-warm: #2C2618;
+    --raiz-warm-sub: #8C7E5E;
+    --raiz-bg: #FDFBF6;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1A1A18; --bg-card: #2C2C2A; --bg-surface: #222220;
+      --text-primary: #E8E6DE; --text-secondary: #9C9A92; --text-tertiary: #6B6A65;
+      --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.14);
+      --companion-bubble: #2D2B40;
+      --raiz-warm: #E8E2D0; --raiz-warm-sub: #9C9680; --raiz-bg: #1A1A18;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #1A1A18;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .scene { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .scene-label {
+    color: #888; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    text-align: center; max-width: 375px;
+  }
+  .scene-desc {
+    color: #666; font-size: 11px; text-align: center;
+    max-width: 375px; line-height: 1.4;
+  }
+
+  .phone-frame {
+    width: 375px; height: 812px;
+    background: var(--raiz-bg);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 0 8px #333, 0 20px 60px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+  }
+
+  .status-bar {
+    height: 54px; padding: 14px 24px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 14px; font-weight: 500; color: var(--text-primary);
+  }
+
+  .screen {
+    height: calc(100% - 54px);
+    overflow-y: auto;
+    scrollbar-width: none;
+    position: relative;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* ═══ Welcome screen ═══ */
+  .welcome-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+    height: 100%;
+    text-align: center;
+  }
+
+  .raiz-symbol {
+    width: 80px; height: 80px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .raiz-symbol .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px solid;
+    opacity: 0.15;
+  }
+  .raiz-symbol .ring-1 { inset: 0; border-color: var(--mod-purpose); animation: ring-pulse 3s infinite; }
+  .raiz-symbol .ring-2 { inset: 10px; border-color: var(--mod-work); animation: ring-pulse 3s 0.5s infinite; }
+  .raiz-symbol .ring-3 { inset: 20px; border-color: var(--mod-mind); animation: ring-pulse 3s 1s infinite; }
+  .raiz-symbol .core {
+    position: absolute;
+    inset: 30px;
+    border-radius: 50%;
+    background: var(--companion-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+  }
+  @keyframes ring-pulse {
+    0%,100% { opacity: 0.15; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(1.03); }
+  }
+
+  .welcome-title {
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--raiz-warm);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .welcome-title strong { font-weight: 500; }
+
+  .welcome-sub {
+    font-size: 15px;
+    color: var(--raiz-warm-sub);
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 280px;
+  }
+
+  .welcome-cta {
+    padding: 16px 40px;
+    border-radius: 14px;
+    background: var(--companion-gradient);
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.2px;
+    box-shadow: 0 4px 20px rgba(127,119,221,0.25);
+    transition: transform 0.15s;
+    margin-bottom: 16px;
+  }
+  .welcome-cta:hover { transform: scale(1.02); }
+
+  .welcome-skip {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+  }
+
+  /* ═══ Doors screen ═══ */
+  .doors-screen {
+    padding: 32px 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .doors-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .doors-header .companion-mini {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--companion-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+    margin: 0 auto 16px;
+  }
+  .doors-header h2 {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--raiz-warm);
+    line-height: 1.3;
+  }
+  .doors-header p {
+    font-size: 13px;
+    color: var(--raiz-warm-sub);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .door-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .door-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  }
+  .door-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .door-card.door-easy::before { background: var(--stage-7); }
+  .door-card.door-pain::before { background: var(--mod-family); }
+  .door-card.door-guide::before { background: var(--mod-purpose); }
+
+  .door-emoji {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .door-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .door-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+  .door-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-top: 10px;
+  }
+  .door-easy .door-tag { background: rgba(29,158,117,0.1); color: var(--stage-7); }
+  .door-pain .door-tag { background: rgba(212,83,126,0.1); color: var(--mod-family); }
+  .door-guide .door-tag { background: rgba(127,119,221,0.1); color: var(--mod-purpose); }
+  .door-guide { border-color: rgba(127,119,221,0.2); }
+  .door-guide .door-default {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--mod-purpose);
+    background: rgba(127,119,221,0.08);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  .doors-footer {
+    margin-top: auto;
+    text-align: center;
+    padding-top: 16px;
+  }
+  .doors-footer p {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  /* ═══ Inventory session (companion full-height) ═══ */
+  .inventory-screen {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+  }
+
+  .inv-header {
+    padding: 8px 20px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 0.5px solid var(--border);
+    flex-shrink: 0;
+  }
+  .inv-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--companion-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .inv-context { flex: 1; }
+  .inv-context .ic-title {
+    font-size: 13px; font-weight: 500; color: var(--text-primary);
+  }
+  .inv-context .ic-sub {
+    font-size: 11px; color: var(--text-tertiary); margin-top: 1px;
+  }
+
+  /* Progress dots for domains */
+  .domain-progress {
+    display: flex;
+    gap: 4px;
+    padding: 10px 20px;
+    flex-shrink: 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .dp-dot {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+  }
+  .dp-dot.active { background: var(--companion-gradient); }
+  .dp-dot.done { background: var(--stage-7); }
+
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scrollbar-width: none;
+  }
+  .chat-area::-webkit-scrollbar { display: none; }
+
+  .chat-bubble {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+  .bubble-companion {
+    background: var(--companion-bubble);
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+  }
+  .bubble-user {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-bottom-right-radius: 4px;
+    align-self: flex-end;
+  }
+
+  .quick-replies {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-self: flex-end;
+  }
+  .qr-chip {
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .qr-chip.primary {
+    background: var(--companion-bubble);
+    border-color: rgba(127,119,221,0.25);
+    color: var(--mod-purpose);
+    font-weight: 500;
+  }
+
+  /* Captured items in chat */
+  .captured-list {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    align-self: flex-start;
+    max-width: 90%;
+  }
+  .cl-header {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .cl-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 0.5px solid var(--border);
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+  .cl-item:last-child { border-bottom: none; }
+  .cl-geo {
+    font-size: 10px;
+    color: var(--text-tertiary);
+  }
+  .cl-type {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  .soul-checkpoint {
+    background: rgba(212,83,126,0.06);
+    border: 1px solid rgba(212,83,126,0.12);
+    border-radius: 14px;
+    padding: 12px 16px;
+    align-self: flex-start;
+    max-width: 85%;
+  }
+  .sc-text {
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .sc-label {
+    font-size: 10px;
+    color: var(--mod-family);
+    font-weight: 500;
+    margin-top: 8px;
+  }
+
+  .chat-input-bar {
+    padding: 10px 20px 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    background: var(--bg);
+    border-top: 0.5px solid var(--border);
+  }
+  .chat-input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 20px;
+    background: var(--bg-surface);
+    border: 0.5px solid var(--border);
+    font-size: 14px;
+    color: var(--text-tertiary);
+  }
+  .chat-send {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--companion-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    border: none;
+    flex-shrink: 0;
+  }
+
+  /* ═══ Panorama screen ═══ */
+  .panorama-screen {
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pano-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .pano-header h2 {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .pano-header p {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .domain-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .domain-cell {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 10px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .domain-cell:hover { border-color: var(--border-strong); }
+  .domain-cell::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .domain-cell .dc-icon {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+  .domain-cell .dc-name {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .domain-cell .dc-stage {
+    font-size: 18px;
+    font-weight: 300;
+    margin-bottom: 2px;
+  }
+  .domain-cell .dc-label {
+    font-size: 9px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .domain-cell .dc-count {
+    position: absolute;
+    top: 8px; right: 8px;
+    font-size: 9px;
+    font-weight: 500;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+  }
+
+  .domain-cell.active {
+    border-color: rgba(127,119,221,0.3);
+    box-shadow: 0 2px 8px rgba(127,119,221,0.08);
+  }
+  .domain-cell.empty { opacity: 0.4; }
+
+  .pano-summary {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .ps-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+  .ps-row .ps-value {
+    font-weight: 500;
+  }
+  .ps-divider {
+    height: 0.5px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+
+  .pano-cta {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+    padding-bottom: 24px;
+  }
+  .pano-btn {
+    flex: 1;
+    padding: 14px 0;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .pano-btn.primary {
+    background: var(--companion-gradient);
+    color: white;
+    box-shadow: 0 4px 16px rgba(127,119,221,0.2);
+  }
+  .pano-btn.secondary {
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    border: 0.5px solid var(--border);
+  }
+
+  /* ═══ UX Notes ═══ */
+  .ux-notes {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+    color: #aaa;
+  }
+  .ux-notes h2 {
+    font-size: 18px; color: #ccc; margin-bottom: 16px; font-weight: 500;
+  }
+  .ux-notes h3 {
+    font-size: 14px; color: #999; margin: 20px 0 8px; font-weight: 500;
+  }
+  .ux-notes p, .ux-notes li {
+    font-size: 13px; line-height: 1.6; margin-bottom: 6px;
+  }
+  .ux-notes ul { padding-left: 20px; }
+  .decision {
+    background: rgba(127,119,221,0.1);
+    border-left: 3px solid #7F77DD;
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-size: 12px;
+    color: #bbb;
+  }
+  .decision strong { color: #ccc; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCENE 1: Welcome — primeiro contato                    -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="scene">
+  <div class="scene-label">1 · bem-vindo — primeiro contato</div>
+  <div class="scene-desc">Nunca começa com formulário. Começa com escuta. Tom quente, sem pressa.</div>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>08:00</span>
+      <span style="font-size:11px">◉ ◉ ◉</span>
+    </div>
+    <div class="screen">
+      <div class="welcome-screen">
+        <div class="raiz-symbol">
+          <div class="ring ring-1"></div>
+          <div class="ring ring-2"></div>
+          <div class="ring ring-3"></div>
+          <div class="core">·</div>
+        </div>
+
+        <div class="welcome-title">
+          vamos organizar<br>sua vida, <strong>uma<br>gaveta por vez.</strong>
+        </div>
+
+        <div class="welcome-sub">
+          todo mundo tem gavetas. digitais, físicas, mentais. a gente começa olhando o que existe — sem mover nada, sem julgar.
+        </div>
+
+        <button class="welcome-cta">começar</button>
+        <div class="welcome-skip">depois, talvez</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCENE 2: 3 portas de entrada                           -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="scene">
+  <div class="scene-label">2 · portas de entrada</div>
+  <div class="scene-desc">3 caminhos, sem caminho errado. A porta padrão é "me guia".</div>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>08:01</span>
+      <span style="font-size:11px">◉ ◉ ◉</span>
+    </div>
+    <div class="screen">
+      <div class="doors-screen">
+        <div class="doors-header">
+          <div class="companion-mini">○</div>
+          <h2>por onde você quer começar?</h2>
+          <p>não existe ordem certa.<br>escolha o que faz sentido agora.</p>
+        </div>
+
+        <div class="door-card door-easy">
+          <div class="door-emoji">✨</div>
+          <div class="door-title">o mais fácil</div>
+          <div class="door-desc">comunicação ou calendário — quick win pra criar momentum.</div>
+          <div class="door-tag">pra quem precisa de uma vitória rápida</div>
+        </div>
+
+        <div class="door-card door-pain">
+          <div class="door-emoji">🎯</div>
+          <div class="door-title">o que mais incomoda</div>
+          <div class="door-desc">o que tira sono. resolver alivia rápido — e o alívio move o resto.</div>
+          <div class="door-tag">pra quem sabe onde dói</div>
+        </div>
+
+        <div class="door-card door-guide">
+          <div class="door-default">recomendado</div>
+          <div class="door-emoji">○</div>
+          <div class="door-title">me guia</div>
+          <div class="door-desc">identidade primeiro — contas, emails, logins. de dentro pra fora.</div>
+          <div class="door-tag">pra quem tá perdido</div>
+        </div>
+
+        <div class="doors-footer">
+          <p>"você não está atrasado. o caos não é culpa sua.<br>a vida foi acontecendo e ninguém ensinou a organizar."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCENE 3: Inventory session — companion guia             -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="scene">
+  <div class="scene-label">3 · sessão de inventário — domínio identidade</div>
+  <div class="scene-desc">Companion guia o despejo livre. Captura items em tempo real. Soul checkpoint quando pesado.</div>
+  <div class="phone-frame" style="background:var(--bg)">
+    <div class="status-bar">
+      <span>08:05</span>
+      <span style="font-size:11px">◉ ◉ ◉</span>
+    </div>
+    <div class="screen">
+      <div class="inventory-screen">
+        <div class="inv-header">
+          <div class="inv-avatar">○</div>
+          <div class="inv-context">
+            <div class="ic-title">raiz · identidade</div>
+            <div class="ic-sub">estágio 1 · ver — inventário</div>
+          </div>
+        </div>
+
+        <!-- Domain progress: 1 of 9 active -->
+        <div class="domain-progress">
+          <div class="dp-dot active"></div>
+          <div class="dp-dot"></div>
+          <div class="dp-dot"></div>
+          <div class="dp-dot"></div>
+          <div class="dp-dot"></div>
+          <div class="dp-dot"></div>
+          <div class="dp-dot"></div>
+          <div class="dp-dot"></div>
+          <div class="dp-dot"></div>
+        </div>
+
+        <div class="chat-area">
+          <div class="chat-bubble bubble-companion">
+            vamos começar pelo mais básico: suas identidades digitais. me conta — quantas contas de email você tem?
+          </div>
+
+          <div class="chat-bubble bubble-user">
+            puts, umas 5 ou 6 eu acho. tem o gmail antigo, o hotmail que nunca deletei, o do trabalho, um pessoal novo...
+          </div>
+
+          <div class="chat-bubble bubble-companion">
+            normal. vamos listar todas, sem pressa. me diz cada uma — o email e pra que você usa.
+          </div>
+
+          <div class="chat-bubble bubble-user">
+            r@ramalho.au — esse é o principal agora<br>
+            rr@atlasframes.com.au — atlas<br>
+            r.r@saystay.com — negócio antigo, tem google photos aqui<br>
+            rsmramalho@gmail.com — primeiro gmail<br>
+            rsmramalho@hotmail.com — adolescência
+          </div>
+
+          <!-- Captured items card -->
+          <div class="captured-list">
+            <div class="cl-header">5 contas capturadas</div>
+            <div class="cl-item">
+              <span class="cl-geo" style="color:var(--stage-1)">·</span>
+              r@ramalho.au — principal
+              <span class="cl-type" style="background:rgba(136,135,128,0.1);color:var(--mod-bridge)">resource</span>
+            </div>
+            <div class="cl-item">
+              <span class="cl-geo" style="color:var(--stage-1)">·</span>
+              rr@atlasframes.com.au — atlas
+              <span class="cl-type" style="background:rgba(55,138,221,0.1);color:var(--mod-work)">resource</span>
+            </div>
+            <div class="cl-item">
+              <span class="cl-geo" style="color:var(--stage-1)">·</span>
+              r.r@saystay.com — fotos aqui
+              <span class="cl-type" style="background:rgba(136,135,128,0.1);color:var(--mod-bridge)">resource</span>
+            </div>
+            <div class="cl-item">
+              <span class="cl-geo" style="color:var(--stage-1)">·</span>
+              rsmramalho@gmail.com — pouco uso
+              <span class="cl-type" style="background:rgba(136,135,128,0.1);color:var(--mod-bridge)">resource</span>
+            </div>
+            <div class="cl-item">
+              <span class="cl-geo" style="color:var(--stage-1)">·</span>
+              rsmramalho@hotmail.com — histórico
+              <span class="cl-type" style="background:rgba(136,135,128,0.1);color:var(--mod-bridge)">resource</span>
+            </div>
+          </div>
+
+          <div class="chat-bubble bubble-companion">
+            5 contas. normal pra quem tem vida digital há mais de uma década. alguma tem coisa importante que você tem medo de perder? fotos, documentos?
+          </div>
+
+          <!-- Soul checkpoint -->
+          <div class="soul-checkpoint">
+            <div class="sc-text">"como tá sendo olhar pra tudo isso?"</div>
+            <div class="sc-label">soul checkpoint · opcional</div>
+          </div>
+
+          <div class="quick-replies">
+            <div class="qr-chip">tranquilo, bora continuar</div>
+            <div class="qr-chip">pesado... vamos pausar</div>
+            <div class="qr-chip primary">tem foto importante no saystay</div>
+          </div>
+        </div>
+
+        <div class="chat-input-bar">
+          <div class="chat-input">despejar mais...</div>
+          <button class="chat-send active">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCENE 4: Panorama — mapa do inventário                 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="scene">
+  <div class="scene-label">4 · panorama — mapa do que existe</div>
+  <div class="scene-desc">Após inventário, o sistema espelha de volta. 9 domínios com geometria de progresso.</div>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>08:25</span>
+      <span style="font-size:11px">◉ ◉ ◉</span>
+    </div>
+    <div class="screen">
+      <div class="panorama-screen">
+        <div class="pano-header">
+          <h2>sua raiz, agora</h2>
+          <p>panorama do inventário — cada gaveta no seu estágio</p>
+        </div>
+
+        <div class="domain-grid">
+          <!-- Identity — just inventoried -->
+          <div class="domain-cell active" style="--c:var(--mod-bridge)">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--c)"></div>
+            <div class="dc-icon">🔑</div>
+            <div class="dc-name">identidade</div>
+            <div class="dc-stage" style="color:var(--stage-1)">·</div>
+            <div class="dc-label">ver</div>
+            <div class="dc-count">6</div>
+          </div>
+
+          <!-- Documents — empty -->
+          <div class="domain-cell empty" style="--c:var(--mod-bridge)">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--c);opacity:0.3"></div>
+            <div class="dc-icon">📄</div>
+            <div class="dc-name">documentos</div>
+            <div class="dc-stage" style="color:var(--text-tertiary)">—</div>
+            <div class="dc-label">não iniciado</div>
+          </div>
+
+          <!-- Health -->
+          <div class="domain-cell empty" style="--c:var(--mod-body)">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--c);opacity:0.3"></div>
+            <div class="dc-icon">❤️</div>
+            <div class="dc-name">saúde</div>
+            <div class="dc-stage" style="color:var(--text-tertiary)">—</div>
+            <div class="dc-label">não iniciado</div>
+          </div>
+
+          <!-- Finance -->
+          <div class="domain-cell empty" style="--c:var(--mod-finance)">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--c);opacity:0.3"></div>
+            <div class="dc-icon">💰</div>
+            <div class="dc-name">finanças</div>
+            <div class="dc-stage" style="color:var(--text-tertiary)">—</div>
+            <div class="dc-label">não iniciado</div>
+          </div>
+
+          <!-- Storage — partially started -->
+          <div class="domain-cell" style="--c:var(--mod-bridge)">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--c)"></div>
+            <div class="dc-icon">☁️</div>
+            <div class="dc-name">arquivos</div>
+            <div class="dc-stage" style="color:var(--stage-1)">·</div>
+            <div class="dc-label">ver</div>
+            <div class="dc-count">3</div>
+          </div>
+
+          <!-- Memories -->
+          <div class="domain-cell" style="--c:var(--mod-family)">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--c)"></div>
+            <div class="dc-icon">📸</div>
+            <div class="dc-name">memórias</div>
+            <div class="dc-stage" style="color:var(--stage-1)">·</div>
+            <div class="dc-label">ver</div>
+            <div class="dc-count">2</div>
+          </div>
+
+          <!-- Time -->
+          <div class="domain-cell empty" style="--c:var(--mod-bridge)">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--c);opacity:0.3"></div>
+            <div class="dc-icon">📅</div>
+            <div class="dc-name">tempo</div>
+            <div class="dc-stage" style="color:var(--text-tertiary)">—</div>
+            <div class="dc-label">não iniciado</div>
+          </div>
+
+          <!-- Communication -->
+          <div class="domain-cell empty" style="--c:var(--mod-social)">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--c);opacity:0.3"></div>
+            <div class="dc-icon">💬</div>
+            <div class="dc-name">comunicação</div>
+            <div class="dc-stage" style="color:var(--text-tertiary)">—</div>
+            <div class="dc-label">não iniciado</div>
+          </div>
+
+          <!-- Projects -->
+          <div class="domain-cell" style="--c:var(--mod-work)">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--c)"></div>
+            <div class="dc-icon">🚀</div>
+            <div class="dc-name">projetos</div>
+            <div class="dc-stage" style="color:var(--stage-1)">·</div>
+            <div class="dc-label">ver</div>
+            <div class="dc-count">4</div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="pano-summary">
+          <div class="ps-row">
+            <span>items capturados</span>
+            <span class="ps-value">15</span>
+          </div>
+          <div class="ps-divider"></div>
+          <div class="ps-row">
+            <span>domínios tocados</span>
+            <span class="ps-value">4 de 9</span>
+          </div>
+          <div class="ps-divider"></div>
+          <div class="ps-row">
+            <span>tempo de sessão</span>
+            <span class="ps-value">25 min</span>
+          </div>
+          <div class="ps-divider"></div>
+          <div class="ps-row">
+            <span>próximo sugerido</span>
+            <span class="ps-value" style="color:var(--mod-bridge)">identidade → decidir</span>
+          </div>
+        </div>
+
+        <div class="pano-cta">
+          <button class="pano-btn secondary">pausar</button>
+          <button class="pano-btn primary">continuar →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- UX DECISION NOTES                                      -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="ux-notes">
+  <h2>Raiz Onboarding — Decisões de UX</h2>
+
+  <div class="decision">
+    <strong>D59:</strong> Welcome screen = sem formulário, sem login, sem setup. Começa com filosofia: "uma gaveta por vez". Símbolo = anéis concêntricos com geometria do ponto (·) no centro → de dentro pra fora. "Depois, talvez" como escape respeitoso.
+  </div>
+
+  <div class="decision">
+    <strong>D60:</strong> 3 portas de entrada como cards verticais. Cada uma com cor, emoji, e tag descritivo ("pra quem precisa de momentum"). "Me guia" é a porta padrão (highlighted, badge "recomendado"). Nenhuma porta é errada.
+  </div>
+
+  <div class="decision">
+    <strong>D61:</strong> Sessão de inventário = companion full-height (não bottom sheet). É o modo principal. Header mostra domínio + estágio. Progress dots mostram 9 domínios (1 ativo, rest pending). O companion guia com perguntas abertas, captura items em tempo real como cards inline.
+  </div>
+
+  <div class="decision">
+    <strong>D62:</strong> Captured items card = lista inline no chat. Mostra items capturados com geometria (·), título, e type chip (resource, doc, etc). Atualiza conforme o usuário despeja. O companion classifica silenciosamente — o usuário vê o resultado, não o processo.
+  </div>
+
+  <div class="decision">
+    <strong>D63:</strong> Soul checkpoints = cards com borda rosa, texto em itálico, label "soul checkpoint · opcional". Aparecem em 5 momentos: início, achado emocional, decisão difícil, vitória, fadiga. Quick replies incluem "pesado... vamos pausar" que é respeitado imediatamente.
+  </div>
+
+  <div class="decision">
+    <strong>D64:</strong> Panorama = grid 3×3 dos 9 domínios com geometria de progresso. Domínios não iniciados ficam dimmed (opacity 0.4). Domínios com items mostram contagem. O ativo (último inventariado) tem borda highlight. Summary card mostra totais + próximo sugerido.
+  </div>
+
+  <div class="decision">
+    <strong>D65:</strong> Pausar é sempre válido. Botão "pausar" é igual em peso visual ao "continuar". Não existe pressão. "A geometria espera." Progresso fica salvo. O panorama reaparece quando o usuário volta.
+  </div>
+
+  <div class="decision">
+    <strong>D66:</strong> Formatos de sessão controlados pela duração natural. O companion observa: 10 min sem interação → "quer pausar aqui? tá salvo." Não existe timer visível. O tempo aparece só no summary (panorama).
+  </div>
+
+  <h3>Flow completo</h3>
+  <ul>
+    <li>1. Welcome → "começar"</li>
+    <li>2. 3 portas → escolhe uma</li>
+    <li>3. Companion abre no domínio selecionado</li>
+    <li>4. Despejo livre → companion captura + classifica</li>
+    <li>5. Soul checkpoints em momentos emocionais</li>
+    <li>6. Panorama → espelha o que foi capturado</li>
+    <li>7. "Continuar" → próximo domínio / "Pausar" → salva e sai</li>
+    <li>8. Após todos os domínios: Raiz Dashboard como feature permanente</li>
+  </ul>
+
+  <h3>Onde vive na navegação</h3>
+  <ul>
+    <li>Primeiro acesso: onboarding intercepts antes da Home</li>
+    <li>Depois: Raiz Dashboard acessível via Home (seção "raiz" abaixo dos items) ou via Settings</li>
+    <li>Sessões de domínio: tap no domínio no dashboard → abre companion no domínio</li>
+    <li>NÃO é uma tab no BottomNav — é feature, não seção</li>
+  </ul>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindRoot — Triage & Pipeline</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --bg-card: #FFFFFF;
+    --bg-surface: #F5F4F0;
+    --text-primary: #1A1A18;
+    --text-secondary: #6B6A65;
+    --text-tertiary: #9C9A92;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.14);
+
+    --mod-work: #378ADD;
+    --mod-purpose: #7F77DD;
+    --mod-body: #D85A30;
+    --mod-mind: #1D9E75;
+    --mod-family: #D4537E;
+    --mod-bridge: #888780;
+    --mod-finance: #639922;
+    --mod-social: #BA7517;
+
+    --type-spec-bg: #EEEDFE; --type-spec: #534AB7;
+    --type-task-bg: #E6F1FB; --type-task: #185FA5;
+    --type-note-bg: #EAF3DE; --type-note: #3B6D11;
+    --type-reflection-bg: #FBEAF0; --type-reflection: #993556;
+    --type-reco-bg: #FAEEDA; --type-reco: #854F0B;
+    --type-project-bg: #E1F5EE; --type-project: #0F6E56;
+    --type-habit-bg: #FAEEDA; --type-habit: #854F0B;
+    --type-recipe-bg: #FAECE7; --type-recipe: #993C1D;
+
+    --stage-1: #9C9A92;
+    --stage-2: #BA7517;
+    --stage-3: #D85A30;
+    --stage-4: #185FA5;
+    --stage-5: #534AB7;
+    --stage-6: #0F6E56;
+    --stage-7: #1D9E75;
+
+    --stage-1-bg: #F1EFE8;
+    --stage-2-bg: #FAEEDA;
+    --stage-3-bg: #FAECE7;
+    --stage-4-bg: #E6F1FB;
+    --stage-5-bg: #EEEDFE;
+    --stage-6-bg: #E1F5EE;
+    --stage-7-bg: #EAF3DE;
+
+    --conf-high: #1D9E75;
+    --conf-mid: #BA7517;
+    --conf-low: #E24B4A;
+
+    --warning-bg: #FAEEDA;
+    --warning: #854F0B;
+    --danger-bg: #FCEBEB;
+    --danger: #A32D2D;
+
+    --swipe-confirm: #1D9E75;
+    --swipe-skip: #9C9A92;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1A1A18;
+      --bg-card: #2C2C2A;
+      --bg-surface: #222220;
+      --text-primary: #E8E6DE;
+      --text-secondary: #9C9A92;
+      --text-tertiary: #6B6A65;
+      --border: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.14);
+      --stage-1-bg: #333330;
+      --stage-2-bg: #3D3520;
+      --stage-3-bg: #3D2A20;
+      --stage-4-bg: #1E2D3D;
+      --stage-5-bg: #2A283D;
+      --stage-6-bg: #1E3530;
+      --stage-7-bg: #253520;
+      --warning-bg: #3D3520;
+      --danger-bg: #3D2020;
+      --type-spec-bg: #2A283D; --type-task-bg: #1E2D3D;
+      --type-note-bg: #253520; --type-reflection-bg: #3D2030;
+      --type-reco-bg: #3D3520; --type-project-bg: #1E3530;
+      --type-habit-bg: #3D3520; --type-recipe-bg: #3D2A20;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #1A1A18;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .phone-frame {
+    width: 375px;
+    height: 812px;
+    background: var(--bg);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 0 8px #333, 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .status-bar {
+    height: 54px;
+    padding: 14px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .screen {
+    height: calc(100% - 54px - 68px);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  .header {
+    padding: 8px 20px 16px;
+  }
+  .header h1 {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* ═══ Tab switcher ═══ */
+  .tab-bar {
+    display: flex;
+    margin: 0 20px 16px;
+    background: var(--bg-surface);
+    border-radius: 10px;
+    padding: 3px;
+  }
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .tab.active {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  /* ═══ Pipeline view ═══ */
+  .pipeline-view { padding: 0 20px 20px; }
+  .pipeline-view:not(.active) { display: none; }
+
+  .funnel-visual {
+    margin: 0 0 20px;
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 48px;
+    padding: 0 4px;
+  }
+  .funnel-bar {
+    flex: 1;
+    border-radius: 4px 4px 2px 2px;
+    transition: height 0.4s ease;
+    position: relative;
+    cursor: pointer;
+  }
+  .funnel-bar:hover { opacity: 0.85; }
+  .funnel-bar .funnel-label {
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+  }
+  .funnel-bar .funnel-count {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .below-floor-banner {
+    margin: 0 0 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--warning-bg);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--warning);
+    font-weight: 500;
+  }
+  .below-floor-banner .detail {
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-left: auto;
+    font-size: 11px;
+  }
+
+  /* Stage rows */
+  .stage-row {
+    position: relative;
+    margin-bottom: 2px;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .stage-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+  .stage-geo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 400;
+    flex-shrink: 0;
+    color: white;
+  }
+  .stage-info { flex: 1; min-width: 0; }
+  .stage-name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .stage-label { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+  .stage-count {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    min-width: 28px;
+    text-align: right;
+  }
+  .stage-count.zero { color: var(--text-tertiary); font-weight: 300; }
+  .stage-badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 10px;
+    position: absolute;
+    top: 8px;
+    right: 14px;
+  }
+  .badge-warning { background: var(--warning-bg); color: var(--warning); }
+  .badge-stale { background: var(--danger-bg); color: var(--danger); }
+
+  .stage-connector {
+    width: 2px;
+    height: 8px;
+    margin: 0 auto;
+    background: var(--border);
+  }
+
+  .stage-items {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0 14px;
+  }
+  .stage-row.expanded .stage-items {
+    max-height: 400px;
+    padding: 0 14px 12px;
+  }
+  .stage-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    margin-top: 4px;
+    border-radius: 8px;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+  .stage-item .mod-bar {
+    width: 3px;
+    height: 24px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .stage-item .item-title {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .type-chip {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .below-floor-icon { font-size: 12px; color: var(--warning); }
+  .stage-expand-hint {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    text-align: center;
+    padding-top: 4px;
+  }
+
+  /* ═══ Triage view ═══ */
+  .triage-view { padding: 0 20px 20px; display: none; }
+  .triage-view.active { display: block; }
+
+  /* Mode toggle */
+  .triage-mode-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .triage-progress {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .triage-progress .current {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .triage-progress .total {
+    font-size: 13px;
+    color: var(--text-tertiary);
+  }
+  .mode-switch {
+    display: flex;
+    background: var(--bg-surface);
+    border-radius: 8px;
+    padding: 2px;
+    gap: 1px;
+  }
+  .mode-btn {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .mode-btn.active {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  /* Progress dots */
+  .triage-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .triage-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    transition: all 0.3s;
+  }
+  .triage-dot.active {
+    background: var(--text-primary);
+    width: 20px;
+    border-radius: 4px;
+  }
+  .triage-dot.done {
+    background: var(--swipe-confirm);
+  }
+  .triage-dot.skipped {
+    background: var(--border);
+  }
+
+  /* ═══ Swipe card ═══ */
+  .swipe-container {
+    position: relative;
+    height: 380px;
+    perspective: 800px;
+    margin-bottom: 16px;
+  }
+
+  .swipe-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 18px;
+    padding: 20px;
+    touch-action: pan-y;
+    cursor: grab;
+    transition: transform 0.35s cubic-bezier(.4,.2,.2,1), opacity 0.35s ease;
+    will-change: transform, opacity;
+    transform-origin: center center;
+  }
+  .swipe-card:active { cursor: grabbing; }
+  .swipe-card.behind {
+    transform: scale(0.95) translateY(12px);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .swipe-card.active-card {
+    z-index: 2;
+  }
+  .swipe-card.exiting-right {
+    transform: translateX(120%) rotate(12deg);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .swipe-card.exiting-left {
+    transform: translateX(-120%) rotate(-12deg);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Swipe feedback overlays */
+  .swipe-feedback {
+    position: absolute;
+    top: 16px;
+    padding: 6px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.15s;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .swipe-feedback.confirm-hint {
+    right: 16px;
+    background: rgba(29,158,117,0.12);
+    color: var(--swipe-confirm);
+    border: 1.5px solid var(--swipe-confirm);
+  }
+  .swipe-feedback.skip-hint {
+    left: 16px;
+    background: rgba(156,154,146,0.12);
+    color: var(--swipe-skip);
+    border: 1.5px solid var(--swipe-skip);
+  }
+
+  /* Card inner content */
+  .sc-module-bar {
+    width: 100%;
+    height: 3px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+  .sc-stale-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--danger);
+    background: var(--danger-bg);
+    padding: 3px 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  .sc-raw {
+    font-size: 18px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-bottom: 20px;
+    font-weight: 400;
+  }
+  .sc-raw .geo-prefix {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    margin-right: 6px;
+  }
+
+  .sc-suggestion {
+    background: var(--bg-surface);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .sc-suggestion-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .sc-suggestion-header .ai-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--mod-purpose), var(--mod-work));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: white;
+    font-weight: 500;
+  }
+  .sc-suggestion-header span {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .sc-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .sc-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1.5px solid transparent;
+  }
+  .sc-chip.selected { border-color: currentColor; }
+  .sc-chip.alt { opacity: 0.6; font-weight: 400; }
+
+  .sc-confidence {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .sc-confidence .bar {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .sc-confidence .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .sc-confidence .pct {
+    font-weight: 500;
+    min-width: 36px;
+    text-align: right;
+  }
+
+  /* Edit panel inside swipe card */
+  .sc-edit-panel {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 0.5px solid var(--border);
+    display: none;
+  }
+  .sc-edit-panel.open { display: block; }
+  .sc-edit-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .sc-edit-label {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    width: 50px;
+    flex-shrink: 0;
+  }
+  .sc-edit-options {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  .sc-edit-opt {
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+  .sc-edit-opt.selected {
+    background: var(--type-task-bg);
+    color: var(--type-task);
+    border-color: var(--type-task);
+  }
+
+  /* Swipe action bar */
+  .swipe-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 8px 0;
+  }
+  .swipe-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    font-family: inherit;
+  }
+  .swipe-btn:hover { transform: scale(1.08); }
+  .swipe-btn:active { transform: scale(0.95); }
+  .swipe-btn.skip-btn {
+    width: 44px;
+    height: 44px;
+    background: var(--bg-surface);
+    color: var(--text-tertiary);
+    font-size: 18px;
+    border: 0.5px solid var(--border);
+  }
+  .swipe-btn.edit-btn {
+    width: 44px;
+    height: 44px;
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    font-size: 14px;
+    border: 0.5px solid var(--border);
+  }
+  .swipe-btn.confirm-btn {
+    width: 56px;
+    height: 56px;
+    background: var(--swipe-confirm);
+    color: white;
+    font-size: 22px;
+    border: none;
+    box-shadow: 0 4px 14px rgba(29,158,117,0.25);
+  }
+
+  .swipe-labels {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-top: 6px;
+  }
+  .swipe-labels span { text-align: center; }
+  .swipe-labels span:nth-child(2) { margin: 0 6px; }
+
+  /* ═══ List mode (same as before, compact) ═══ */
+  .list-mode { display: none; }
+  .list-mode.active { display: block; }
+  .swipe-mode { display: none; }
+  .swipe-mode.active { display: block; }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-title .geo { font-size: 12px; opacity: 0.5; }
+
+  /* List triage card (compact) */
+  .list-card {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .list-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .lc-raw {
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-bottom: 10px;
+  }
+  .lc-raw .geo-prefix {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-right: 4px;
+  }
+  .lc-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .lc-chip {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 6px;
+  }
+  .lc-conf {
+    font-size: 11px;
+    font-weight: 500;
+    margin-left: auto;
+  }
+  .lc-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .lc-btn {
+    flex: 1;
+    padding: 8px 0;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .lc-btn.confirm { background: var(--type-project-bg); color: var(--type-project); }
+  .lc-btn.edit { background: var(--bg-surface); color: var(--text-secondary); }
+  .lc-btn.skip { background: none; color: var(--text-tertiary); flex: 0.5; }
+
+  .lc-stale {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--danger);
+    background: var(--danger-bg);
+    padding: 2px 8px;
+    border-radius: 8px;
+  }
+
+  /* Classified queue */
+  .classified-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    margin-bottom: 4px;
+    border-radius: 10px;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    opacity: 0.65;
+  }
+  .classified-item .ci-geo {
+    font-size: 14px;
+  }
+  .classified-item .ci-title {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ═══ All done state ═══ */
+  .triage-done {
+    text-align: center;
+    padding: 48px 20px;
+    display: none;
+  }
+  .triage-done.active { display: block; }
+  .triage-done .geo-done {
+    font-size: 48px;
+    color: var(--swipe-confirm);
+    margin-bottom: 12px;
+  }
+  .triage-done h3 {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+  .triage-done p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .triage-done .stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .triage-done .stat {
+    text-align: center;
+  }
+  .triage-done .stat-num {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .triage-done .stat-label {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+
+  /* ═══ Bottom nav ═══ */
+  .bottom-nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 68px;
+    background: var(--bg-card);
+    border-top: 0.5px solid var(--border);
+    display: flex;
+    padding: 8px 0 20px;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    transition: color 0.15s;
+  }
+  .nav-item.active { color: var(--text-primary); }
+  .nav-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .fab {
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--text-primary);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 300;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: transform 0.15s;
+    z-index: 10;
+  }
+  .fab:hover { transform: scale(1.05); }
+
+  /* Legend */
+  .legend {
+    padding: 0 4px;
+    margin-bottom: 20px;
+  }
+  .legend-title {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 8px;
+  }
+  .legend-pills {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+  }
+  .stat-pill .geo { font-size: 10px; opacity: 0.7; }
+
+  /* Animations */
+  @keyframes card-entrance {
+    from { opacity: 0; transform: scale(0.96) translateY(12px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .swipe-card.entering {
+    animation: card-entrance 0.3s cubic-bezier(.4,.2,.2,1) forwards;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="status-bar">
+    <span>17:42</span>
+    <span style="font-size:12px;letter-spacing:1px">····</span>
+    <span style="font-size:12px">94%</span>
+  </div>
+
+  <div class="screen" id="screen">
+    <div class="header">
+      <h1>pipeline</h1>
+      <div class="header-sub">32 atoms · 4 need triage</div>
+    </div>
+
+    <div class="tab-bar">
+      <div class="tab active" id="tab-pipeline" onclick="switchTab('pipeline')">pipeline</div>
+      <div class="tab" id="tab-triage" onclick="switchTab('triage')">triage <span style="color:var(--danger);font-weight:500">4</span></div>
+    </div>
+
+    <!-- ═══════════ PIPELINE TAB ═══════════ -->
+    <div class="pipeline-view active" id="pipeline-tab">
+      <div class="funnel-visual">
+        <div class="funnel-bar" style="height:35%;background:var(--stage-1)" onclick="scrollToStage(1)">
+          <span class="funnel-count">4</span><span class="funnel-label">·</span>
+        </div>
+        <div class="funnel-bar" style="height:25%;background:var(--stage-2)" onclick="scrollToStage(2)">
+          <span class="funnel-count">3</span><span class="funnel-label">—</span>
+        </div>
+        <div class="funnel-bar" style="height:50%;background:var(--stage-3)" onclick="scrollToStage(3)">
+          <span class="funnel-count">6</span><span class="funnel-label">△</span>
+        </div>
+        <div class="funnel-bar" style="height:40%;background:var(--stage-4)" onclick="scrollToStage(4)">
+          <span class="funnel-count">5</span><span class="funnel-label">□</span>
+        </div>
+        <div class="funnel-bar" style="height:60%;background:var(--stage-5)" onclick="scrollToStage(5)">
+          <span class="funnel-count">7</span><span class="funnel-label">⬠</span>
+        </div>
+        <div class="funnel-bar" style="height:15%;background:var(--stage-6)" onclick="scrollToStage(6)">
+          <span class="funnel-count">2</span><span class="funnel-label">⬡</span>
+        </div>
+        <div class="funnel-bar" style="height:45%;background:var(--stage-7)" onclick="scrollToStage(7)">
+          <span class="funnel-count">5</span><span class="funnel-label">○</span>
+        </div>
+      </div>
+      <div style="height:20px"></div>
+
+      <div class="below-floor-banner">
+        <span>⚠</span> 3 items below floor
+        <span class="detail">tap to see →</span>
+      </div>
+
+      <!-- Stage rows -->
+      <div class="stage-row" id="stage-1" style="background:var(--stage-1-bg)" onclick="toggleStage(this)">
+        <div class="stage-header">
+          <div class="stage-geo" style="background:var(--stage-1)">·</div>
+          <div class="stage-info"><div class="stage-name">inbox</div><div class="stage-label">captura — texto bruto</div></div>
+          <div class="stage-count">4</div>
+          <div class="stage-badge badge-stale">2 stale</div>
+        </div>
+        <div class="stage-items">
+          <div class="stage-item"><div class="mod-bar" style="background:var(--text-tertiary)"></div><span class="item-title">"experimentar aquele ramen do centro"</span></div>
+          <div class="stage-item" style="border-color:var(--danger)"><div class="mod-bar" style="background:var(--text-tertiary)"></div><span class="item-title" style="color:var(--danger)">"pesquisar solar panels mt samson" <span style="font-size:10px">9d</span></span></div>
+          <div class="stage-item" style="border-color:var(--danger)"><div class="mod-bar" style="background:var(--text-tertiary)"></div><span class="item-title" style="color:var(--danger)">"livro que a De recomendou" <span style="font-size:10px">11d</span></span></div>
+          <div class="stage-item"><div class="mod-bar" style="background:var(--text-tertiary)"></div><span class="item-title">"ideia: atom engine marketplace"</span></div>
+        </div>
+      </div>
+      <div class="stage-connector"></div>
+
+      <div class="stage-row" id="stage-2" style="background:var(--stage-2-bg)" onclick="toggleStage(this)">
+        <div class="stage-header">
+          <div class="stage-geo" style="background:var(--stage-2)">—</div>
+          <div class="stage-info"><div class="stage-name">classified</div><div class="stage-label">intenção — type + module</div></div>
+          <div class="stage-count">3</div>
+        </div>
+        <div class="stage-items">
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-mind)"></div><span class="item-title">podcast sobre estoicismo</span><span class="type-chip" style="background:var(--type-reco-bg);color:var(--type-reco)">podcast</span></div>
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-work)"></div><span class="item-title">refatorar auth no MindRoot</span><span class="type-chip" style="background:var(--type-task-bg);color:var(--type-task)">task</span></div>
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-body)"></div><span class="item-title">receita frango thai</span><span class="type-chip" style="background:var(--type-recipe-bg);color:var(--type-recipe)">recipe</span></div>
+        </div>
+      </div>
+      <div class="stage-connector"></div>
+
+      <div class="stage-row" id="stage-3" style="background:var(--stage-3-bg)" onclick="toggleStage(this)">
+        <div class="stage-header">
+          <div class="stage-geo" style="background:var(--stage-3)">△</div>
+          <div class="stage-info"><div class="stage-name">structured</div><div class="stage-label">template aplicado + UUID</div></div>
+          <div class="stage-count">6</div>
+          <div class="stage-badge badge-warning">1 below</div>
+        </div>
+        <div class="stage-items">
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-work)"></div><span class="item-title">setup CI/CD pipeline</span><span class="type-chip" style="background:var(--type-task-bg);color:var(--type-task)">task</span></div>
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-body)"></div><span class="item-title">calistenia básica</span><span class="type-chip" style="background:var(--type-recipe-bg);color:var(--type-recipe)">workout</span></div>
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-mind)"></div><span class="item-title">reflexão sobre medo</span><span class="type-chip" style="background:var(--type-reflection-bg);color:var(--type-reflection)">reflection</span><span class="below-floor-icon">⚠</span></div>
+          <div class="stage-expand-hint">+3 more</div>
+        </div>
+      </div>
+      <div class="stage-connector"></div>
+
+      <div class="stage-row" id="stage-4" style="background:var(--stage-4-bg)" onclick="toggleStage(this)">
+        <div class="stage-header">
+          <div class="stage-geo" style="background:var(--stage-4)">□</div>
+          <div class="stage-info"><div class="stage-name">validated</div><div class="stage-label">4 portões + naming</div></div>
+          <div class="stage-count">5</div>
+        </div>
+        <div class="stage-items">
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-work)"></div><span class="item-title">deploy Supabase triggers</span><span class="type-chip" style="background:var(--type-task-bg);color:var(--type-task)">task</span></div>
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-body)"></div><span class="item-title">carbonara clássica</span><span class="type-chip" style="background:var(--type-recipe-bg);color:var(--type-recipe)">recipe</span></div>
+          <div class="stage-expand-hint">+3 more</div>
+        </div>
+      </div>
+      <div class="stage-connector"></div>
+
+      <div class="stage-row" id="stage-5" style="background:var(--stage-5-bg)" onclick="toggleStage(this)">
+        <div class="stage-header">
+          <div class="stage-geo" style="background:var(--stage-5)">⬠</div>
+          <div class="stage-info"><div class="stage-name">connected</div><div class="stage-label">parte do grafo</div></div>
+          <div class="stage-count">7</div>
+          <div class="stage-badge badge-warning">2 below</div>
+        </div>
+        <div class="stage-items">
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-work)"></div><span class="item-title">Auto-Triage Engine spec</span><span class="type-chip" style="background:var(--type-spec-bg);color:var(--type-spec)">spec</span></div>
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-work)"></div><span class="item-title">Atom Engine</span><span class="type-chip" style="background:var(--type-project-bg);color:var(--type-project)">project</span></div>
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-purpose)"></div><span class="item-title">Muda</span><span class="type-chip" style="background:var(--type-project-bg);color:var(--type-project)">project</span><span class="below-floor-icon">⚠</span></div>
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-purpose)"></div><span class="item-title">Yugar Commons</span><span class="type-chip" style="background:var(--type-project-bg);color:var(--type-project)">project</span><span class="below-floor-icon">⚠</span></div>
+          <div class="stage-expand-hint">+3 more</div>
+        </div>
+      </div>
+      <div class="stage-connector"></div>
+
+      <div class="stage-row" id="stage-6" style="background:var(--stage-6-bg)" onclick="toggleStage(this)">
+        <div class="stage-header">
+          <div class="stage-geo" style="background:var(--stage-6)">⬡</div>
+          <div class="stage-info"><div class="stage-name">propagated</div><div class="stage-label">efeito cascata registrado</div></div>
+          <div class="stage-count zero">2</div>
+        </div>
+        <div class="stage-items">
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-work)"></div><span class="item-title">schema v2 migration</span><span class="type-chip" style="background:var(--type-spec-bg);color:var(--type-spec)">spec</span></div>
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-work)"></div><span class="item-title">MindRoot UX wireframes</span><span class="type-chip" style="background:var(--type-task-bg);color:var(--type-task)">task</span></div>
+        </div>
+      </div>
+      <div class="stage-connector"></div>
+
+      <div class="stage-row" id="stage-7" style="background:var(--stage-7-bg)" onclick="toggleStage(this)">
+        <div class="stage-header">
+          <div class="stage-geo" style="background:var(--stage-7)">○</div>
+          <div class="stage-info"><div class="stage-name">committed</div><div class="stage-label">visível em todas as camadas</div></div>
+          <div class="stage-count">5</div>
+        </div>
+        <div class="stage-items">
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-bridge)"></div><span class="item-title">wrap 30 Mar 2026</span><span class="type-chip" style="background:var(--stage-7-bg);color:var(--stage-7)">wrap</span></div>
+          <div class="stage-item"><div class="mod-bar" style="background:var(--mod-bridge)"></div><span class="item-title">wrap 29 Mar 2026</span><span class="type-chip" style="background:var(--stage-7-bg);color:var(--stage-7)">wrap</span></div>
+          <div class="stage-expand-hint">+3 more</div>
+        </div>
+      </div>
+
+      <div style="height:30px"></div>
+      <div class="legend">
+        <div class="legend-title">Genesis stages</div>
+        <div class="legend-pills">
+          <span class="stat-pill"><span class="geo">·</span> inbox</span>
+          <span class="stat-pill"><span class="geo">—</span> classified</span>
+          <span class="stat-pill"><span class="geo">△</span> structured</span>
+          <span class="stat-pill"><span class="geo">□</span> validated</span>
+          <span class="stat-pill"><span class="geo">⬠</span> connected</span>
+          <span class="stat-pill"><span class="geo">⬡</span> propagated</span>
+          <span class="stat-pill"><span class="geo">○</span> committed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ TRIAGE TAB ═══════════ -->
+    <div class="triage-view" id="triage-tab">
+
+      <!-- Mode toggle + progress -->
+      <div class="triage-mode-toggle">
+        <div class="triage-progress">
+          <span class="current" id="triage-current">1</span>
+          <span class="total">/ 4</span>
+        </div>
+        <div class="mode-switch">
+          <div class="mode-btn active" id="mode-swipe" onclick="setMode('swipe')">swipe</div>
+          <div class="mode-btn" id="mode-list" onclick="setMode('list')">list</div>
+        </div>
+      </div>
+
+      <!-- Progress dots -->
+      <div class="triage-dots" id="triage-dots">
+        <div class="triage-dot active"></div>
+        <div class="triage-dot"></div>
+        <div class="triage-dot"></div>
+        <div class="triage-dot"></div>
+      </div>
+
+      <!-- ═══ SWIPE MODE ═══ -->
+      <div class="swipe-mode active" id="swipe-mode">
+        <div class="swipe-container" id="swipe-container">
+
+          <!-- Card 4 (behind behind) -->
+          <div class="swipe-card behind" style="transform:scale(0.9) translateY(24px);opacity:0.3" data-index="3">
+            <div class="sc-module-bar" style="background:var(--mod-mind)"></div>
+            <div class="sc-raw"><span class="geo-prefix">·</span>"livro que a De recomendou"</div>
+          </div>
+
+          <!-- Card 3 (behind) -->
+          <div class="swipe-card behind" data-index="2">
+            <div class="sc-module-bar" style="background:var(--mod-purpose)"></div>
+            <div class="sc-raw"><span class="geo-prefix">·</span>"pesquisar solar panels mt samson"</div>
+          </div>
+
+          <!-- Card 2 (behind) -->
+          <div class="swipe-card behind" data-index="1">
+            <div class="sc-module-bar" style="background:var(--mod-work)"></div>
+            <div class="sc-raw"><span class="geo-prefix">·</span>"ideia: atom engine marketplace"</div>
+          </div>
+
+          <!-- Card 1 (active) -->
+          <div class="swipe-card active-card" data-index="0" id="active-swipe-card">
+            <div class="swipe-feedback confirm-hint" id="confirm-hint">· → —</div>
+            <div class="swipe-feedback skip-hint" id="skip-hint">pular</div>
+
+            <div class="sc-module-bar" style="background:var(--mod-body)"></div>
+            <div class="sc-raw"><span class="geo-prefix">·</span>"experimentar aquele ramen do centro"</div>
+
+            <div class="sc-suggestion">
+              <div class="sc-suggestion-header">
+                <div class="ai-icon">⚡</div>
+                <span>auto-triage suggestion</span>
+              </div>
+              <div class="sc-chips">
+                <div class="sc-chip selected" style="background:var(--type-reco-bg);color:var(--type-reco)">recommendation</div>
+                <div class="sc-chip selected" style="background:rgba(216,90,48,0.12);color:var(--mod-body)">mod-body</div>
+              </div>
+              <div class="sc-confidence">
+                <span>confidence</span>
+                <div class="bar"><div class="bar-fill" style="width:94%;background:var(--conf-high)"></div></div>
+                <span class="pct" style="color:var(--conf-high)">94%</span>
+              </div>
+            </div>
+
+            <div class="sc-edit-panel" id="edit-panel">
+              <div class="sc-edit-row">
+                <span class="sc-edit-label">type</span>
+                <div class="sc-edit-options">
+                  <span class="sc-edit-opt selected">recommendation</span>
+                  <span class="sc-edit-opt">note</span>
+                  <span class="sc-edit-opt">task</span>
+                  <span class="sc-edit-opt">resource</span>
+                </div>
+              </div>
+              <div class="sc-edit-row">
+                <span class="sc-edit-label">module</span>
+                <div class="sc-edit-options">
+                  <span class="sc-edit-opt">work</span>
+                  <span class="sc-edit-opt selected">body</span>
+                  <span class="sc-edit-opt">mind</span>
+                  <span class="sc-edit-opt">family</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="swipe-actions">
+          <button class="swipe-btn skip-btn" onclick="swipeAction('skip')" title="pular">✕</button>
+          <button class="swipe-btn edit-btn" onclick="toggleEdit()" title="editar" id="edit-toggle">✎</button>
+          <button class="swipe-btn confirm-btn" onclick="swipeAction('confirm')" title="confirmar">✓</button>
+        </div>
+        <div class="swipe-labels">
+          <span>pular</span>
+          <span>editar</span>
+          <span>confirmar</span>
+        </div>
+      </div>
+
+      <!-- ═══ LIST MODE ═══ -->
+      <div class="list-mode" id="list-mode">
+
+        <div class="section-title"><span class="geo">·</span> 4 items waiting for triage</div>
+
+        <div class="list-card" style="border-left-color:var(--mod-body)">
+          <div class="lc-raw"><span class="geo-prefix">·</span>"experimentar aquele ramen do centro"</div>
+          <div class="lc-row">
+            <span class="lc-chip" style="background:var(--type-reco-bg);color:var(--type-reco)">recommendation</span>
+            <span class="lc-chip" style="background:rgba(216,90,48,0.12);color:var(--mod-body)">body</span>
+            <span class="lc-conf" style="color:var(--conf-high)">94%</span>
+          </div>
+          <div class="lc-actions">
+            <button class="lc-btn confirm">confirmar · → —</button>
+            <button class="lc-btn edit">editar</button>
+            <button class="lc-btn skip">pular</button>
+          </div>
+        </div>
+
+        <div class="list-card" style="border-left-color:var(--mod-work)">
+          <div class="lc-raw"><span class="geo-prefix">·</span>"ideia: atom engine marketplace"</div>
+          <div class="lc-row">
+            <span class="lc-chip" style="background:var(--type-note-bg);color:var(--type-note)">note</span>
+            <span class="lc-chip" style="background:rgba(55,138,221,0.12);color:var(--mod-work)">work</span>
+            <span class="lc-conf" style="color:var(--conf-mid)">72%</span>
+          </div>
+          <div class="lc-actions">
+            <button class="lc-btn confirm">confirmar · → —</button>
+            <button class="lc-btn edit">editar</button>
+            <button class="lc-btn skip">pular</button>
+          </div>
+        </div>
+
+        <div class="list-card" style="border-left-color:var(--mod-purpose)">
+          <div class="lc-stale">⚠ 9 dias</div>
+          <div class="lc-raw"><span class="geo-prefix">·</span>"pesquisar solar panels mt samson"</div>
+          <div class="lc-row">
+            <span class="lc-chip" style="background:var(--type-task-bg);color:var(--type-task)">task</span>
+            <span class="lc-chip" style="background:rgba(127,119,221,0.12);color:var(--mod-purpose)">purpose</span>
+            <span class="lc-conf" style="color:var(--conf-mid)">88%</span>
+          </div>
+          <div class="lc-actions">
+            <button class="lc-btn confirm">confirmar · → —</button>
+            <button class="lc-btn edit">editar</button>
+            <button class="lc-btn skip">pular</button>
+          </div>
+        </div>
+
+        <div class="list-card" style="border-left-color:var(--mod-mind)">
+          <div class="lc-stale">⚠ 11 dias</div>
+          <div class="lc-raw"><span class="geo-prefix">·</span>"livro que a De recomendou"</div>
+          <div class="lc-row">
+            <span class="lc-chip" style="background:var(--type-reco-bg);color:var(--type-reco)">reco?</span>
+            <span class="lc-chip" style="background:var(--type-note-bg);color:var(--type-note)">note?</span>
+            <span class="lc-chip" style="background:rgba(29,158,117,0.12);color:var(--mod-mind)">mind</span>
+            <span class="lc-conf" style="color:var(--conf-low)">48%</span>
+          </div>
+          <div class="lc-actions">
+            <button class="lc-btn edit" style="flex:2">classify manually</button>
+            <button class="lc-btn skip">pular</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Classified queue (visible in both modes) -->
+      <div style="margin-top:24px" id="classified-queue">
+        <div class="section-title"><span class="geo">—</span> 3 classified, awaiting structure</div>
+        <div class="classified-item"><span class="ci-geo" style="color:var(--stage-2)">—</span><span class="ci-title">podcast sobre estoicismo</span><span class="type-chip" style="background:var(--type-reco-bg);color:var(--type-reco)">podcast</span></div>
+        <div class="classified-item"><span class="ci-geo" style="color:var(--stage-2)">—</span><span class="ci-title">refatorar auth no MindRoot</span><span class="type-chip" style="background:var(--type-task-bg);color:var(--type-task)">task</span></div>
+        <div class="classified-item"><span class="ci-geo" style="color:var(--stage-2)">—</span><span class="ci-title">receita frango thai</span><span class="type-chip" style="background:var(--type-recipe-bg);color:var(--type-recipe)">recipe</span></div>
+      </div>
+
+      <!-- All done state -->
+      <div class="triage-done" id="triage-done">
+        <div class="geo-done">—</div>
+        <h3>triage completa</h3>
+        <p>todos os items foram classificados.<br>eles vão receber estrutura no próximo wrap.</p>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-num" id="done-confirmed">0</div>
+            <div class="stat-label">confirmados</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" id="done-skipped">0</div>
+            <div class="stat-label">pulados</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:80px"></div>
+    </div>
+  </div>
+
+  <div class="fab" title="quick capture">·</div>
+
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">⌂</div><span>home</span></div>
+    <div class="nav-item active"><div class="nav-icon">◇</div><span>pipeline</span></div>
+    <div class="nav-item"><div class="nav-icon">▪</div><span>projects</span></div>
+    <div class="nav-item"><div class="nav-icon">◫</div><span>calendar</span></div>
+  </div>
+</div>
+
+<script>
+  // ═══ State ═══
+  let currentCardIndex = 0;
+  let confirmedCount = 0;
+  let skippedCount = 0;
+  const totalCards = 4;
+  let currentMode = 'swipe';
+  let isEditing = false;
+  let isDragging = false;
+  let startX = 0;
+  let currentX = 0;
+
+  // ═══ Tab switching ═══
+  function switchTab(tab) {
+    document.getElementById('tab-pipeline').classList.toggle('active', tab === 'pipeline');
+    document.getElementById('tab-triage').classList.toggle('active', tab === 'triage');
+    document.getElementById('pipeline-tab').classList.toggle('active', tab === 'pipeline');
+    document.getElementById('triage-tab').classList.toggle('active', tab === 'triage');
+  }
+
+  // ═══ Mode switching ═══
+  function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('mode-swipe').classList.toggle('active', mode === 'swipe');
+    document.getElementById('mode-list').classList.toggle('active', mode === 'list');
+    document.getElementById('swipe-mode').classList.toggle('active', mode === 'swipe');
+    document.getElementById('list-mode').classList.toggle('active', mode === 'list');
+
+    // Hide/show progress elements
+    document.getElementById('triage-dots').style.display = mode === 'swipe' ? 'flex' : 'none';
+    document.getElementById('triage-current').parentElement.style.display = mode === 'swipe' ? 'flex' : 'none';
+  }
+
+  // ═══ Stage expand/collapse ═══
+  function toggleStage(el) {
+    const wasExpanded = el.classList.contains('expanded');
+    document.querySelectorAll('.stage-row').forEach(r => r.classList.remove('expanded'));
+    if (!wasExpanded) el.classList.add('expanded');
+  }
+
+  function scrollToStage(n) {
+    const el = document.getElementById('stage-' + n);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => toggleStage(el), 300);
+    }
+  }
+
+  // ═══ Swipe actions ═══
+  function swipeAction(action) {
+    if (currentCardIndex >= totalCards) return;
+
+    const activeCard = document.querySelector('.swipe-card.active-card');
+    if (!activeCard) return;
+
+    // Close edit if open
+    if (isEditing) toggleEdit();
+
+    // Animate out
+    if (action === 'confirm') {
+      activeCard.classList.add('exiting-right');
+      confirmedCount++;
+    } else {
+      activeCard.classList.add('exiting-left');
+      skippedCount++;
+    }
+    activeCard.classList.remove('active-card');
+
+    // Update dots
+    const dots = document.querySelectorAll('.triage-dot');
+    dots[currentCardIndex].classList.remove('active');
+    dots[currentCardIndex].classList.add(action === 'confirm' ? 'done' : 'skipped');
+
+    currentCardIndex++;
+
+    // Update counter
+    document.getElementById('triage-current').textContent = Math.min(currentCardIndex + 1, totalCards);
+
+    if (currentCardIndex < totalCards) {
+      // Activate next dot
+      dots[currentCardIndex].classList.add('active');
+
+      // Promote next cards
+      setTimeout(() => {
+        const cards = document.querySelectorAll('.swipe-card:not(.exiting-right):not(.exiting-left)');
+        cards.forEach((card, i) => {
+          card.classList.remove('behind');
+          if (i === 0) {
+            card.classList.add('active-card', 'entering');
+            card.style.transform = '';
+            card.style.opacity = '';
+            // Add feedback overlays to new active card
+            addFeedbackOverlays(card);
+            // Setup drag on new card
+            setupDrag(card);
+          } else if (i === 1) {
+            card.classList.add('behind');
+            card.style.transform = 'scale(0.95) translateY(12px)';
+            card.style.opacity = '0.5';
+          } else {
+            card.classList.add('behind');
+            card.style.transform = 'scale(0.9) translateY(24px)';
+            card.style.opacity = '0.3';
+          }
+        });
+      }, 200);
+    } else {
+      // All done!
+      setTimeout(showDoneState, 400);
+    }
+  }
+
+  function addFeedbackOverlays(card) {
+    if (!card.querySelector('.confirm-hint')) {
+      const ch = document.createElement('div');
+      ch.className = 'swipe-feedback confirm-hint';
+      ch.textContent = '· → —';
+      card.prepend(ch);
+    }
+    if (!card.querySelector('.skip-hint')) {
+      const sh = document.createElement('div');
+      sh.className = 'swipe-feedback skip-hint';
+      sh.textContent = 'pular';
+      card.prepend(sh);
+    }
+  }
+
+  function showDoneState() {
+    document.getElementById('swipe-mode').style.display = 'none';
+    document.getElementById('triage-dots').style.display = 'none';
+    document.getElementById('classified-queue').style.display = 'none';
+    document.getElementById('done-confirmed').textContent = confirmedCount;
+    document.getElementById('done-skipped').textContent = skippedCount;
+    document.getElementById('triage-done').classList.add('active');
+    document.getElementById('triage-current').parentElement.style.display = 'none';
+  }
+
+  // ═══ Edit toggle ═══
+  function toggleEdit() {
+    isEditing = !isEditing;
+    const panel = document.getElementById('edit-panel');
+    const btn = document.getElementById('edit-toggle');
+    if (panel) {
+      panel.classList.toggle('open', isEditing);
+      btn.style.background = isEditing ? 'var(--type-task-bg)' : '';
+      btn.style.color = isEditing ? 'var(--type-task)' : '';
+    }
+  }
+
+  // ═══ Drag/swipe handling ═══
+  function setupDrag(card) {
+    card.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('.sc-edit-panel') || e.target.closest('.sc-chip')) return;
+      isDragging = true;
+      startX = e.clientX;
+      card.style.transition = 'none';
+      card.setPointerCapture(e.pointerId);
+    });
+
+    card.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      currentX = e.clientX - startX;
+      const rotation = currentX * 0.08;
+      const clamped = Math.max(-1, Math.min(1, currentX / 100));
+      card.style.transform = `translateX(${currentX}px) rotate(${rotation}deg)`;
+
+      // Show feedback hints
+      const confirmHint = card.querySelector('.confirm-hint');
+      const skipHint = card.querySelector('.skip-hint');
+      if (confirmHint) confirmHint.style.opacity = Math.max(0, clamped);
+      if (skipHint) skipHint.style.opacity = Math.max(0, -clamped);
+    });
+
+    card.addEventListener('pointerup', () => {
+      if (!isDragging) return;
+      isDragging = false;
+      card.style.transition = '';
+
+      // Reset hints
+      const confirmHint = card.querySelector('.confirm-hint');
+      const skipHint = card.querySelector('.skip-hint');
+      if (confirmHint) confirmHint.style.opacity = 0;
+      if (skipHint) skipHint.style.opacity = 0;
+
+      if (currentX > 80) {
+        swipeAction('confirm');
+      } else if (currentX < -80) {
+        swipeAction('skip');
+      } else {
+        card.style.transform = '';
+      }
+      currentX = 0;
+    });
+  }
+
+  // Edit option selection
+  document.querySelectorAll('.sc-edit-opt').forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const row = opt.closest('.sc-edit-row');
+      row.querySelectorAll('.sc-edit-opt').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+    });
+  });
+
+  // Init: setup drag on first active card
+  const firstCard = document.getElementById('active-swipe-card');
+  if (firstCard) setupDrag(firstCard);
+
+  // Stage entrance animation
+  setTimeout(() => {
+    document.querySelectorAll('.stage-row').forEach((row, i) => {
+      row.style.opacity = '0';
+      row.style.transform = 'translateY(8px)';
+      row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      setTimeout(() => {
+        row.style.opacity = '1';
+        row.style.transform = 'translateY(0)';
+      }, 80 * i);
+    });
+  }, 100);
+</script>
+
+</body>
+</html>
