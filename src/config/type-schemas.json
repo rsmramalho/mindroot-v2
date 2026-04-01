@@ -1,0 +1,330 @@
+{
+  "$schema": "Atom Engine Type Registry — Genesis v5",
+  "$version": "1.0",
+  "$created": "2026-04-01",
+  "$note": "Loaded by MindRoot at build time. Source of truth for type config. Lives in GitHub repo.",
+
+  "types": {
+
+    "note": {
+      "floor_stage": 2,
+      "default_module": "mind",
+      "has_body_schema": false,
+      "body_schema": null,
+      "extensions": ["soul"],
+      "naming": "mod-[module]_note_[description]",
+      "drive_dest": "mod-[module]/logs/",
+      "usage_notes": "Momentary capture. Content lives in notes field. Not a document — ephemeral by nature. Can be promoted to reflection, task, or other types via morph."
+    },
+
+    "reflection": {
+      "floor_stage": 2,
+      "default_module": "mind",
+      "has_body_schema": false,
+      "body_schema": null,
+      "extensions": ["soul"],
+      "naming": "mod-[module]_reflection_[description]",
+      "drive_dest": "mod-[module]/logs/",
+      "usage_notes": "Deeper than a note. Has emotional or philosophical weight. Soul extension natural. Content lives in notes field."
+    },
+
+    "recommendation": {
+      "floor_stage": 2,
+      "default_module": "varies",
+      "has_body_schema": true,
+      "body_schema": {
+        "subject": { "type": "string", "description": "What is being recommended" },
+        "category": { "type": "string", "description": "book, movie, restaurant, tool, etc." },
+        "rating": { "type": "number", "description": "1-5 scale, optional" },
+        "why": { "type": "string", "description": "Why this is recommended" },
+        "source": { "type": "string", "description": "Who recommended or where found" },
+        "link": { "type": "string", "description": "URL if applicable" }
+      },
+      "extensions": [],
+      "naming": "mod-[module]_recommendation_[description]",
+      "drive_dest": "mod-[module]/library/",
+      "usage_notes": "Module follows the content: book=mind, restaurant=body, tool=work. Tag #who:* for who recommended."
+    },
+
+    "podcast": {
+      "floor_stage": 2,
+      "default_module": "mind",
+      "has_body_schema": true,
+      "body_schema": {
+        "show": { "type": "string", "description": "Podcast name" },
+        "episode": { "type": "string", "description": "Episode title or number" },
+        "host": { "type": "string", "description": "Host name" },
+        "guest": { "type": "string", "description": "Guest name if applicable" },
+        "duration": { "type": "string", "description": "Episode duration" },
+        "key_takeaways": { "type": "string[]", "description": "Main ideas extracted" }
+      },
+      "extensions": [],
+      "naming": "mod-mind_podcast_[show]-[topic]",
+      "drive_dest": "mod-mind/library/",
+      "usage_notes": "Capture key ideas from podcasts. Notes field for free-form thoughts. Key takeaways in body for structured extraction."
+    },
+
+    "article": {
+      "floor_stage": 2,
+      "default_module": "mind",
+      "has_body_schema": true,
+      "body_schema": {
+        "author": { "type": "string", "description": "Author name" },
+        "publication": { "type": "string", "description": "Where published" },
+        "url": { "type": "string", "description": "Link to article" },
+        "key_points": { "type": "string[]", "description": "Main arguments or findings" }
+      },
+      "extensions": [],
+      "naming": "mod-mind_article_[author]-[topic]",
+      "drive_dest": "mod-mind/library/",
+      "usage_notes": "Articles, blog posts, papers. Key points in body, personal reaction in notes."
+    },
+
+    "resource": {
+      "floor_stage": 2,
+      "default_module": "varies",
+      "has_body_schema": false,
+      "body_schema": null,
+      "extensions": ["operations"],
+      "naming": "mod-[module]_resource_[description]",
+      "drive_dest": "mod-[module]/library/",
+      "usage_notes": "External resource inventoried. Accounts, subscriptions, tools, services. Operations extension for cost/expiry tracking. Used heavily by Raiz (tag #domain:*)."
+    },
+
+    "list": {
+      "floor_stage": 2,
+      "default_module": "varies",
+      "has_body_schema": false,
+      "body_schema": null,
+      "extensions": [],
+      "naming": "mod-[module]_list_[description]",
+      "drive_dest": "mod-[module]/",
+      "usage_notes": "Curated lists. Content lives in notes as markdown list. Module varies by content."
+    },
+
+    "task": {
+      "floor_stage": 3,
+      "default_module": "work",
+      "has_body_schema": false,
+      "body_schema": null,
+      "extensions": ["operations"],
+      "naming": "mod-[module]_task_[description]",
+      "drive_dest": "mod-[module]/ or project-[x]/",
+      "usage_notes": "Actionable item with clear completion criteria. Operations extension for priority, deadline, progress. Content in notes."
+    },
+
+    "habit": {
+      "floor_stage": 3,
+      "default_module": "varies",
+      "has_body_schema": false,
+      "body_schema": null,
+      "extensions": ["recurrence", "soul"],
+      "naming": "mod-[module]_habit_[description]",
+      "drive_dest": "mod-[module]/",
+      "usage_notes": "Recurring behavior to track. Trigger/action/reward pattern described in notes. Recurrence extension for frequency and streak tracking. Soul optional for habits with emotional dimension."
+    },
+
+    "recipe": {
+      "floor_stage": 3,
+      "default_module": "body",
+      "has_body_schema": true,
+      "body_schema": {
+        "ingredients": { "type": "object[]", "description": "Array of {item, quantity, unit}" },
+        "servings": { "type": "number", "description": "Number of servings" },
+        "prep_time": { "type": "string", "description": "Preparation time" },
+        "cook_time": { "type": "string", "description": "Cooking time" },
+        "steps": { "type": "string[]", "description": "Ordered preparation steps" },
+        "source_url": { "type": "string", "description": "Original recipe URL if adapted" }
+      },
+      "extensions": [],
+      "naming": "mod-body_recipe_[description]",
+      "drive_dest": "mod-body/library/",
+      "usage_notes": "Recipes. Ingredients as structured array for future scaling/shopping list features. Steps as ordered strings. Notes for personal variations."
+    },
+
+    "workout": {
+      "floor_stage": 3,
+      "default_module": "body",
+      "has_body_schema": true,
+      "body_schema": {
+        "exercises": { "type": "object[]", "description": "Array of {name, sets, reps, rest, notes}" },
+        "target_muscles": { "type": "string[]", "description": "Muscle groups targeted" },
+        "duration": { "type": "string", "description": "Estimated duration" },
+        "intensity": { "type": "string", "description": "low | moderate | high" },
+        "location": { "type": "string", "description": "Where it happens (optional)" }
+      },
+      "extensions": ["recurrence"],
+      "naming": "mod-body_workout_[description]",
+      "drive_dest": "mod-body/library/",
+      "usage_notes": "Workout templates. Exercises as structured array. Location optional (also available via #location:* tag). Recurrence for regular training schedule."
+    },
+
+    "ritual": {
+      "floor_stage": 3,
+      "default_module": "purpose",
+      "has_body_schema": true,
+      "body_schema": {
+        "intention": { "type": "string", "description": "Core purpose of the ritual" },
+        "anchors": { "type": "string[]", "description": "Sensory or behavioral anchors that activate the ritual" },
+        "time_window": { "type": "string", "description": "Time range (e.g. 05:00-08:00)" },
+        "duration": { "type": "string", "description": "Expected duration (e.g. 15 min, flexible)" }
+      },
+      "extensions": ["soul", "recurrence"],
+      "naming": "mod-purpose_ritual_[name]",
+      "drive_dest": "mod-purpose/rituals/",
+      "usage_notes": "The 3 daily blocks (aurora, zênite, crepúsculo) are rituals. Defines STRUCTURE of a time block. What happens inside are tasks, habits, work items. Soul extension natural. Genesis piso technically 2 but functionally needs stage 3 for body schema."
+    },
+
+    "review": {
+      "floor_stage": 3,
+      "default_module": "varies",
+      "has_body_schema": true,
+      "body_schema": {
+        "subject": { "type": "string", "description": "What is being reviewed" },
+        "rating": { "type": "number", "description": "1-5 scale" },
+        "verdict": { "type": "string", "description": "One-line summary verdict" },
+        "highlights": { "type": "string[]", "description": "What worked well" },
+        "lowlights": { "type": "string[]", "description": "What didn't work" }
+      },
+      "extensions": ["recurrence"],
+      "naming": "mod-[module]_review_[description]",
+      "drive_dest": "mod-[module]/",
+      "usage_notes": "Reviews of anything — products, periods, processes. Recurrence for periodic reviews (weekly, monthly, quarterly). Module follows the subject."
+    },
+
+    "checkpoint": {
+      "floor_stage": 3,
+      "default_module": "work",
+      "has_body_schema": true,
+      "body_schema": {
+        "milestone": { "type": "string", "description": "What milestone this represents" },
+        "progress": { "type": "number", "description": "0-100 progress at this point" },
+        "blockers": { "type": "string[]", "description": "Current blockers" },
+        "next_actions": { "type": "string[]", "description": "Concrete next steps" }
+      },
+      "extensions": ["operations"],
+      "naming": "mod-work_checkpoint_[project]_[date]",
+      "drive_dest": "mod-work/project-[x]/",
+      "usage_notes": "Point-in-time snapshot of project state. Always belongs_to a project. Used by Raiz for domain milestones (e.g. 'Identity reached ○')."
+    },
+
+    "spec": {
+      "floor_stage": 5,
+      "default_module": "work",
+      "has_body_schema": true,
+      "body_schema": {
+        "scope": { "type": "string", "description": "What this spec covers" },
+        "requirements": { "type": "string[]", "description": "What must be true" },
+        "constraints": { "type": "string[]", "description": "Limitations and boundaries" },
+        "decisions": { "type": "object[]", "description": "Array of {question, decision, rationale}" }
+      },
+      "extensions": ["operations"],
+      "naming": "mod-work_spec_[description]_v[X-Y]",
+      "drive_dest": "mod-work/project-[x]/",
+      "usage_notes": "Prescriptive documents. Specs define rules, not describe things (that's doc). Always versioned. Must reach stage 5 (connected) to be valid — specs without connections are orphans."
+    },
+
+    "project": {
+      "floor_stage": 5,
+      "default_module": "work",
+      "has_body_schema": false,
+      "body_schema": null,
+      "extensions": ["operations"],
+      "naming": "mod-work_project_[name]",
+      "drive_dest": "mod-work/project-[name]/",
+      "usage_notes": "Container for related items. Operations extension for progress tracking (auto/milestone/manual). Must have connections (stage 5 minimum) — a project without items is empty. The Raiz itself is a project with 9 milestones."
+    },
+
+    "session-log": {
+      "floor_stage": 7,
+      "default_module": "bridge",
+      "has_body_schema": true,
+      "body_schema": {
+        "session_type": { "type": "string", "description": "planning, deep-work, review, brainstorm, etc." },
+        "duration": { "type": "string", "description": "Session duration" },
+        "participants": { "type": "string[]", "description": "Who was involved" },
+        "summary": { "type": "string", "description": "What was accomplished" },
+        "action_items": { "type": "string[]", "description": "Concrete next steps from session" }
+      },
+      "extensions": ["soul"],
+      "naming": "system_session-log_[date]_[context]",
+      "drive_dest": "system/logs/",
+      "usage_notes": "Born committed (stage 7). Created automatically at end of significant sessions. No pipeline traversal needed. Soul extension for emotional context of the session."
+    },
+
+    "wrap": {
+      "floor_stage": 7,
+      "default_module": "bridge",
+      "has_body_schema": true,
+      "body_schema": {
+        "created": { "type": "object[]", "description": "Items created in this session" },
+        "modified": { "type": "object[]", "description": "Items modified with field/from/to" },
+        "decided": { "type": "string[]", "description": "Decisions in natural language" },
+        "connections": { "type": "object[]", "description": "Connections created/modified" },
+        "seeds": { "type": "object[]", "description": "Stale items surfaced for review" },
+        "soul": { "type": "object", "description": "Emotional data: aurora, intention, tasks, crepúsculo, shift" },
+        "audit": { "type": "object", "description": "inbox_count, below_floor, orphans, stale_count" },
+        "next": { "type": "string[]", "description": "Concrete next steps (required)" }
+      },
+      "extensions": [],
+      "naming": "system_wrap_[date]",
+      "drive_dest": "system/logs/",
+      "usage_notes": "Born committed (stage 7). The daily closing ritual. Body is JSONB structured (Genesis v5). Soul data lives inside body.soul, not as extension. NEXT is required — no wrap without next steps."
+    },
+
+    "log": {
+      "floor_stage": 2,
+      "default_module": "varies",
+      "has_body_schema": false,
+      "body_schema": null,
+      "extensions": ["soul"],
+      "naming": "mod-[module]_log_[description]",
+      "drive_dest": "mod-[module]/logs/",
+      "usage_notes": "Chronological entry. Less structured than session-log, less emotional than reflection. A factual record of what happened."
+    },
+
+    "doc": {
+      "floor_stage": 2,
+      "default_module": "varies",
+      "has_body_schema": false,
+      "body_schema": null,
+      "extensions": [],
+      "naming": "mod-[module]_doc_[description]",
+      "drive_dest": "mod-[module]/",
+      "usage_notes": "Reference document. Stable, consulted frequently, updated when something changes. Different from spec (specs prescribe rules, docs compile information), note (notes are momentary), and log (logs are chronological). Can be versioned if info changes frequently."
+    },
+
+    "research": {
+      "floor_stage": 2,
+      "default_module": "varies",
+      "has_body_schema": false,
+      "body_schema": null,
+      "extensions": [],
+      "naming": "mod-[module]_research_[description]",
+      "drive_dest": "mod-[module]/library/",
+      "usage_notes": "Research compilation. Gathered information on a topic. Content in notes. Can morph into spec, doc, or project when research concludes."
+    },
+
+    "template": {
+      "floor_stage": 3,
+      "default_module": "bridge",
+      "has_body_schema": false,
+      "body_schema": null,
+      "extensions": [],
+      "naming": "system_template_[type]_v[X-Y]",
+      "drive_dest": "system/templates/",
+      "usage_notes": "Template defining structure for a type. With Genesis v5, templates are superseded by this type-schemas.json config. Existing templates in Drive become historical reference."
+    },
+
+    "lib": {
+      "floor_stage": 2,
+      "default_module": "varies",
+      "has_body_schema": false,
+      "body_schema": null,
+      "extensions": [],
+      "naming": "mod-[module]_lib_[description]",
+      "drive_dest": "mod-[module]/library/",
+      "usage_notes": "Library item — curated reference material. Books, courses, tools, frameworks. Content in notes."
+    }
+  }
+}

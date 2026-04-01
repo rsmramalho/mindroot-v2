@@ -1,6 +1,6 @@
 // types/item.ts — Atom Engine Schema v2
-// Zero imports. Pure types.
 // Reference: Genesis v4.2 + AtomItem Schema v2
+// TYPE_FLOORS now derived from @/config/types (type-schemas.json)
 
 // ═══════════════════════════════════════════
 // ENUMS
@@ -193,11 +193,12 @@ export const GENESIS_STAGES = [
   { stage: 7, geometry: '○', name: 'Círculo',   label: 'Completude' },
 ] as const;
 
-export const TYPE_FLOORS: Record<AtomType, number> = {
-  'note': 2, 'reflection': 2, 'recommendation': 2, 'podcast': 2, 'article': 2,
-  'resource': 2, 'list': 2,
-  'task': 3, 'habit': 3, 'recipe': 3, 'workout': 3, 'checkpoint': 3,
-  'spec': 5, 'project': 5,
-  'session-log': 7, 'wrap': 7,
-  'ritual': 3, 'review': 3, 'log': 2, 'doc': 2, 'research': 2, 'template': 3, 'lib': 2,
-};
+// TYPE_FLOORS is now derived from the centralized type registry.
+// Import { getFloorStage, ALL_TYPES } from '@/config/types' for programmatic access.
+// Re-exported here for backward compatibility.
+import { getFloorStage, ALL_TYPES } from '@/config/types';
+import type { AtomType as RegistryAtomType } from '@/config/types';
+
+export const TYPE_FLOORS: Record<AtomType, number> = Object.fromEntries(
+  ALL_TYPES.map((t) => [t, getFloorStage(t as RegistryAtomType)])
+) as Record<AtomType, number>;
