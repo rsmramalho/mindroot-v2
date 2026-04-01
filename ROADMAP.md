@@ -55,7 +55,7 @@ Supabase: avvwjkzkzklloyfugzer
 ### Deploy
 
 - Vercel: mindroot-v2.vercel.app (auto-deploy from GitHub)
-- PWA: manifest + service worker (falta icons raster)
+- PWA: manifest + service worker + icons raster (192, 512)
 
 ---
 
@@ -124,19 +124,19 @@ Entregáveis:
 - bg-card token (dark mode prep)
 - Deploy live + auth configurado
 
-### 🔵 Fase 6 ⬡ Inteligência (effort: 8) — PRÓXIMO
-**Status:** próximo
-**Escopo:** AI triage + audit views reais + testes
+### ✅ Fase 6 ⬡ Inteligência (effort: 8)
+**Commits:** d9e711a → 73650a0
+**Escopo:** AI triage, audit views, cleanup, testes
 
-Entregáveis pendentes:
-- AI triage integration (edge function triage-classify com Claude Haiku)
-- Triage na UI com 3 faixas de confiança (auto/suggest/manual)
-- Fix onboarding domain→module mapping
-- Deploy audit views no Supabase (v_below_floor, v_orphan_items, v_inbox_stale)
-- Verificar commit_item RPC deployed
-- PWA icons raster (192x192, 512x512)
-- Vitest setup + testes dos fluxos críticos
-- Auth.tsx refactor (usar auth-service em vez de Supabase direto)
+Entregáveis:
+- Audit views: HealthBar (home), AuditPanel (analytics), Wrap integration — consuming real Supabase views
+- useAudit hook (full + light) wrapping audit-service with TanStack Query
+- AI triage: triage-service (edge function), useTriage hook, Pipeline triage tab com 3 faixas de confiança (auto ≥90/95%, suggest 60-89%, manual <60%)
+- Auth refactor: Auth.tsx usa authService (não supabase direto)
+- Onboarding fix: domain→module mapping de raiz.ts aplicado na captura (captureWithModule)
+- Cleanup: AuditBar.tsx orphaned deletado
+- PWA icons: 192x192 + 512x512 raster (sharp from favicon.svg)
+- Vitest: setup + 41 engine tests (fsm, wrap, parsing)
 
 ### ⚪ Fase 7 ○ Completude (effort: 13)
 **Status:** futuro
@@ -157,17 +157,17 @@ Entregáveis planejados:
 
 | Métrica | Valor |
 |---------|-------|
-| Commits | 13 |
-| Files | 63 .ts/.tsx |
-| LOC | 6,200 |
+| Commits | 21 |
+| Files | 71 .ts/.tsx |
+| LOC | ~7,000 |
 | Pages | 10 |
-| Components | 16 |
-| Services | 7 |
+| Components | 18 |
+| Services | 8 |
 | Engines | 6 |
 | Stores | 3 |
-| Hooks | 7 |
+| Hooks | 9 |
+| Tests | 41 (vitest) |
 | Bundle (gzip) | 71KB main |
-| Build time | 224ms (Vercel) |
 | TS errors | 0 |
 
 ---
@@ -190,3 +190,4 @@ Entregáveis planejados:
 | 1.0 | 31 Mar 2026 | MINDROOT-ROADMAP.md — fases 0-5 originais |
 | 2.0 | 01 Abr 2026 | Roadmap unificado Atom OS. Reordenado: motor → inteligência → visualização → reflexão. |
 | 3.0 | 02 Abr 2026 | Fases PHI (espiral Fibonacci). Rebuild do zero (mindroot-v2). Fases 1-5 DONE. Deploy live. Métricas reais. |
+| 3.1 | 02 Abr 2026 | Fase 6 DONE. AI triage, audit views, vitest, PWA icons, auth refactor, onboarding fix. 21 commits, 71 files, ~7K LOC, 41 tests. |
