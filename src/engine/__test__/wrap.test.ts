@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { getCreatedToday, getModifiedToday, computeAudit, getAuditSeverity } from '../wrap';
 import type { AtomItem } from '@/types/item';
 

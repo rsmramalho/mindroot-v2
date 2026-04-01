@@ -143,13 +143,19 @@ Entregáveis:
 **Escopo:** Export, dark mode, refinements, desacoplamento
 
 Entregáveis planejados:
-- Export to Drive (botão manual)
+- Export to Drive (botão manual) — export-service.ts stub criado
 - Obsidian vault generation
 - Dark mode toggle
 - Analytics soul + connections tabs (real data)
 - Search global
 - Notifications
 - Offline mode (service worker cache)
+
+**Dark mode debt:** 136 hardcoded hex values across 27 .tsx files. Key files:
+Auth, Landing, Onboarding, Wrap, Pipeline, Calendar, Projects, Raiz, Settings,
+Home, SoulCard, WrapBanner, AtomInput, ItemCard, CompanionSheet,
+AuditPanel, HealthBar, ConfidenceBar, StageBadge, ModuleBar.
+All need migration to CSS variables/Tailwind tokens for dark mode.
 
 ---
 
