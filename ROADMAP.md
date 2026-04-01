@@ -1,7 +1,7 @@
 # Atom OS — Roadmap Oficial
 
-**Versão:** 2.0
-**Data:** 01 Abr 2026
+**Versão:** 3.0
+**Data:** 02 Abr 2026
 **Status:** active
 **Princípio:** Motor → Inteligência → Visualização → Reflexão
 
@@ -12,8 +12,9 @@
 O Atom OS é o produto completo: **Atom Engine** (cérebro) + **MindRoot** (corpo).
 O Engine define as regras (Genesis v5). O MindRoot implementa a experiência.
 
-Este é o roadmap único e oficial. Vive no GitHub (atom-engine-core/).
-Se não está aqui, não está planejado.
+Repo único: `mindroot-v2` (github.com/rsmramalho/mindroot-v2)
+Deploy: mindroot-v2.vercel.app
+Supabase: avvwjkzkzklloyfugzer
 
 ---
 
@@ -22,8 +23,8 @@ Se não está aqui, não está planejado.
 | # | Projeto | Status | Descrição |
 |---|---------|--------|-----------|
 | V1 | **Atom OS** (Engine + MindRoot) | active | Sistema operacional pessoal. Foco atual. |
-| V2 | **Constellation OS** | paused | Infraestrutura operacional. Landing page entregue. Aguarda Atom OS. |
-| V3 | **Atlas Frames** | active | Negócio físico. Estruturas de aço. Monday.com. Operação independente. |
+| V2 | **Constellation OS** | paused | Infraestrutura operacional. Aguarda Atom OS. |
+| V3 | **Atlas Frames** | active | Negócio físico. Monday.com. Operação independente. |
 | V4 | **Muda** | concept | Comunidade. Nasce do Atom OS quando maduro. |
 | V5 | **Yugar Commons** | concept | Mt Samson. Visão de longo prazo. |
 
@@ -40,6 +41,8 @@ Se não está aqui, não está planejado.
 - RPCs: morph_item, decay_item, propagate_effect, commit_item
 - RLS: ativo (row-level security por user_id)
 - Audit views: v_orphan_items, v_below_floor, v_inbox_stale
+- Edge functions: parse-input, send-push, triage-classify
+- Auth: email + Google OAuth
 
 ### Specs e design (completo ✓)
 
@@ -49,98 +52,134 @@ Se não está aqui, não está planejado.
 - type-schemas.json com 23 types + helper tipado
 - 11 wireframes + 74 decisões UX (D0-D74)
 
-### MindRoot repo — branch ui-v2
+### Deploy
 
-- Stack: React 19 + Vite 6 + TypeScript + Supabase + Zustand + Tailwind
-- Data layer existente do alpha.26 (services, engines, hooks)
-- type-schemas.json + types.ts commitados
-
----
-
-## Fases de implementação
-
-### ✅ Fase 0 — Foundation (UI)
-**Status:** implementada (commit a293329)
-**Escopo:** Design tokens + component library base
-
-Entregáveis:
-- tokens.ts — cores (8 módulos + 7 estágios), tipografia (DM Sans), espaçamento
-- GeometryIcon — 7 geometrias SVG (· — △ □ ⬠ ⬡ ○)
-- TypeChip — pill com cor do módulo
-- ModuleBar — indicador lateral de módulo
-- StageBadge — badge com geometria + label
-- ConfidenceBar — barra de confiança do triage (3 faixas)
-- FAB — floating action button de captura rápida
-
-### ✅ Fase 1 — Home (UI)
-**Status:** implementada (commit d827214)
-**Escopo:** Tela principal com estado do dia
-
-Entregáveis:
-- SoulCard — aurora/crepúsculo emocional
-- WrapBanner — resumo do último wrap
-- Home reestruturada com cards de estado
-
-### ✅ Fase 2 — Pipeline / Triage (UI)
-**Status:** implementada (commit 6543535)
-**Escopo:** Visualização do pipeline e fluxo de triagem
-
-Entregáveis:
-- Funnel visual dos 7 estágios
-- Triage flow (3 faixas de confiança)
-- FAB integrado com captura → inbox
-
-### ✅ Fase 3 — Wrap + FSM (UI)
-**Status:** implementada (commit 8cf2204)
-**Escopo:** Ritual de wrap e state machine visual
-
-Entregáveis:
-- fsm.ts — lógica de transição de estágios
-- wrap.ts — estrutura JSONB do wrap
-- WrapStepper — wizard de 7 passos (created → soul → audit → next)
+- Vercel: mindroot-v2.vercel.app (auto-deploy from GitHub)
+- PWA: manifest + service worker (falta icons raster)
 
 ---
 
-### 🔵 Fase 4 — Service Layer + FSM Runtime
-**Status:** próximo (spec abaixo)
-**Escopo:** O sistema nervoso — conectar a UI ao Supabase
-**Princípio:** Sem esta fase, a UI é casca e o banco é motor parado.
+## Fases PHI (espiral Fibonacci: 1-1-2-3-5-8-13)
+
+### ✅ Fase 1 · Sementes (effort: 1)
+**Commit:** 1e019f5
+**Escopo:** Scaffold, config, types, raiz domains
 
 Entregáveis:
-- **Supabase client service** — CRUD tipado pra items, item_connections, atom_events
-- **FSM runtime** — invocar RPCs reais (morph, decay, propagate, commit) a partir da UI
-- **Pipeline service** — avançar/regredir items pelos 7 estágios com validação de gates
-- **Connection service** — criar/deletar edges tipadas com downgrade automático
-- **Wrap service** — gerar body JSONB estruturado, INSERT como AtomItem type=wrap
-- **Audit service** — queries reais contra views (orphans, below_floor, stale)
-- **Real-time subscriptions** — Supabase Realtime pra atualizar a UI quando dados mudam
+- type-schemas.json (23 types), types.ts (registry), raiz.ts (9 domains)
+- item.ts (Schema v2), engine.ts, ui.ts
+- Tailwind 4 @theme com Genesis v5 tokens (light-first #FDFCF9, DM Sans)
+- Path alias @/ configurado
 
-Critério de done:
-- Um item pode ser criado, classificado, estruturado, validado, conectado, e commitado via wrap — tudo pelo MindRoot, tudo persistido no Supabase.
-- Audit roda com dados reais.
-- FSM impede transições inválidas.
+### ✅ Fase 2 — Raízes (effort: 1)
+**Commit:** f68ee25
+**Escopo:** Services, engines, Supabase connection. Zero UI.
 
-### 🔵 Fase 5 — Auto-Triage Engine
-**Status:** aguardando Fase 4
+Entregáveis:
+- 7 services: supabase, item-service, auth-service, fsm-service, pipeline-service, wrap-service, audit-service
+- 6 engines: fsm, wrap, parsing, recurrence, soul, search
+- 6 migrations (001-006)
+- 3 edge functions (parse-input, send-push, triage-classify)
 
-### 🟡 Fase 6 — Projects + Calendar + Raiz Onboarding
-**Status:** aguardando Fase 5
+### ✅ Fase 3 △ Geometria (effort: 2)
+**Commit:** 16f4149
+**Escopo:** Atoms, shell, stores, hooks
 
-### 🟡 Fase 7 — Analytics + Library + Reflexões + Settings
-**Status:** aguardando Fase 6
+Entregáveis:
+- 7 atoms: GeometryIcon, TypeChip, StageBadge, ModuleBar, ConfidenceBar, FAB, tokens
+- App shell: router, layout, BottomNav, auth guard
+- 3 stores: app-store, wrap-store, toast-store
+- 7 hooks: useAuth, useItems, useItemMutations, usePipeline, useRealtime, useWrap, useProject
 
-### ⚪ Fase 8 — Export + Desacoplamento
+### ✅ Fase 4 □ Fundação (effort: 3)
+**Commits:** 775f8cc → cf886ab → dc48982 → 950c2e8
+**Escopo:** Todas as páginas construídas dos wireframes
+
+Entregáveis (10 páginas):
+- Landing, Auth, Onboarding (Raiz 4-step)
+- Home (SoulCard, WrapBanner, AtomInput, ItemCards, InboxPreview, AuditBar)
+- Pipeline/Triage (funnel, stage rows, swipe cards)
+- Wrap (7-step stepper)
+- Projects (list + detail)
+- Calendar (week strip + ritual blocks)
+- Analytics (pipeline/soul/connections tabs)
+- Library (search + filter + cards)
+- Settings (profile, rituals, modules)
+- Raiz Dashboard (health ring, 9 domains)
+- AI Companion (bottom sheet, contextual chat)
+- Lazy loading (44% bundle reduction)
+- PWA (manifest, service worker, standalone)
+- Vercel deploy config
+
+### ✅ Fase 5 ⬠ Polish (effort: 5)
+**Commits:** 1407d37 → 756edc3 → 0e69af8
+**Escopo:** Visual consistency, animations, states
+
+Entregáveis:
+- Framer Motion: page transitions, item stagger, funnel bars, health ring, FAB bounce, WrapBanner slide
+- Empty states com geometria Genesis em Home, Analytics, Projects
+- Loading skeletons: SoulCard, Card, List, Ring, Chart
+- Error banner component
+- Micro-interações: inbox badge, active page dot, period-aware placeholder
+- bg-card token (dark mode prep)
+- Deploy live + auth configurado
+
+### 🔵 Fase 6 ⬡ Inteligência (effort: 8) — PRÓXIMO
+**Status:** próximo
+**Escopo:** AI triage + audit views reais + testes
+
+Entregáveis pendentes:
+- AI triage integration (edge function triage-classify com Claude Haiku)
+- Triage na UI com 3 faixas de confiança (auto/suggest/manual)
+- Fix onboarding domain→module mapping
+- Deploy audit views no Supabase (v_below_floor, v_orphan_items, v_inbox_stale)
+- Verificar commit_item RPC deployed
+- PWA icons raster (192x192, 512x512)
+- Vitest setup + testes dos fluxos críticos
+- Auth.tsx refactor (usar auth-service em vez de Supabase direto)
+
+### ⚪ Fase 7 ○ Completude (effort: 13)
 **Status:** futuro
+**Escopo:** Export, dark mode, refinements, desacoplamento
+
+Entregáveis planejados:
+- Export to Drive (botão manual)
+- Obsidian vault generation
+- Dark mode toggle
+- Analytics soul + connections tabs (real data)
+- Search global
+- Notifications
+- Offline mode (service worker cache)
+
+---
+
+## Métricas atuais
+
+| Métrica | Valor |
+|---------|-------|
+| Commits | 13 |
+| Files | 63 .ts/.tsx |
+| LOC | 6,200 |
+| Pages | 10 |
+| Components | 16 |
+| Services | 7 |
+| Engines | 6 |
+| Stores | 3 |
+| Hooks | 7 |
+| Bundle (gzip) | 71KB main |
+| Build time | 224ms (Vercel) |
+| TS errors | 0 |
 
 ---
 
 ## Regras do roadmap
 
 1. **Uma fase por vez.** Não começar a próxima sem terminar a atual.
-2. **Spec antes de código.** Cada fase ganha spec completo aqui antes de ir pro Claude Code.
+2. **Spec antes de código.** Cada fase ganha spec antes de ir pro Claude Code.
 3. **Build from the inside out.** Motor → Inteligência → Visualização → Reflexão.
 4. **Critério de done explícito.** Se não dá pra demonstrar, não tá pronto.
 5. **Este documento é a referência.** Se não está aqui, não está planejado.
+6. **Wireframe é lei.** Toda página segue o wireframe antes de inventar.
 
 ---
 
@@ -149,4 +188,5 @@ Critério de done:
 | Versão | Data | Mudança |
 |--------|------|---------|
 | 1.0 | 31 Mar 2026 | MINDROOT-ROADMAP.md — fases 0-5 originais |
-| 2.0 | 01 Abr 2026 | Roadmap unificado Atom OS. Reordenado: motor → inteligência → visualização → reflexão. Service layer e FSM runtime como Fase 4. Auto-triage como Fase 5. Export como Fase 8. Pentágono mapeado. |
+| 2.0 | 01 Abr 2026 | Roadmap unificado Atom OS. Reordenado: motor → inteligência → visualização → reflexão. |
+| 3.0 | 02 Abr 2026 | Fases PHI (espiral Fibonacci). Rebuild do zero (mindroot-v2). Fases 1-5 DONE. Deploy live. Métricas reais. |
