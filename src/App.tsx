@@ -14,13 +14,15 @@ const queryClient = new QueryClient({
   },
 });
 
+import { HomePage } from '@/pages/Home';
+
 // ─── Placeholder pages ────────────────────────────────
 
 function PlaceholderPage({ name }: { name: string }) {
   return (
     <div className="p-6">
       <h2 className="text-lg font-medium text-text-heading mb-2">{name}</h2>
-      <p className="text-sm text-text-muted">Em construcao — Fase 4+</p>
+      <p className="text-sm text-text-muted">Em construcao</p>
     </div>
   );
 }
@@ -32,7 +34,7 @@ function PageRouter() {
 
   const renderPage = () => {
     switch (currentPage) {
-      case 'home': return <PlaceholderPage name="Home" />;
+      case 'home': return <HomePage />;
       case 'pipeline': return <PlaceholderPage name="Pipeline" />;
       case 'triage': return <PlaceholderPage name="Triage" />;
       case 'wrap': return <PlaceholderPage name="Wrap" />;
@@ -43,7 +45,7 @@ function PageRouter() {
       case 'analytics': return <PlaceholderPage name="Analytics" />;
       case 'library': return <PlaceholderPage name="Library" />;
       case 'settings': return <PlaceholderPage name="Settings" />;
-      default: return <PlaceholderPage name="Home" />;
+      default: return <HomePage />;
     }
   };
 
