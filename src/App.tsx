@@ -17,6 +17,12 @@ const queryClient = new QueryClient({
 import { HomePage } from '@/pages/Home';
 import { PipelinePage } from '@/pages/Pipeline';
 import { WrapPage } from '@/pages/Wrap';
+import { ProjectsPage } from '@/pages/Projects';
+import { CalendarPage } from '@/pages/Calendar';
+import { AnalyticsPage } from '@/pages/Analytics';
+import { LibraryPage } from '@/pages/Library';
+import { SettingsPage } from '@/pages/Settings';
+import { RaizPage } from '@/pages/Raiz';
 
 // ─── Placeholder pages ────────────────────────────────
 
@@ -40,13 +46,13 @@ function PageRouter() {
       case 'pipeline': return <PipelinePage />;
       case 'triage': return <PipelinePage />;
       case 'wrap': return <WrapPage />;
-      case 'projects': return <PlaceholderPage name="Projetos" />;
-      case 'project-detail': return <PlaceholderPage name="Projeto" />;
-      case 'calendar': return <PlaceholderPage name="Agenda" />;
-      case 'raiz': return <PlaceholderPage name="Raiz" />;
-      case 'analytics': return <PlaceholderPage name="Analytics" />;
-      case 'library': return <PlaceholderPage name="Library" />;
-      case 'settings': return <PlaceholderPage name="Settings" />;
+      case 'projects': return <ProjectsPage />;
+      case 'project-detail': return <ProjectsPage />;
+      case 'calendar': return <CalendarPage />;
+      case 'raiz': return <RaizPage />;
+      case 'analytics': return <AnalyticsPage />;
+      case 'library': return <LibraryPage />;
+      case 'settings': return <SettingsPage />;
       default: return <HomePage />;
     }
   };
