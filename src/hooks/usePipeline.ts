@@ -26,6 +26,18 @@ export function usePipeline() {
     }
   };
 
+  const captureWithModule = async (title: string, module: AtomModule): Promise<AtomItem | null> => {
+    if (!user) return null;
+    try {
+      const item = await pipelineService.captureWithModule(title, user.id, module);
+      invalidate();
+      return item;
+    } catch {
+      toast.error('Erro ao capturar item');
+      return null;
+    }
+  };
+
   const classify = async (itemId: string, type: AtomItem['type'], module: AtomModule): Promise<AtomItem | null> => {
     try {
       const item = await pipelineService.classify(itemId, type, module);
@@ -124,6 +136,7 @@ export function usePipeline() {
 
   return {
     capture,
+    captureWithModule,
     classify,
     structure,
     validate,

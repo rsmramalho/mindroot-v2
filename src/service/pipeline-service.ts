@@ -23,6 +23,20 @@ export const pipelineService = {
     });
   },
 
+  async captureWithModule(title: string, userId: string, module: AtomModule): Promise<AtomItem> {
+    return itemService.create({
+      title,
+      user_id: userId,
+      state: 'inbox',
+      genesis_stage: 1,
+      status: 'inbox',
+      module,
+      source: 'mindroot',
+      tags: [],
+      body: {},
+    });
+  },
+
   async classify(itemId: string, type: AtomItem['type'], module: AtomModule): Promise<AtomItem> {
     return fsmService.classify(itemId, type, module);
   },

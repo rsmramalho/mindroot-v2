@@ -16,7 +16,7 @@ export function OnboardingPage({ onComplete }: OnboardingProps) {
   const [entryMode, setEntryMode] = useState<RaizEntryMode>('padrao');
   const [domainInputs, setDomainInputs] = useState<Record<string, string[]>>({});
   const [currentDomain, setCurrentDomain] = useState(0);
-  const { capture } = usePipeline();
+  const { captureWithModule } = usePipeline();
 
   const mode = RAIZ_ENTRY_MODES.find((m) => m.key === entryMode)!;
   const activeDomains = RAIZ_DOMAINS.slice(0, mode.domains);
@@ -30,10 +30,12 @@ export function OnboardingPage({ onComplete }: OnboardingProps) {
   };
 
   const handleFinish = async () => {
-    // Capture all items
-    for (const [, texts] of Object.entries(domainInputs)) {
+    // Capture all items with their domain→module mapping
+    for (const [domainKey, texts] of Object.entries(domainInputs)) {
+      const domain = RAIZ_DOMAINS.find((d) => d.key === domainKey);
+      const module = domain?.module ?? 'bridge';
       for (const text of texts) {
-        await capture(text);
+        await captureWithModule(text, module);
       }
     }
     onComplete();
