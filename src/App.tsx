@@ -15,6 +15,8 @@ const queryClient = new QueryClient({
 });
 
 import { HomePage } from '@/pages/Home';
+import { PipelinePage } from '@/pages/Pipeline';
+import { WrapPage } from '@/pages/Wrap';
 
 // ─── Placeholder pages ────────────────────────────────
 
@@ -35,9 +37,9 @@ function PageRouter() {
   const renderPage = () => {
     switch (currentPage) {
       case 'home': return <HomePage />;
-      case 'pipeline': return <PlaceholderPage name="Pipeline" />;
-      case 'triage': return <PlaceholderPage name="Triage" />;
-      case 'wrap': return <PlaceholderPage name="Wrap" />;
+      case 'pipeline': return <PipelinePage />;
+      case 'triage': return <PipelinePage />;
+      case 'wrap': return <WrapPage />;
       case 'projects': return <PlaceholderPage name="Projetos" />;
       case 'project-detail': return <PlaceholderPage name="Projeto" />;
       case 'calendar': return <PlaceholderPage name="Agenda" />;
