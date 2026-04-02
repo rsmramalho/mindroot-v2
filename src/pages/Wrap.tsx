@@ -11,8 +11,10 @@ import { useAppStore } from '@/store/app-store';
 import { getCreatedToday, getModifiedToday, computeAudit } from '@/engine/wrap';
 import { StageBadge } from '@/components/atoms/StageBadge';
 import { EMOTIONS } from '@/types/item';
-import type { Emotion, EnergyLevel } from '@/types/item';
+import type { Emotion, EnergyLevel, AtomItem, AtomRelation } from '@/types/item';
 import { toast } from '@/store/toast-store';
+import { usePipeline } from '@/hooks/usePipeline';
+import { getTypeColor } from '@/components/atoms/tokens';
 
 const STEPS = [
   { n: '01', name: 'soul', label: '' },
@@ -141,7 +143,7 @@ export function WrapPage() {
             {step === 0 && <SoulStep emotions={selectedEmotions} setEmotions={setSelectedEmotions} energy={energy} setEnergy={setEnergy} />}
             {step === 1 && <ItemsStep created={created} modified={modified} />}
             {step === 2 && <DecidedStep decisions={decisions} setDecisions={setDecisions} newDecision={newDecision} setNewDecision={setNewDecision} />}
-            {step === 3 && <ConnectionsStep />}
+            {step === 3 && <ConnectionsStep items={items} createdToday={created} modifiedToday={modified} />}
             {step === 4 && <SeedsStep />}
             {step === 5 && <AuditStep audit={audit} fullAudit={fullAudit ?? null} auditLoading={auditLoading} />}
             {step === 6 && <CommitStep created={created} modified={modified} decisions={decisions} audit={audit} nextSteps={nextSteps} setNextSteps={setNextSteps} />}
@@ -292,11 +294,132 @@ function DecidedStep({ decisions, setDecisions, newDecision, setNewDecision }: {
   );
 }
 
-function ConnectionsStep() {
+function ConnectionsStep({ items, createdToday, modifiedToday }: {
+  items: AtomItem[]; createdToday: AtomItem[]; modifiedToday: AtomItem[];
+}) {
+  const { connect } = usePipeline();
+  const [connectingItem, setConnectingItem] = useState<string | null>(null);
+  const [added, setAdded] = useState<Set<string>>(new Set());
+
+  const todayItems = useMemo(() => {
+    const ids = new Set([...createdToday.map((i) => i.id), ...modifiedToday.map((i) => i.id)]);
+    return items.filter((i) => ids.has(i.id));
+  }, [items, createdToday, modifiedToday]);
+
+  const handleConnect = async (sourceId: string, targetId: string, relation: AtomRelation) => {
+    const result = await connect(sourceId, targetId, relation);
+    if (result) {
+      setAdded((prev) => new Set(prev).add(sourceId));
+      setConnectingItem(null);
+    }
+  };
+
+  if (todayItems.length === 0) {
+    return (
+      <div className="bg-card border border-border rounded-xl p-4">
+        <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">connections</div>
+        <p className="text-xs text-text-muted py-4 text-center">nenhum item criado ou modificado hoje</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-card border border-border rounded-xl p-4">
-      <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">connections</div>
-      <p className="text-xs text-text-muted py-4 text-center">conexoes serao sugeridas pelo agente na Fase 5</p>
+      <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">
+        connections
+        {added.size > 0 && (
+          <span className="ml-1.5 text-[10px] px-1.5 py-px rounded-md bg-success-bg text-success-text font-medium">+{added.size}</span>
+        )}
+      </div>
+      <p className="text-xs text-text-muted mb-3">algum item de hoje se conecta com outro?</p>
+      <div className="space-y-1.5">
+        {todayItems.map((item) => {
+          const isConnecting = connectingItem === item.id;
+          const wasConnected = added.has(item.id);
+          const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
+          return (
+            <div key={item.id}>
+              <div className="flex items-center gap-2 text-[12px]">
+                <span className="flex-1 truncate">{item.title}</span>
+                {item.type && (
+                  <span className="text-[9px] px-1.5 py-px rounded" style={{ background: `color-mix(in srgb, ${typeColor} 12%, transparent)`, color: typeColor }}>{item.type}</span>
+                )}
+                {wasConnected ? (
+                  <span className="text-[10px] text-success-text">✓</span>
+                ) : (
+                  <button onClick={() => setConnectingItem(isConnecting ? null : item.id)} className="text-[10px] text-accent shrink-0">
+                    {isConnecting ? 'cancelar' : 'conectar'}
+                  </button>
+                )}
+              </div>
+              {isConnecting && (
+                <WrapConnectionPicker items={items} sourceId={item.id}
+                  onSelect={(tid, rel) => handleConnect(item.id, tid, rel)}
+                  onCancel={() => setConnectingItem(null)} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function WrapConnectionPicker({ items, sourceId, onSelect, onCancel }: {
+  items: AtomItem[]; sourceId: string;
+  onSelect: (targetId: string, relation: AtomRelation) => void; onCancel: () => void;
+}) {
+  const [search, setSearch] = useState('');
+  const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
+  const [relation, setRelation] = useState<AtomRelation>('references');
+
+  const RELATIONS: { key: AtomRelation; label: string }[] = [
+    { key: 'belongs_to', label: 'pertence a' },
+    { key: 'references', label: 'referencia' },
+    { key: 'feeds', label: 'alimenta' },
+    { key: 'blocks', label: 'bloqueia' },
+    { key: 'derives', label: 'deriva de' },
+    { key: 'mirrors', label: 'espelha' },
+  ];
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return [];
+    const q = search.toLowerCase();
+    return items.filter((i) => i.id !== sourceId && i.title.toLowerCase().includes(q)).slice(0, 5);
+  }, [items, search, sourceId]);
+
+  const target = selectedTarget ? items.find((i) => i.id === selectedTarget) : null;
+
+  return (
+    <div className="bg-surface rounded-lg p-2.5 mt-1.5 mb-2">
+      {!selectedTarget ? (
+        <>
+          <input value={search} onChange={(e) => setSearch(e.target.value)} autoFocus placeholder="buscar item..."
+            className="w-full text-[12px] bg-card border border-border rounded-lg px-2.5 py-1.5 outline-none focus:border-accent-light mb-1.5" />
+          {filtered.map((item) => (
+            <button key={item.id} onClick={() => { setSelectedTarget(item.id); setSearch(''); }}
+              className="w-full text-left px-2 py-1.5 text-[11px] hover:bg-card rounded transition-colors truncate">
+              {item.title}
+            </button>
+          ))}
+        </>
+      ) : (
+        <>
+          <div className="text-[11px] text-text-muted mb-2">→ <span className="font-medium text-text">{target?.title}</span></div>
+          <div className="flex flex-wrap gap-1 mb-2">
+            {RELATIONS.map((r) => (
+              <button key={r.key} onClick={() => setRelation(r.key)}
+                className={`text-[9px] px-2 py-0.5 rounded-md border ${relation === r.key ? 'border-accent bg-accent-bg text-accent' : 'border-border text-text-muted'}`}>
+                {r.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-1.5">
+            <button onClick={onCancel} className="flex-1 py-1.5 text-[10px] border border-border rounded-lg text-text-muted">cancelar</button>
+            <button onClick={() => onSelect(selectedTarget!, relation)} className="flex-1 py-1.5 text-[10px] bg-accent text-white rounded-lg">conectar</button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

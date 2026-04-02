@@ -13,6 +13,7 @@ import type { AtomType, AtomModule, AtomStatus } from '@/types/item';
 import { toast } from '@/store/toast-store';
 import { ALL_TYPES } from '@/config/types';
 import { STAGE_COLORS, STAGE_GEOMETRIES, STAGE_NAMES, MODULE_COLORS } from '@/components/atoms/tokens';
+import { ConnectionsSection } from '@/components/shared/ConnectionsSection';
 import { getTypeColor } from '@/components/atoms/tokens';
 
 const STATUS_OPTIONS: { key: AtomStatus; label: string }[] = [
@@ -86,6 +87,11 @@ export function ItemDetailPage() {
 
       {/* Tags */}
       <TagsSection tags={item.tags} onAdd={(tag) => update({ tags: [...item.tags, tag] })} />
+
+      <Divider />
+
+      {/* Connections */}
+      <ConnectionsSection itemId={item.id} />
 
       <Divider />
 
