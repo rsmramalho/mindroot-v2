@@ -43,7 +43,7 @@ export function BottomNav() {
             <button
               key={item.key}
               onClick={() => navigate(item.key)}
-              className={`relative flex flex-col items-center gap-0.5 px-3 py-1 transition-colors ${
+              className={`relative flex flex-col items-center gap-0.5 px-3 py-1 min-h-[44px] min-w-[44px] justify-center transition-colors ${
                 active ? 'text-text-heading' : 'text-text-muted'
               }`}
               aria-current={active ? 'page' : undefined}

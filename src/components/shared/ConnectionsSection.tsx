@@ -104,7 +104,7 @@ export function ConnectionsSection({ itemId }: ConnectionsSectionProps) {
                     {c.otherType}
                   </span>
                 )}
-                <button onClick={() => handleDelete(c)} className="text-text-muted hover:text-error text-xs shrink-0 ml-1" aria-label="Remover conexao">×</button>
+                <button onClick={() => handleDelete(c)} className="text-text-muted hover:text-error text-xs shrink-0 ml-1 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Remover conexao">×</button>
               </div>
             );
           })}
@@ -167,7 +167,7 @@ function ConnectionPicker({ items, excludeId, onSelect, onCancel }: {
           <div className="flex items-center gap-2 mb-3">
             <span className="text-[11px] text-text-muted">conectar com:</span>
             <span className="text-[12px] font-medium flex-1 truncate">{target?.title}</span>
-            <button onClick={() => setSelectedTarget(null)} className="text-xs text-text-muted">×</button>
+            <button onClick={() => setSelectedTarget(null)} className="text-xs text-text-muted min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Limpar selecao">×</button>
           </div>
           <div className="flex flex-wrap gap-1.5 mb-3">
             {RELATION_OPTIONS.map((r) => (

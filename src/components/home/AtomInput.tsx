@@ -37,7 +37,7 @@ export function AtomInput({ placeholder = 'o que esta na cabeca?', onSubmit }: A
       <button
         onClick={handleSubmit}
         disabled={!value.trim()}
-        className="w-7 h-7 rounded-full bg-text text-bg flex items-center justify-center shrink-0 disabled:opacity-30"
+        className="w-9 h-9 rounded-full bg-text text-bg flex items-center justify-center shrink-0 disabled:opacity-30"
         aria-label="Capturar"
       >
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none">

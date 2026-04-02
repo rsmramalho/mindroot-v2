@@ -23,7 +23,7 @@ export function TopBar({ onOpenSettings }: TopBarProps) {
         {/* Search */}
         <button
           onClick={() => navigate('search')}
-          className="w-9 h-9 rounded-full bg-surface flex items-center justify-center"
+          className="w-11 h-11 rounded-full bg-surface flex items-center justify-center"
           aria-label="Buscar"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -35,7 +35,7 @@ export function TopBar({ onOpenSettings }: TopBarProps) {
         {/* Menu */}
         <button
           onClick={onOpenSettings}
-          className="w-9 h-9 rounded-full bg-surface flex items-center justify-center"
+          className="w-11 h-11 rounded-full bg-surface flex items-center justify-center"
           aria-label="Menu"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

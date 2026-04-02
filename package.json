@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lighthouse": "lhci autorun --collect.url=https://mindroot-v2.vercel.app --collect.numberOfRuns=3"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@lhci/cli": "^0.15.1",
     "@tailwindcss/vite": "^4.2.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -34,6 +36,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "jsdom": "^29.0.1",
+    "lighthouse": "^12.8.2",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.2.2",
     "typescript": "~5.9.3",

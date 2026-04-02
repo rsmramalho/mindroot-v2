@@ -25,3 +25,8 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Lighthouse reports
+lighthouse-report.*
+lighthouse-after.*
+.lighthouseci
