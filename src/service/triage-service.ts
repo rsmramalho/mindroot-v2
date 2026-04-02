@@ -27,7 +27,12 @@ export const triageService = {
     const { data, error } = await supabase.functions.invoke('triage-classify', {
       body: { input, context },
     });
-    if (error) throw error;
+    if (error) {
+      if (error.message?.includes('429') || error.message?.includes('Rate limit')) {
+        throw new Error('Limite de classificacoes atingido. Tente novamente em 1 hora.');
+      }
+      throw error;
+    }
     return data as TriageResult;
   },
 };

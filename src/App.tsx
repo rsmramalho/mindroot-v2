@@ -114,6 +114,7 @@ function AnimatedRoutes() {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/item/:id" element={<ItemDetailPage />} />
             <Route path="/auth/callback" element={<HomePage />} />
+            <Route path="/auth/reset" element={<AuthPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
@@ -201,6 +202,11 @@ function AppContent() {
         </div>
       </div>
     );
+  }
+
+  // Password reset callback — render AuthPage regardless of auth state
+  if (window.location.pathname === '/auth/reset') {
+    return <AuthPage />;
   }
 
   if (!user) {
