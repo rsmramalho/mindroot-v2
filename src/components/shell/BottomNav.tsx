@@ -1,6 +1,6 @@
 // shell/BottomNav.tsx — Bottom navigation
-// 5 tabs: Home, Pipeline, Projects, Calendar, Raiz
-// Inbox badge on Home when inbox > 0
+// 4 tabs: Home, Pipeline, Projects, Calendar
+// SVG icons 24px, labels 11px, touch area 48px, height 56px
 
 import { useAppStore } from '@/store/app-store';
 import { useNav } from '@/hooks/useNav';
@@ -10,15 +10,60 @@ import type { AppPage } from '@/types/ui';
 interface NavItem {
   key: AppPage;
   label: string;
-  geometry: string;
+  icon: (active: boolean) => React.ReactNode;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { key: 'home', label: 'home', geometry: '·' },
-  { key: 'pipeline', label: 'pipeline', geometry: '△' },
-  { key: 'projects', label: 'projects', geometry: '□' },
-  { key: 'calendar', label: 'calendar', geometry: '⬡' },
-  { key: 'raiz', label: 'raiz', geometry: '○' },
+  {
+    key: 'home',
+    label: 'home',
+    icon: (active) => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-5h-6v5H5a1 1 0 01-1-1V10.5z"
+          stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+          fill={active ? 'currentColor' : 'none'} fillOpacity={active ? 0.15 : 0}
+        />
+      </svg>
+    ),
+  },
+  {
+    key: 'pipeline',
+    label: 'pipeline',
+    icon: (active) => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M4 6h16M6 10h12M8 14h8M10 18h4"
+          stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+          opacity={active ? 1 : 0.8}
+        />
+      </svg>
+    ),
+  },
+  {
+    key: 'projects',
+    label: 'projects',
+    icon: (active) => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <rect x="4" y="4" width="16" height="16" rx="2"
+          stroke="currentColor" strokeWidth="1.5"
+          fill={active ? 'currentColor' : 'none'} fillOpacity={active ? 0.15 : 0}
+        />
+        <path d="M9 9h6M9 12h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    key: 'calendar',
+    label: 'calendar',
+    icon: (active) => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <rect x="4" y="5" width="16" height="15" rx="2"
+          stroke="currentColor" strokeWidth="1.5"
+          fill={active ? 'currentColor' : 'none'} fillOpacity={active ? 0.15 : 0}
+        />
+        <path d="M8 3v3M16 3v3M4 10h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+  },
 ];
 
 export function BottomNav() {
@@ -33,28 +78,31 @@ export function BottomNav() {
       role="navigation"
       aria-label="Navegacao principal"
     >
-      <div className="flex items-center justify-around max-w-lg mx-auto py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <div className="flex items-center justify-around max-w-lg mx-auto h-14 pb-[max(0rem,env(safe-area-inset-bottom))]">
         {NAV_ITEMS.map((item) => {
           const active = currentPage === item.key
-            || (item.key === 'projects' && currentPage === 'project-detail')
-            || (item.key === 'pipeline' && currentPage === 'triage');
+            || (item.key === 'projects' && (currentPage === 'project-detail'))
+            || (item.key === 'pipeline' && currentPage === 'triage')
+            || (item.key === 'home' && currentPage === 'item-detail');
 
           return (
             <button
               key={item.key}
               onClick={() => navigate(item.key)}
-              className={`relative flex flex-col items-center gap-0.5 px-3 py-1 min-h-[44px] min-w-[44px] justify-center transition-colors ${
+              className={`relative flex flex-col items-center justify-center gap-0.5 min-h-[48px] min-w-[48px] px-3 transition-colors ${
                 active ? 'text-text-heading' : 'text-text-muted'
               }`}
               aria-current={active ? 'page' : undefined}
               aria-label={item.label}
             >
-              <span className="text-lg leading-none font-light">{item.geometry}</span>
-              <span className="text-[10px] font-normal">{item.label}</span>
-              {active && <div className="w-1 h-1 rounded-full bg-text-heading mt-px" />}
+              {item.icon(active)}
+              <span className={`text-[11px] ${active ? 'font-medium' : 'font-normal'}`}>
+                {item.label}
+              </span>
+              {active && <div className="absolute bottom-1 w-1 h-1 rounded-full bg-accent" />}
               {/* Inbox badge */}
               {item.key === 'home' && inboxCount > 0 && (
-                <span className="absolute -top-0.5 right-1 w-4 h-4 rounded-full bg-error text-white text-[9px] font-medium flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 w-4.5 h-4.5 rounded-full bg-error text-white text-[9px] font-medium flex items-center justify-center min-w-[18px] min-h-[18px]">
                   {inboxCount > 9 ? '9+' : inboxCount}
                 </span>
               )}
