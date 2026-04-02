@@ -5,6 +5,19 @@ import { DEFAULT_FILTERS } from '@/types/ui';
 import type { Emotion } from '@/types/item';
 import type { User } from '@supabase/supabase-js';
 
+export type ThemeMode = 'system' | 'light' | 'dark';
+
+function applyTheme(theme: ThemeMode) {
+  const root = document.documentElement;
+  root.classList.remove('light', 'dark');
+  if (theme === 'system') {
+    root.style.colorScheme = '';
+  } else {
+    root.classList.add(theme);
+    root.style.colorScheme = theme;
+  }
+}
+
 interface AppState {
   // Navigation
   currentPage: AppPage;
@@ -22,6 +35,10 @@ interface AppState {
   // Soul state
   currentEmotion: Emotion | null;
   setCurrentEmotion: (emotion: Emotion | null) => void;
+
+  // Theme
+  theme: ThemeMode;
+  setTheme: (theme: ThemeMode) => void;
 
   // UI
   isInputFocused: boolean;
@@ -46,6 +63,14 @@ export const useAppStore = create<AppState>((set) => ({
   // Soul
   currentEmotion: null,
   setCurrentEmotion: (emotion) => set({ currentEmotion: emotion }),
+
+  // Theme
+  theme: (localStorage.getItem('mindroot-theme') as ThemeMode) ?? 'system',
+  setTheme: (theme) => {
+    localStorage.setItem('mindroot-theme', theme);
+    set({ theme });
+    applyTheme(theme);
+  },
 
   // UI
   isInputFocused: false,

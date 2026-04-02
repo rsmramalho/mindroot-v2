@@ -114,6 +114,14 @@ function AuthenticatedApp() {
 // ─── Auth Gate ────────────────────────────────────────
 
 function AppContent() {
+  // Apply saved theme on mount
+  useLayoutEffect(() => {
+    const saved = localStorage.getItem('mindroot-theme') as 'light' | 'dark' | null;
+    if (saved) {
+      document.documentElement.classList.add(saved);
+      document.documentElement.style.colorScheme = saved;
+    }
+  }, []);
   const { user, loading } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
   const [onboardingDone, setOnboardingDone] = useState(false);

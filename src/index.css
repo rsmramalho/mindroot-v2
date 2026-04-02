@@ -145,6 +145,78 @@
   }
 }
 
+/* ─── Manual theme overrides (class-based) ───────────── */
+
+html.dark {
+  --color-bg: #111318;
+  --color-card: #1e2024;
+  --color-surface: #1a1d24;
+  --color-border: #2a2d34;
+  --color-text: #d4d0cc;
+  --color-text-muted: #8a8580;
+  --color-text-heading: #f0ece6;
+  --color-accent: #7F77DD;
+  --color-accent-light: #AFA9EC;
+  --color-accent-lighter: #CECBF6;
+  --color-accent-bg: rgba(83, 74, 183, 0.15);
+  --color-accent-hover: rgba(83, 74, 183, 0.25);
+  --color-success: #5DCAA5;
+  --color-success-text: #9FE1CB;
+  --color-success-bg: rgba(29, 158, 117, 0.12);
+  --color-warning: #FAC775;
+  --color-warning-text: #FAC775;
+  --color-warning-bg: rgba(239, 159, 39, 0.12);
+  --color-error: #F0997B;
+  --color-error-text: #F5C4B3;
+  --color-error-bg: rgba(216, 90, 48, 0.12);
+  --color-ai-purple: #AFA9EC;
+  --color-ai-blue: #85B7EB;
+  --color-ai-green: #5DCAA5;
+  --color-aurora-bg-from: rgba(239, 159, 39, 0.08);
+  --color-aurora-bg-to: rgba(239, 159, 39, 0.04);
+  --color-aurora-border: rgba(239, 159, 39, 0.2);
+  --color-zenite-bg-to: rgba(232, 224, 212, 0.08);
+  --color-zenite-mid: rgba(196, 188, 176, 0.4);
+  --color-crepusculo-bg-from: rgba(127, 119, 221, 0.1);
+  --color-crepusculo-bg-to: rgba(127, 119, 221, 0.06);
+  --color-crepusculo-border: rgba(127, 119, 221, 0.2);
+}
+
+html.light {
+  --color-bg: #FDFCF9;
+  --color-card: #FFFFFF;
+  --color-surface: #F5F3EE;
+  --color-border: #E8E4DC;
+  --color-text: #3D3A36;
+  --color-text-muted: #8A8580;
+  --color-text-heading: #2A2724;
+  --color-accent: #534AB7;
+  --color-accent-light: #7F77DD;
+  --color-accent-lighter: #AFA9EC;
+  --color-accent-bg: #EEEDFE;
+  --color-accent-hover: #F0EFFE;
+  --color-success: #1D9E75;
+  --color-success-text: #3B6D11;
+  --color-success-bg: #EAF3DE;
+  --color-warning: #EF9F27;
+  --color-warning-text: #854F0B;
+  --color-warning-bg: #FAEEDA;
+  --color-error: #D85A30;
+  --color-error-text: #A32D2D;
+  --color-error-bg: #FAECE7;
+  --color-ai-purple: #7F77DD;
+  --color-ai-blue: #378ADD;
+  --color-ai-green: #1D9E75;
+  --color-aurora-bg-from: #FFF8F0;
+  --color-aurora-bg-to: #FFF4E8;
+  --color-aurora-border: #F0D8B8;
+  --color-zenite-bg-to: #EDEAE4;
+  --color-zenite-mid: #C4BCB0;
+  --color-crepusculo-bg-from: #F3F0FA;
+  --color-crepusculo-bg-to: #EDEBF8;
+  --color-crepusculo-border: #D0C8E8;
+}
+
 /* ─── Base ────────────────────────────────────────────── */
 
 @layer base {

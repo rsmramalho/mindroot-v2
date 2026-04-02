@@ -1,16 +1,32 @@
-// pages/Settings.tsx — Profile, rituals, modules, integrations
+// pages/Settings.tsx — Profile, rituals, modules, theme, export
 // Wireframe: mindroot-wireframe-settings.html
 
 import { useAppStore } from '@/store/app-store';
+import { useItems } from '@/hooks/useItems';
 import { MODULES } from '@/types/item';
 import { RITUAL_PERIODS } from '@/types/ui';
+import { exportService } from '@/service/export-service';
+import { toast } from '@/store/toast-store';
 
 export function SettingsPage() {
   const user = useAppStore((s) => s.user);
   const navigate = useAppStore((s) => s.navigate);
+  const theme = useAppStore((s) => s.theme);
+  const setTheme = useAppStore((s) => s.setTheme);
+  const { items } = useItems();
 
   const email = user?.email ?? '';
   const name = user?.user_metadata?.full_name ?? email.split('@')[0];
+
+  const handleExportJSON = async () => {
+    await exportService.exportAsJSON(items);
+    toast.success('Backup JSON baixado');
+  };
+
+  const handleExportObsidian = async () => {
+    await exportService.exportBatchObsidian(items, items);
+    toast.success('Vault Obsidian baixado');
+  };
 
   return (
     <div className="px-5 pb-4">
@@ -30,6 +46,25 @@ export function SettingsPage() {
             <div className="text-xs text-text-muted">{email}</div>
           </div>
         </div>
+      </div>
+
+      {/* Theme */}
+      <SectionLabel>aparencia</SectionLabel>
+      <div className="bg-card border border-border rounded-xl overflow-hidden mb-4">
+        {(['system', 'light', 'dark'] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTheme(t)}
+            className={`w-full flex items-center justify-between px-4 py-3 border-b border-surface last:border-0 ${
+              theme === t ? 'text-accent font-medium' : 'text-text'
+            }`}
+          >
+            <span className="text-[13px]">
+              {t === 'system' ? 'Sistema' : t === 'light' ? 'Claro' : 'Escuro'}
+            </span>
+            {theme === t && <span className="text-xs">✓</span>}
+          </button>
+        ))}
       </div>
 
       {/* Ritual times */}
@@ -60,6 +95,13 @@ export function SettingsPage() {
         ))}
       </div>
 
+      {/* Export */}
+      <SectionLabel>exportar</SectionLabel>
+      <div className="bg-card border border-border rounded-xl overflow-hidden mb-4">
+        <ExportRow label="Backup JSON" description="todos os items como JSON" onClick={handleExportJSON} />
+        <ExportRow label="Obsidian vault" description="todos os items como .md" onClick={handleExportObsidian} />
+      </div>
+
       {/* Integrations placeholder */}
       <SectionLabel>integracoes</SectionLabel>
       <div className="bg-card border border-border rounded-xl p-4 mb-4">
@@ -85,4 +127,16 @@ export function SettingsPage() {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return <div className="text-[11px] text-text-muted tracking-wider uppercase mb-2 mt-2">{children}</div>;
+}
+
+function ExportRow({ label, description, onClick }: { label: string; description: string; onClick: () => void }) {
+  return (
+    <button onClick={onClick} className="w-full flex items-center justify-between px-4 py-3 border-b border-surface last:border-0 text-left">
+      <div>
+        <div className="text-[13px]">{label}</div>
+        <div className="text-[11px] text-text-muted">{description}</div>
+      </div>
+      <span className="text-xs text-accent">↓</span>
+    </button>
+  );
 }
