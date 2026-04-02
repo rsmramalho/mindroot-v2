@@ -68,23 +68,23 @@ export function AuthPage({ onBack }: AuthPageProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="email"
-          className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-sm text-text outline-none focus:border-[#534AB7] placeholder:text-text-muted mb-2"
+          className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-sm text-text outline-none focus:border-accent placeholder:text-text-muted mb-2"
         />
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="senha"
-          className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-sm text-text outline-none focus:border-[#534AB7] placeholder:text-text-muted mb-4"
+          className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-sm text-text outline-none focus:border-accent placeholder:text-text-muted mb-4"
           onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
         />
 
-        {error && <p className="text-xs text-[#D85A30] mb-3">{error}</p>}
+        {error && <p className="text-xs text-error mb-3">{error}</p>}
 
         <button
           onClick={handleSubmit}
           disabled={loading || !email || !password}
-          className="w-full bg-[#534AB7] text-white rounded-xl py-3 text-sm font-medium disabled:opacity-50"
+          className="w-full bg-accent text-white rounded-xl py-3 text-sm font-medium disabled:opacity-50"
         >
           {loading ? '...' : mode === 'login' ? 'Entrar' : 'Criar conta'}
         </button>
@@ -97,7 +97,7 @@ export function AuthPage({ onBack }: AuthPageProps) {
         </button>
 
         {onBack && (
-          <button onClick={onBack} className="w-full text-center text-xs text-[#534AB7] mt-2 py-2">
+          <button onClick={onBack} className="w-full text-center text-xs text-accent mt-2 py-2">
             ← voltar
           </button>
         )}

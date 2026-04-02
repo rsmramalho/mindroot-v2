@@ -10,7 +10,7 @@ interface GeometryIconProps {
 }
 
 export function GeometryIcon({ stage, size = 24, animated = false, className = '' }: GeometryIconProps) {
-  const color = STAGE_COLORS[stage] ?? '#8a8a8a';
+  const color = STAGE_COLORS[stage] ?? 'var(--color-mod-bridge)';
   const geometry = STAGE_GEOMETRIES[stage] ?? '?';
 
   const content = (

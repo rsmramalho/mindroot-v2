@@ -69,9 +69,9 @@ export function HomePage() {
       <div className="pt-4 pb-2">
         <div className="text-[22px] font-medium tracking-tight text-text-heading flex items-center gap-2">
           {period.greeting}{firstName ? `, ${firstName}` : ''}
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium ml-2" style={{ color: isCrepusculo ? '#534AB7' : '#BA7517' }}>
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium ml-2" style={{ color: isCrepusculo ? 'var(--color-accent)' : 'var(--color-warning)' }}>
             <svg width="12" height="12" viewBox="0 0 12 12">
-              <circle cx="6" cy="6" r="5" fill={isCrepusculo ? '#AFA9EC' : '#FAC775'} stroke={isCrepusculo ? '#534AB7' : '#BA7517'} strokeWidth=".5" />
+              <circle cx="6" cy="6" r="5" fill={isCrepusculo ? 'var(--color-accent-lighter)' : 'var(--color-aurora)'} stroke={isCrepusculo ? 'var(--color-accent)' : 'var(--color-warning)'} strokeWidth=".5" />
             </svg>
             {period.key}
           </span>
@@ -139,7 +139,7 @@ export function HomePage() {
       {inboxItems.length > 0 && (
         <div className="mt-3">
           <SectionLabel>
-            inbox <span className="text-[#D85A30] font-medium text-[13px] normal-case tracking-normal">{inboxItems.length}</span>
+            inbox <span className="text-error font-medium text-[13px] normal-case tracking-normal">{inboxItems.length}</span>
           </SectionLabel>
           <InboxPreview items={inboxItems} />
         </div>

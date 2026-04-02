@@ -14,7 +14,7 @@ export function WrapBanner({ createdCount, modifiedCount }: WrapBannerProps) {
 
   return (
     <motion.div
-      className="bg-gradient-to-br from-[#7F77DD] to-[#534AB7] rounded-xl p-3.5 px-4 mt-3 flex items-center justify-between"
+      className="bg-gradient-to-br from-accent-light to-accent rounded-xl p-3.5 px-4 mt-3 flex items-center justify-between"
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}

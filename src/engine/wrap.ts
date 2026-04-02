@@ -60,9 +60,9 @@ export function getAuditSeverity(audit: WrapAudit): AuditSeverity {
 }
 
 const SEVERITY_COLORS: Record<AuditSeverity, string> = {
-  green: '#8a9e7a',
-  yellow: '#c4a872',
-  red: '#d4856a',
+  green: 'var(--color-mod-work)',
+  yellow: 'var(--color-stage-7)',
+  red: 'var(--color-mod-family)',
 };
 
 export function getAuditColor(severity: AuditSeverity): string {

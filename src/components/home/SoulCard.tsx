@@ -14,30 +14,30 @@ interface SoulCardProps {
 const PERIOD_STYLES: Record<string, {
   bg: string;
   border: string;
-  orbInner: string;
+  orbInnerStyle: React.CSSProperties;
   orbRing: string;
   energyClass: string;
 }> = {
   aurora: {
-    bg: 'bg-gradient-to-br from-[#FFF8F0] to-[#FFF4E8]',
-    border: 'border-[#F0D8B8]',
-    orbInner: 'bg-[radial-gradient(circle,#FAC775,#EF9F27_60%,#D85A30)]',
-    orbRing: 'border-[#EF9F27]',
-    energyClass: 'bg-[#EAF3DE] text-[#3B6D11]',
+    bg: 'bg-gradient-to-br from-aurora-bg-from to-aurora-bg-to',
+    border: 'border-aurora-border',
+    orbInnerStyle: { background: 'radial-gradient(circle, var(--color-aurora), var(--color-warning) 60%, var(--color-error))' },
+    orbRing: 'border-warning',
+    energyClass: 'bg-success-bg text-success-text',
   },
   zenite: {
-    bg: 'bg-gradient-to-br from-[#F5F3EE] to-[#EDEAE4]',
-    border: 'border-[#D8D4CC]',
-    orbInner: 'bg-[radial-gradient(circle,#E8E0D4,#C4BCB0_60%,#A89478)]',
-    orbRing: 'border-[#C4BCB0]',
-    energyClass: 'bg-[#F0EDE8] text-[#6B6560]',
+    bg: 'bg-gradient-to-br from-surface to-zenite-bg-to',
+    border: 'border-border',
+    orbInnerStyle: { background: 'radial-gradient(circle, var(--color-zenite), var(--color-zenite-mid) 60%, var(--color-mod-mind))' },
+    orbRing: 'border-zenite-mid',
+    energyClass: 'bg-surface text-text-muted',
   },
   crepusculo: {
-    bg: 'bg-gradient-to-br from-[#F3F0FA] to-[#EDEBF8]',
-    border: 'border-[#D0C8E8]',
-    orbInner: 'bg-[radial-gradient(circle,#AFA9EC,#7F77DD_60%,#534AB7)]',
-    orbRing: 'border-[#7F77DD]',
-    energyClass: 'bg-[#EEEDFE] text-[#534AB7]',
+    bg: 'bg-gradient-to-br from-crepusculo-bg-from to-crepusculo-bg-to',
+    border: 'border-crepusculo-border',
+    orbInnerStyle: { background: 'radial-gradient(circle, var(--color-accent-lighter), var(--color-accent-light) 60%, var(--color-accent))' },
+    orbRing: 'border-accent-light',
+    energyClass: 'bg-accent-bg text-accent',
   },
 };
 
@@ -53,7 +53,7 @@ export function SoulCard({ period, intention, emotions, energy }: SoulCardProps)
           animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.1, 0.3] }}
           transition={{ duration: period === 'crepusculo' ? 3 : 2.5, repeat: Infinity, ease: 'easeInOut' }}
         />
-        <div className={`w-7 h-7 rounded-full ${s.orbInner}`} />
+        <div className="w-7 h-7 rounded-full" style={s.orbInnerStyle} />
       </div>
 
       {/* Text */}

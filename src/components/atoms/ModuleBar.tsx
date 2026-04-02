@@ -9,7 +9,7 @@ interface ModuleBarProps {
 }
 
 export function ModuleBar({ module, children, className = '' }: ModuleBarProps) {
-  const color = module ? MODULE_COLORS[module] : '#8a8a8a';
+  const color = module ? MODULE_COLORS[module] : 'var(--color-mod-bridge)';
 
   return (
     <div

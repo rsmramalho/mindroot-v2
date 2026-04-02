@@ -3,12 +3,7 @@
 // Uses useLightAudit() for fast Supabase query.
 
 import { useLightAudit } from '@/hooks/useAudit';
-
-const STATUS_COLORS = {
-  green: { bg: '#EAF3DE', text: '#3B6D11' },
-  amber: { bg: '#FAEEDA', text: '#854F0B' },
-  red:   { bg: '#FAECE7', text: '#A32D2D' },
-} as const;
+import { STATUS_COLORS } from '@/components/atoms/tokens';
 
 function pillColor(value: number, thresholds?: { amber: number }) {
   if (value === 0) return STATUS_COLORS.green;

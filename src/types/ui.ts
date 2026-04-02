@@ -47,21 +47,21 @@ export const RITUAL_PERIODS: RitualPeriodConfig[] = [
     label: 'Aurora',
     greeting: 'Bom dia',
     hours: { start: 5, end: 12 },
-    color: '#f0c674',
+    color: 'var(--color-aurora)',
   },
   {
     key: 'zenite',
     label: 'Zenite',
     greeting: 'Boa tarde',
     hours: { start: 12, end: 18 },
-    color: '#e8e0d4',
+    color: 'var(--color-zenite)',
   },
   {
     key: 'crepusculo',
     label: 'Crepusculo',
     greeting: 'Boa noite',
     hours: { start: 18, end: 5 },
-    color: '#8a6e5a',
+    color: 'var(--color-crepusculo)',
   },
 ];
 

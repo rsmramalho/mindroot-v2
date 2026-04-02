@@ -16,13 +16,13 @@ export function SettingsPage() {
     <div className="px-5 pb-4">
       <div className="pt-4 pb-4 flex items-center justify-between">
         <h1 className="text-2xl font-medium tracking-tight">settings</h1>
-        <button onClick={() => navigate('home')} className="text-xs text-[#534AB7]">fechar</button>
+        <button onClick={() => navigate('home')} className="text-xs text-accent">fechar</button>
       </div>
 
       {/* Profile */}
       <div className="bg-card border border-border rounded-xl p-4 mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-[#EEEDFE] flex items-center justify-center text-lg text-[#534AB7] font-medium">
+          <div className="w-12 h-12 rounded-full bg-accent-bg flex items-center justify-center text-lg text-accent font-medium">
             {name.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1">

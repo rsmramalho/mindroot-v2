@@ -53,7 +53,7 @@ export function BottomNav() {
               {active && <div className="w-1 h-1 rounded-full bg-text-heading mt-px" />}
               {/* Inbox badge */}
               {item.key === 'home' && inboxCount > 0 && (
-                <span className="absolute -top-0.5 right-1 w-4 h-4 rounded-full bg-[#D85A30] text-white text-[9px] font-medium flex items-center justify-center">
+                <span className="absolute -top-0.5 right-1 w-4 h-4 rounded-full bg-error text-white text-[9px] font-medium flex items-center justify-center">
                   {inboxCount > 9 ? '9+' : inboxCount}
                 </span>
               )}

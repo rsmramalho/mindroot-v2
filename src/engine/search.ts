@@ -307,7 +307,7 @@ export function getFilterLabels(filters: SearchFilters): { key: string; label: s
     if (m) labels.push({ key: 'module', label: m.label, color: m.color });
   }
   if (filters.emotion) {
-    labels.push({ key: 'emotion', label: filters.emotion, color: '#c4a882' });
+    labels.push({ key: 'emotion', label: filters.emotion, color: 'var(--color-mod-purpose)' });
   }
   if (filters.period) {
     const p = RITUAL_PERIODS.find((rp) => rp.key === filters.period);
@@ -315,17 +315,17 @@ export function getFilterLabels(filters: SearchFilters): { key: string; label: s
   }
   if (filters.priority) {
     const pl: Record<string, string> = { high: 'Alta', medium: 'Media', low: 'Baixa' };
-    labels.push({ key: 'priority', label: pl[filters.priority] || filters.priority, color: '#a89478' });
+    labels.push({ key: 'priority', label: pl[filters.priority] || filters.priority, color: 'var(--color-mod-mind)' });
   }
   if (filters.type) {
-    labels.push({ key: 'type', label: filters.type, color: '#a89478' });
+    labels.push({ key: 'type', label: filters.type, color: 'var(--color-mod-mind)' });
   }
   if (filters.tag) {
-    labels.push({ key: 'tag', label: `#${filters.tag}`, color: '#a89478' });
+    labels.push({ key: 'tag', label: `#${filters.tag}`, color: 'var(--color-mod-mind)' });
   }
   if (filters.dateRange) {
     const dl: Record<string, string> = { hoje: 'Hoje', semana: 'Semana', atrasado: 'Atrasado', futuro: 'Futuro' };
-    labels.push({ key: 'dateRange', label: dl[filters.dateRange] || filters.dateRange, color: '#a89478' });
+    labels.push({ key: 'dateRange', label: dl[filters.dateRange] || filters.dateRange, color: 'var(--color-mod-mind)' });
   }
 
   return labels;

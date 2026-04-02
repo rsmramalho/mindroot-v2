@@ -7,9 +7,9 @@ interface ConfidenceBarProps {
 }
 
 function getConfidenceColor(value: number): string {
-  if (value >= 80) return '#8a9e7a'; // green
-  if (value >= 50) return '#c4a872'; // yellow
-  return '#d4856a'; // red
+  if (value >= 80) return 'var(--color-mod-work)'; // green
+  if (value >= 50) return 'var(--color-stage-7)'; // yellow
+  return 'var(--color-mod-family)'; // red
 }
 
 export function ConfidenceBar({ value, className = '', showLabel = true }: ConfidenceBarProps) {

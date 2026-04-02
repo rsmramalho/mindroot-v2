@@ -81,12 +81,12 @@ export function ProjectsPage() {
 }
 
 function ProjectCard({ project, childCount, onClick }: { project: AtomItem; childCount: number; onClick: () => void }) {
-  const moduleColor = project.module ? MODULE_COLORS[project.module] : '#8a8a8a';
+  const moduleColor = project.module ? MODULE_COLORS[project.module] : 'var(--color-mod-bridge)';
   const progress = project.body?.operations?.progress ?? 0;
   const stage = project.genesis_stage;
   const geometry = STAGE_GEOMETRIES[stage] ?? '·';
   const statusLabel = project.status === 'active' ? 'active' : project.status;
-  const statusBg = project.status === 'active' ? 'bg-[#EAF3DE] text-[#3B6D11]' : 'bg-surface text-text-muted';
+  const statusBg = project.status === 'active' ? 'bg-success-bg text-success-text' : 'bg-surface text-text-muted';
 
   return (
     <button
@@ -109,15 +109,15 @@ function ProjectCard({ project, childCount, onClick }: { project: AtomItem; chil
 }
 
 function ProjectDetail({ project, children, onBack }: { project: AtomItem; children: AtomItem[]; onBack: () => void }) {
-  const moduleColor = project.module ? MODULE_COLORS[project.module] : '#8a8a8a';
+  const moduleColor = project.module ? MODULE_COLORS[project.module] : 'var(--color-mod-bridge)';
   const progress = project.body?.operations?.progress ?? 0;
   const stage = project.genesis_stage;
   const geometry = STAGE_GEOMETRIES[stage] ?? '·';
-  const statusBg = project.status === 'active' ? 'bg-[#EAF3DE] text-[#3B6D11]' : 'bg-surface text-text-muted';
+  const statusBg = project.status === 'active' ? 'bg-success-bg text-success-text' : 'bg-surface text-text-muted';
 
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="px-5 pb-4">
-      <button onClick={onBack} className="text-[13px] text-[#534AB7] pt-4 pb-2">← projects</button>
+      <button onClick={onBack} className="text-[13px] text-accent pt-4 pb-2">← projects</button>
       <h1 className="text-2xl font-medium mb-1.5">{project.title}</h1>
       <div className="text-[13px] text-text-muted mb-4 flex items-center gap-2">
         <span className={`text-[10px] px-2 py-px rounded-lg font-medium ${statusBg}`}>{project.status}</span>
@@ -143,8 +143,8 @@ function ProjectDetail({ project, children, onBack }: { project: AtomItem; child
       ) : (
         children.map((item) => {
           const geo = STAGE_GEOMETRIES[item.genesis_stage] ?? '·';
-          const stageColor = STAGE_COLORS[item.genesis_stage] ?? '#6b6b6b';
-          const typeColor = item.type ? getTypeColor(item.type) : '#8a8a8a';
+          const stageColor = STAGE_COLORS[item.genesis_stage] ?? 'var(--color-stage-1)';
+          const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
           return (
             <div key={item.id} className="bg-card border border-border rounded-lg p-2.5 px-3 mb-1.5 flex items-center gap-2.5 text-[13px]">
               <span style={{ color: stageColor }}>{geo}</span>

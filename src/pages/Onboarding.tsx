@@ -42,26 +42,26 @@ export function OnboardingPage({ onComplete }: OnboardingProps) {
   };
 
   return (
-    <div className="min-h-dvh bg-[#FDFBF6] text-[#2C2618] flex flex-col">
+    <div className="min-h-dvh bg-bg text-text flex flex-col">
       <AnimatePresence mode="wait">
         {step === 0 && (
           <motion.div key="welcome" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="flex-1 flex flex-col items-center justify-center px-8 text-center"
           >
             {/* Raiz symbol */}
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#7F77DD] to-[#1D9E75] flex items-center justify-center mb-6 relative">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-ai-purple to-ai-green flex items-center justify-center mb-6 relative">
               <div className="w-10 h-10 rounded-full border-2 border-white/40" />
-              <div className="absolute inset-0 rounded-full border border-[#7F77DD]/20 animate-pulse" style={{ animationDuration: '3s' }} />
+              <div className="absolute inset-0 rounded-full border border-accent-light/20 animate-pulse" style={{ animationDuration: '3s' }} />
             </div>
             <h1 className="text-2xl font-medium mb-2">raiz</h1>
-            <p className="text-sm text-[#8C7E5E] leading-relaxed mb-8 max-w-[280px]">
+            <p className="text-sm text-text-muted leading-relaxed mb-8 max-w-[280px]">
               antes de organizar, precisa ver.<br />
               vamos mapear onde voce esta agora.
             </p>
-            <button onClick={() => setStep(1)} className="bg-gradient-to-r from-[#7F77DD] to-[#534AB7] text-white rounded-xl px-8 py-3.5 text-sm font-medium mb-3">
+            <button onClick={() => setStep(1)} className="bg-gradient-to-r from-accent-light to-accent text-white rounded-xl px-8 py-3.5 text-sm font-medium mb-3">
               comecar
             </button>
-            <button onClick={onComplete} className="text-xs text-[#8C7E5E]">depois, talvez</button>
+            <button onClick={onComplete} className="text-xs text-text-muted">depois, talvez</button>
           </motion.div>
         )}
 
@@ -71,7 +71,7 @@ export function OnboardingPage({ onComplete }: OnboardingProps) {
           >
             <div className="text-center mb-6">
               <div className="text-2xl mb-1">por onde quer comecar?</div>
-              <p className="text-sm text-[#8C7E5E]">escolha o nivel de profundidade</p>
+              <p className="text-sm text-text-muted">escolha o nivel de profundidade</p>
             </div>
             <div className="space-y-3">
               {RAIZ_ENTRY_MODES.map((m) => (
@@ -79,11 +79,11 @@ export function OnboardingPage({ onComplete }: OnboardingProps) {
                   key={m.key}
                   onClick={() => { setEntryMode(m.key); setStep(2); }}
                   className={`w-full text-left bg-card border rounded-xl p-4 transition-all ${
-                    entryMode === m.key ? 'border-[#534AB7]' : 'border-border'
+                    entryMode === m.key ? 'border-accent' : 'border-border'
                   }`}
                 >
                   <div className="text-[15px] font-medium mb-0.5">{m.label}</div>
-                  <div className="text-xs text-[#8C7E5E]">{m.description}</div>
+                  <div className="text-xs text-text-muted">{m.description}</div>
                 </button>
               ))}
             </div>
@@ -113,15 +113,15 @@ export function OnboardingPage({ onComplete }: OnboardingProps) {
           <motion.div key="done" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             className="flex-1 flex flex-col items-center justify-center px-8 text-center"
           >
-            <div className="text-5xl mb-4 text-[#1D9E75]">○</div>
+            <div className="text-5xl mb-4 text-success">○</div>
             <h2 className="text-xl font-medium mb-2">raiz mapeada</h2>
-            <p className="text-sm text-[#8C7E5E] leading-relaxed mb-2">
+            <p className="text-sm text-text-muted leading-relaxed mb-2">
               {Object.values(domainInputs).flat().length} items capturados em {Object.keys(domainInputs).length} dominios
             </p>
-            <p className="text-xs text-[#8C7E5E] mb-8">
+            <p className="text-xs text-text-muted mb-8">
               todos entraram como pontos · no inbox — o triage vai classifica-los
             </p>
-            <button onClick={handleFinish} className="bg-[#1D9E75] text-white rounded-xl px-8 py-3.5 text-sm font-medium">
+            <button onClick={handleFinish} className="bg-success text-white rounded-xl px-8 py-3.5 text-sm font-medium">
               ir pro MindRoot
             </button>
           </motion.div>
@@ -156,11 +156,11 @@ function DomainStep({ domain, inputs, onAdd, onNext, onBack, current, total }: {
       {/* Progress */}
       <div className="flex gap-1.5 mb-6">
         {Array.from({ length: total }).map((_, i) => (
-          <div key={i} className={`flex-1 h-1 rounded-full ${i < current ? 'bg-[#7F77DD]' : 'bg-[#e8e6df]'}`} />
+          <div key={i} className={`flex-1 h-1 rounded-full ${i < current ? 'bg-accent-light' : 'bg-border'}`} />
         ))}
       </div>
 
-      <div className="text-[11px] text-[#8C7E5E] tracking-wider uppercase mb-1">{current}/{total} · {domain.label}</div>
+      <div className="text-[11px] text-text-muted tracking-wider uppercase mb-1">{current}/{total} · {domain.label}</div>
       <h2 className="text-lg font-medium mb-2">{domain.prompt}</h2>
 
       {/* Examples */}
@@ -169,7 +169,7 @@ function DomainStep({ domain, inputs, onAdd, onNext, onBack, current, total }: {
           <button
             key={ex}
             onClick={() => { onAdd(ex); }}
-            className="text-xs px-3 py-1.5 rounded-xl border border-border bg-card text-[#8C7E5E] hover:border-[#7F77DD] transition-colors"
+            className="text-xs px-3 py-1.5 rounded-xl border border-border bg-card text-text-muted hover:border-accent-light transition-colors"
           >
             {ex}
           </button>
@@ -183,9 +183,9 @@ function DomainStep({ domain, inputs, onAdd, onNext, onBack, current, total }: {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && add()}
           placeholder="escreva algo..."
-          className="flex-1 border border-border rounded-xl px-4 py-3 text-sm bg-card text-text outline-none focus:border-[#7F77DD]"
+          className="flex-1 border border-border rounded-xl px-4 py-3 text-sm bg-card text-text outline-none focus:border-accent-light"
         />
-        <button onClick={add} disabled={!text.trim()} className="px-4 py-3 bg-[#534AB7] text-white rounded-xl text-sm disabled:opacity-30">+</button>
+        <button onClick={add} disabled={!text.trim()} className="px-4 py-3 bg-accent text-white rounded-xl text-sm disabled:opacity-30">+</button>
       </div>
 
       {/* Captured items */}
@@ -193,7 +193,7 @@ function DomainStep({ domain, inputs, onAdd, onNext, onBack, current, total }: {
         <div className="space-y-1 mb-4">
           {inputs.map((item, i) => (
             <div key={i} className="flex items-center gap-2 text-[13px] py-1.5 px-3 bg-card border border-border rounded-lg">
-              <span className="text-[#7F77DD]">·</span>
+              <span className="text-accent-light">·</span>
               <span>{item}</span>
             </div>
           ))}
@@ -201,8 +201,8 @@ function DomainStep({ domain, inputs, onAdd, onNext, onBack, current, total }: {
       )}
 
       <div className="mt-auto flex justify-between pt-4">
-        <button onClick={onBack} className="text-sm text-[#534AB7]">voltar</button>
-        <button onClick={onNext} className="bg-[#534AB7] text-white rounded-xl px-6 py-2.5 text-sm font-medium">
+        <button onClick={onBack} className="text-sm text-accent">voltar</button>
+        <button onClick={onNext} className="bg-accent text-white rounded-xl px-6 py-2.5 text-sm font-medium">
           {current === total ? 'finalizar' : 'proximo'}
         </button>
       </div>

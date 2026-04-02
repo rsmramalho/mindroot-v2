@@ -74,10 +74,10 @@ export function WrapPage() {
   if (done) {
     return (
       <div className="px-5 text-center py-16">
-        <div className="text-5xl text-[#534AB7] mb-4">
+        <div className="text-5xl text-accent mb-4">
           <svg width="64" height="64" viewBox="0 0 64 64" className="mx-auto">
-            <circle cx="32" cy="32" r="28" fill="none" stroke="#534AB7" strokeWidth="3" />
-            <path d="M22 32l6 6 14-14" stroke="#534AB7" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="32" cy="32" r="28" fill="none" stroke="var(--color-accent)" strokeWidth="3" />
+            <path d="M22 32l6 6 14-14" stroke="var(--color-accent)" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
         <h2 className="text-xl font-medium mb-1.5">wrap commitado</h2>
@@ -86,7 +86,7 @@ export function WrapPage() {
         </p>
         <button
           onClick={() => navigate('home')}
-          className="mt-8 text-[15px] text-[#534AB7] font-medium"
+          className="mt-8 text-[15px] text-accent font-medium"
         >
           boa noite ○
         </button>
@@ -113,7 +113,7 @@ export function WrapPage() {
           <div
             key={i}
             className={`h-2 rounded-full transition-all cursor-pointer ${
-              i === step ? 'w-6 bg-[#7F77DD]' : i < step ? 'w-2 bg-[#AFA9EC]' : 'w-2 bg-border'
+              i === step ? 'w-6 bg-accent-light' : i < step ? 'w-2 bg-accent-lighter' : 'w-2 bg-border'
             }`}
             onClick={() => setStep(i)}
           />
@@ -122,7 +122,7 @@ export function WrapPage() {
 
       {/* Step header */}
       <div className="px-5 pb-2 flex items-baseline gap-2">
-        <span className="text-[11px] font-medium text-[#AFA9EC]">{s.n}</span>
+        <span className="text-[11px] font-medium text-accent-lighter">{s.n}</span>
         <span className="text-[15px] font-medium">{s.name}</span>
         {s.label && <span className="text-[11px] text-text-muted ml-auto">{s.label}</span>}
       </div>
@@ -146,7 +146,7 @@ export function WrapPage() {
       <div className="px-5 py-2.5 border-t border-border flex justify-between items-center">
         <button
           onClick={goBack}
-          className={`text-sm text-[#534AB7] ${step === 0 ? 'invisible' : ''}`}
+          className={`text-sm text-accent ${step === 0 ? 'invisible' : ''}`}
         >
           voltar
         </button>
@@ -154,7 +154,7 @@ export function WrapPage() {
           onClick={goNext}
           disabled={loading}
           className={`rounded-xl px-7 py-3 text-sm font-medium text-white ${
-            step === STEPS.length - 1 ? 'bg-[#639922]' : 'bg-[#534AB7]'
+            step === STEPS.length - 1 ? 'bg-success-text' : 'bg-accent'
           } disabled:opacity-50`}
         >
           {step === STEPS.length - 1 ? 'commitar ○' : 'proximo'}
@@ -183,7 +183,7 @@ function SoulStep({ emotions, setEmotions, energy, setEnergy }: {
             key={e}
             onClick={() => toggleEmotion(e)}
             className={`px-3 py-1 rounded-2xl border text-xs transition-all ${
-              emotions.includes(e) ? 'border-[#7F77DD] bg-[#EEEDFE] text-[#534AB7]' : 'border-border bg-card text-text-muted'
+              emotions.includes(e) ? 'border-accent-light bg-accent-bg text-accent' : 'border-border bg-card text-text-muted'
             }`}
           >
             {e}
@@ -197,7 +197,7 @@ function SoulStep({ emotions, setEmotions, energy, setEnergy }: {
             key={e}
             onClick={() => setEnergy(e)}
             className={`px-3 py-1 rounded-xl border text-xs transition-all ${
-              energy === e ? 'border-[#7F77DD] bg-[#EEEDFE] text-[#534AB7]' : 'border-border bg-card'
+              energy === e ? 'border-accent-light bg-accent-bg text-accent' : 'border-border bg-card'
             }`}
           >
             {e}
@@ -255,14 +255,14 @@ function DecidedStep({ decisions, setDecisions, newDecision, setNewDecision }: {
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">decisoes</div>
       {decisions.map((d, i) => (
         <div key={i} className="py-2 border-b border-surface last:border-0 flex items-center gap-2.5">
-          <div className="w-[18px] h-[18px] rounded-md bg-[#7F77DD] flex items-center justify-center shrink-0">
-            <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#fff" strokeWidth="1.3" fill="none" strokeLinecap="round" /></svg>
+          <div className="w-[18px] h-[18px] rounded-md bg-accent-light text-white flex items-center justify-center shrink-0">
+            <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinecap="round" /></svg>
           </div>
           <span className="text-[13px]">"{d}"</span>
         </div>
       ))}
       <input
-        className="w-full border border-border rounded-lg px-3 py-2 text-[13px] bg-card text-text outline-none focus:border-[#7F77DD] mt-2"
+        className="w-full border border-border rounded-lg px-3 py-2 text-[13px] bg-card text-text outline-none focus:border-accent-light mt-2"
         placeholder="+ adicionar decisao..."
         value={newDecision}
         onChange={(e) => setNewDecision(e.target.value)}
@@ -335,7 +335,7 @@ function AuditStep({ audit, fullAudit, auditLoading }: {
             detail={stale.map((i) => (
               <div key={i.id} className="flex items-center gap-1.5 text-[11px] text-text-muted py-0.5">
                 <span className="truncate flex-1">{i.title}</span>
-                <span className="text-[10px] font-medium px-1 rounded bg-[#FAECE7] text-[#A32D2D]">{i.days_in_inbox}d</span>
+                <span className="text-[10px] font-medium px-1 rounded bg-error-bg text-error-text">{i.days_in_inbox}d</span>
               </div>
             ))}
           />
@@ -350,7 +350,7 @@ function AuditRow({ label, value, ok, detail }: { label: string; value: number; 
     <div className="border-b border-surface last:border-0">
       <div className="flex justify-between py-1.5 text-[13px]">
         <span>{label}</span>
-        <span className={`font-medium ${ok ? 'text-[#639922]' : 'text-[#EF9F27]'}`}>
+        <span className={`font-medium ${ok ? 'text-success-text' : 'text-warning'}`}>
           {value} {ok ? '✓' : '!'}
         </span>
       </div>
@@ -372,7 +372,7 @@ function CommitStep({ created, modified, decisions, audit, nextSteps, setNextSte
 
   return (
     <>
-      <div className="bg-[#EEEDFE] border border-border rounded-xl p-6 text-center">
+      <div className="bg-accent-bg border border-border rounded-xl p-6 text-center">
         <div className="text-[10px] text-text-muted tracking-wider mb-4">
           · → — → △ → □ → ⬠ → ⬡ → ○
         </div>
@@ -382,15 +382,15 @@ function CommitStep({ created, modified, decisions, audit, nextSteps, setNextSte
         </p>
         <div className="flex justify-center gap-6 mt-4">
           <div className="text-center">
-            <div className="text-xl font-medium text-[#534AB7]">○</div>
+            <div className="text-xl font-medium text-accent">○</div>
             <div className="text-[10px] text-text-muted mt-0.5">completude</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-medium text-[#534AB7]">{created.length + modified.length}</div>
+            <div className="text-xl font-medium text-accent">{created.length + modified.length}</div>
             <div className="text-[10px] text-text-muted mt-0.5">items</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-medium text-[#534AB7]">
+            <div className="text-xl font-medium text-accent">
               {audit.total_active > 0 ? Math.round(((audit.total_active - audit.inbox_count - audit.below_floor) / audit.total_active) * 100) : 100}%
             </div>
             <div className="text-[10px] text-text-muted mt-0.5">saude</div>
@@ -402,13 +402,13 @@ function CommitStep({ created, modified, decisions, audit, nextSteps, setNextSte
         {nextSteps.map((s, i) => (
           <input
             key={i}
-            className="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] bg-card text-text outline-none focus:border-[#7F77DD] mb-1.5"
+            className="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] bg-card text-text outline-none focus:border-accent-light mb-1.5"
             value={s}
             onChange={(e) => updateStep(i, e.target.value)}
             placeholder="+ adicionar..."
           />
         ))}
-        <button onClick={addStep} className="text-xs text-[#534AB7] mt-1">+ adicionar</button>
+        <button onClick={addStep} className="text-xs text-accent mt-1">+ adicionar</button>
       </div>
     </>
   );

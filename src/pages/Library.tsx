@@ -63,7 +63,7 @@ export function LibraryPage() {
             key={p.key}
             onClick={() => setFilter(p.key)}
             className={`px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all ${
-              filter === p.key ? 'bg-[#EEEDFE] text-[#534AB7] font-medium' : 'bg-surface text-text-muted'
+              filter === p.key ? 'bg-accent-bg text-accent font-medium' : 'bg-surface text-text-muted'
             }`}
           >
             {p.label}
@@ -93,7 +93,7 @@ export function LibraryPage() {
 }
 
 function LibraryCard({ item }: { item: AtomItem }) {
-  const typeColor = item.type ? getTypeColor(item.type) : '#8a8a8a';
+  const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
 
   return (
     <div className="bg-card border border-border rounded-xl p-3 px-3.5">

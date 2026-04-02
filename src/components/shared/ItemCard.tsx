@@ -13,10 +13,10 @@ interface ItemCardProps {
 }
 
 export function ItemCard({ item, onClick }: ItemCardProps) {
-  const moduleColor = item.module ? MODULE_COLORS[item.module] : '#8a8a8a';
-  const stageColor = STAGE_COLORS[item.genesis_stage] ?? '#6b6b6b';
+  const moduleColor = item.module ? MODULE_COLORS[item.module] : 'var(--color-mod-bridge)';
+  const stageColor = STAGE_COLORS[item.genesis_stage] ?? 'var(--color-stage-1)';
   const geometry = STAGE_GEOMETRIES[item.genesis_stage] ?? '·';
-  const typeColor = item.type ? getTypeColor(item.type) : '#8a8a8a';
+  const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
   const progress = item.body?.operations?.progress ?? null;
   const dueDate = item.body?.operations?.due_date;
 
@@ -53,7 +53,7 @@ export function ItemCard({ item, onClick }: ItemCardProps) {
           )}
           <span className="text-[11px] text-text-muted">stage {item.genesis_stage}</span>
           {dueDate && (
-            <span className="text-[10px] text-[#b4b2a9] ml-auto shrink-0">
+            <span className="text-[10px] text-text-muted ml-auto shrink-0">
               {formatDue(dueDate)}
             </span>
           )}

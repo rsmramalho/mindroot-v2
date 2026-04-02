@@ -3,13 +3,9 @@
 
 import { useFullAudit } from '@/hooks/useAudit';
 import { GENESIS_STAGES, MODULES } from '@/types/item';
-import { STAGE_COLORS, MODULE_COLORS, STAGE_GEOMETRIES } from '@/components/atoms/tokens';
+import { STAGE_COLORS, MODULE_COLORS, STAGE_GEOMETRIES, STATUS_COLORS } from '@/components/atoms/tokens';
 import { StageBadge } from '@/components/atoms/StageBadge';
 import { ListSkeleton } from '@/components/shared/Skeleton';
-
-const GREEN = { bg: '#EAF3DE', text: '#3B6D11' };
-const AMBER = { bg: '#FAEEDA', text: '#854F0B' };
-const RED   = { bg: '#FAECE7', text: '#A32D2D' };
 
 export function AuditPanel() {
   const { data: audit, isLoading, isError } = useFullAudit();
@@ -137,7 +133,7 @@ function StaleSection({ items }: { items: { id: string; title: string; created_a
               <span className="text-[13px] flex-1 truncate">{item.title}</span>
               <span
                 className="text-[10px] font-medium px-1.5 py-0.5 rounded-lg shrink-0"
-                style={{ background: RED.bg, color: RED.text }}
+                style={{ background: STATUS_COLORS.red.bg, color: STATUS_COLORS.red.text }}
               >
                 {item.days_in_inbox}d
               </span>
@@ -192,7 +188,7 @@ function SectionLabel({ children, count, warn }: { children: React.ReactNode; co
       {count !== undefined && count > 0 && (
         <span
           className="text-[10px] font-medium px-1.5 py-px rounded-lg"
-          style={{ background: warn ? AMBER.bg : GREEN.bg, color: warn ? AMBER.text : GREEN.text }}
+          style={{ background: warn ? STATUS_COLORS.amber.bg : STATUS_COLORS.green.bg, color: warn ? STATUS_COLORS.amber.text : STATUS_COLORS.green.text }}
         >
           {count}
         </span>
@@ -202,7 +198,7 @@ function SectionLabel({ children, count, warn }: { children: React.ReactNode; co
 }
 
 function StatusBanner({ status, text }: { status: 'green' | 'amber' | 'red'; text: string }) {
-  const colors = status === 'green' ? GREEN : status === 'amber' ? AMBER : RED;
+  const colors = STATUS_COLORS[status];
   const icon = status === 'green' ? '✓' : '!';
   return (
     <div

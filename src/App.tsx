@@ -95,7 +95,7 @@ function AuthenticatedApp() {
       {/* FAB for companion */}
       <motion.button
         onClick={() => setCompanionOpen(true)}
-        className="fixed bottom-20 right-5 w-12 h-12 rounded-full bg-gradient-to-br from-[#7F77DD] via-[#378ADD] to-[#1D9E75] text-white flex items-center justify-center text-lg font-light shadow-lg shadow-[#534AB7]/20 z-30"
+        className="fixed bottom-20 right-5 w-12 h-12 rounded-full bg-gradient-to-br from-ai-purple via-ai-blue to-ai-green text-white flex items-center justify-center text-lg font-light shadow-lg shadow-accent/20 z-30"
         aria-label="Abrir companion"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}

@@ -7,7 +7,7 @@ interface StageBadgeProps {
 }
 
 export function StageBadge({ stage, className = '' }: StageBadgeProps) {
-  const color = STAGE_COLORS[stage] ?? '#8a8a8a';
+  const color = STAGE_COLORS[stage] ?? 'var(--color-mod-bridge)';
   const geometry = STAGE_GEOMETRIES[stage] ?? '?';
 
   return (

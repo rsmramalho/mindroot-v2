@@ -111,7 +111,7 @@ function PipelineView() {
 
       {/* Below floor banner */}
       {belowFloor.length > 0 && (
-        <div className="bg-[#FAEEDA] rounded-lg px-3.5 py-2.5 mb-3 flex items-center gap-2 text-xs text-[#854F0B] font-medium">
+        <div className="bg-warning-bg rounded-lg px-3.5 py-2.5 mb-3 flex items-center gap-2 text-xs text-warning-text font-medium">
           <span>⚠</span>
           <span>{belowFloor.length} items abaixo do floor</span>
         </div>
@@ -168,8 +168,8 @@ function PipelineView() {
 }
 
 function StageItem({ item }: { item: AtomItem }) {
-  const moduleColor = item.module ? MODULE_COLORS[item.module] : '#8a8a8a';
-  const typeColor = item.type ? getTypeColor(item.type) : '#8a8a8a';
+  const moduleColor = item.module ? MODULE_COLORS[item.module] : 'var(--color-mod-bridge)';
+  const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
 
   return (
     <div className="flex items-center gap-2 p-2 px-2.5 mt-1 rounded-lg bg-card border border-border text-[13px]">
@@ -190,9 +190,9 @@ function StageItem({ item }: { item: AtomItem }) {
 // ─── Triage View ───────────────────────────────────────
 
 const BAND_COLORS = {
-  auto:    { bg: '#EAF3DE', text: '#3B6D11', label: 'auto' },
-  suggest: { bg: '#FAEEDA', text: '#854F0B', label: 'sugerir' },
-  manual:  { bg: '#FAECE7', text: '#A32D2D', label: 'manual' },
+  auto:    { bg: 'var(--color-success-bg)', text: 'var(--color-success-text)', label: 'auto' },
+  suggest: { bg: 'var(--color-warning-bg)', text: 'var(--color-warning-text)', label: 'sugerir' },
+  manual:  { bg: 'var(--color-error-bg)', text: 'var(--color-error-text)', label: 'manual' },
 } as const;
 
 function TriageView() {
@@ -212,7 +212,7 @@ function TriageView() {
   if (total === 0) {
     return (
       <div className="text-center py-12">
-        <div className="text-5xl text-[#1D9E75] mb-3">○</div>
+        <div className="text-5xl text-success mb-3">○</div>
         <h3 className="text-lg font-medium mb-1.5">Inbox limpo</h3>
         <p className="text-[13px] text-text-muted">Todos os items foram triados</p>
       </div>
@@ -269,7 +269,7 @@ function TriageView() {
           <div
             key={i}
             className={`h-2 rounded-full transition-all ${
-              i === currentIdx ? 'w-5 bg-text-heading' : i < currentIdx ? 'w-2 bg-[#1D9E75]' : 'w-2 bg-border'
+              i === currentIdx ? 'w-5 bg-text-heading' : i < currentIdx ? 'w-2 bg-success' : 'w-2 bg-border'
             }`}
           />
         ))}
@@ -288,7 +288,7 @@ function TriageView() {
             {/* Module bar */}
             <div
               className="w-full h-[3px] rounded-sm mb-4"
-              style={{ background: current.module ? MODULE_COLORS[current.module] : '#9C9A92' }}
+              style={{ background: current.module ? MODULE_COLORS[current.module] : 'var(--color-text-muted)' }}
             />
 
             {/* Title */}
@@ -315,7 +315,7 @@ function TriageView() {
 
                 {/* Suggestion */}
                 <div className="flex items-center gap-1.5 mb-2">
-                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#7F77DD] to-[#378ADD] flex items-center justify-center text-[10px] text-white font-medium shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-ai-purple to-ai-blue flex items-center justify-center text-[10px] text-white font-medium shrink-0">
                     A
                   </div>
                   <span className="text-xs text-text-muted">sugestao do triage</span>
@@ -340,12 +340,12 @@ function TriageView() {
               >
                 {isClassifying ? (
                   <span className="flex items-center justify-center gap-2">
-                    <span className="w-3 h-3 rounded-full border-2 border-[#7F77DD] border-t-transparent animate-spin" />
+                    <span className="w-3 h-3 rounded-full border-2 border-accent-light border-t-transparent animate-spin" />
                     classificando...
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#7F77DD] to-[#378ADD] flex items-center justify-center text-[10px] text-white font-medium shrink-0">
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-ai-purple to-ai-blue flex items-center justify-center text-[10px] text-white font-medium shrink-0">
                       A
                     </div>
                     classificar com AI
@@ -373,7 +373,7 @@ function TriageView() {
         {triageResult ? (
           <button
             onClick={() => handleAccept(triageResult)}
-            className="w-14 h-14 rounded-full bg-[#1D9E75] text-white flex items-center justify-center text-xl shadow-lg shadow-[#1D9E75]/25"
+            className="w-14 h-14 rounded-full bg-success text-white flex items-center justify-center text-xl shadow-lg shadow-success/25"
             aria-label="Aceitar classificacao"
           >
             ✓
@@ -382,7 +382,7 @@ function TriageView() {
           <button
             onClick={handleClassify}
             disabled={isClassifying}
-            className="w-14 h-14 rounded-full bg-[#1D9E75] text-white flex items-center justify-center text-xl shadow-lg shadow-[#1D9E75]/25 disabled:opacity-50"
+            className="w-14 h-14 rounded-full bg-success text-white flex items-center justify-center text-xl shadow-lg shadow-success/25 disabled:opacity-50"
             aria-label="Classificar"
           >
             ▸
@@ -410,7 +410,7 @@ function TypeChip({ type }: { type: string }) {
 }
 
 function ModuleChip({ module }: { module: string }) {
-  const color = MODULE_COLORS[module as keyof typeof MODULE_COLORS] ?? '#8a8a8a';
+  const color = MODULE_COLORS[module as keyof typeof MODULE_COLORS] ?? 'var(--color-mod-bridge)';
   return (
     <span
       className="text-[13px] font-medium px-3 py-1.5 rounded-lg"

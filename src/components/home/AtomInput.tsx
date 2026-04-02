@@ -31,7 +31,7 @@ export function AtomInput({ placeholder = 'o que esta na cabeca?', onSubmit }: A
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
         placeholder={placeholder}
-        className="flex-1 text-sm bg-transparent outline-none placeholder:text-[#b4b2a9]"
+        className="flex-1 text-sm bg-transparent outline-none placeholder:text-text-muted"
       />
 
       <button

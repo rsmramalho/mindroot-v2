@@ -11,7 +11,7 @@ export function LandingPage({ onLogin }: LandingPageProps) {
       <div className="text-center max-w-sm">
         {/* Raiz symbol */}
         <div className="mb-8">
-          <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[#7F77DD] to-[#534AB7] flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-accent-light to-accent flex items-center justify-center">
             <div className="w-8 h-8 rounded-full border-2 border-white/30" />
           </div>
         </div>
@@ -40,12 +40,12 @@ export function LandingPage({ onLogin }: LandingPageProps) {
           <span className="text-xs">→</span>
           <span>⬡</span>
           <span className="text-xs">→</span>
-          <span className="text-[#534AB7]">○</span>
+          <span className="text-accent">○</span>
         </div>
 
         <button
           onClick={onLogin}
-          className="bg-[#534AB7] text-white rounded-xl px-8 py-3.5 text-sm font-medium"
+          className="bg-accent text-white rounded-xl px-8 py-3.5 text-sm font-medium"
         >
           comecar
         </button>

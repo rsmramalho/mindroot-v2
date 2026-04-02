@@ -162,14 +162,14 @@ export type CreateConnectionPayload = Pick<ItemConnection, 'source_id' | 'target
 // ═══════════════════════════════════════════
 
 export const MODULES: { key: AtomModule; label: string; color: string }[] = [
-  { key: 'work',    label: 'Trabalho',  color: '#8a9e7a' },
-  { key: 'body',    label: 'Corpo',     color: '#b8c4a8' },
-  { key: 'mind',    label: 'Mente',     color: '#a89478' },
-  { key: 'family',  label: 'Família',   color: '#d4856a' },
-  { key: 'purpose', label: 'Propósito', color: '#c4a882' },
-  { key: 'bridge',  label: 'Ponte',     color: '#8a8a8a' },
-  { key: 'finance', label: 'Finanças',  color: '#7a9e8a' },
-  { key: 'social',  label: 'Social',    color: '#9e7a8a' },
+  { key: 'work',    label: 'Trabalho',  color: 'var(--color-mod-work)' },
+  { key: 'body',    label: 'Corpo',     color: 'var(--color-mod-body)' },
+  { key: 'mind',    label: 'Mente',     color: 'var(--color-mod-mind)' },
+  { key: 'family',  label: 'Família',   color: 'var(--color-mod-family)' },
+  { key: 'purpose', label: 'Propósito', color: 'var(--color-mod-purpose)' },
+  { key: 'bridge',  label: 'Ponte',     color: 'var(--color-mod-bridge)' },
+  { key: 'finance', label: 'Finanças',  color: 'var(--color-mod-finance)' },
+  { key: 'social',  label: 'Social',    color: 'var(--color-mod-social)' },
 ];
 
 export const EMOTIONS = [

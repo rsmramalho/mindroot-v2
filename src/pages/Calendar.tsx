@@ -92,7 +92,7 @@ export function CalendarPage() {
               </div>
               <div className="flex justify-center gap-[3px] min-h-[6px]">
                 {dayItemCount > 0 && Array.from({ length: Math.min(dayItemCount, 3) }).map((_, i) => (
-                  <div key={i} className="w-[5px] h-[5px] rounded-full bg-[#378ADD]" />
+                  <div key={i} className="w-[5px] h-[5px] rounded-full bg-ai-blue" />
                 ))}
               </div>
             </button>
@@ -110,13 +110,13 @@ export function CalendarPage() {
         </div>
 
         {/* Aurora block */}
-        <RitualBlock period="aurora" color="#EF9F27" bgClass="bg-[rgba(239,159,39,0.06)] border-[rgba(239,159,39,0.15)]" items={aurora} habits={habits.slice(0, 2)} />
+        <RitualBlock period="aurora" color="var(--color-warning)" bgClass="bg-warning/5 border-warning/15" items={aurora} habits={habits.slice(0, 2)} />
 
         {/* Zenite block */}
-        <RitualBlock period="zenite" color="#378ADD" bgClass="bg-[rgba(55,138,221,0.04)] border-[rgba(55,138,221,0.1)]" items={[]} habits={[]} />
+        <RitualBlock period="zenite" color="var(--color-ai-blue)" bgClass="bg-ai-blue/4 border-ai-blue/10" items={[]} habits={[]} />
 
         {/* Crepúsculo block */}
-        <RitualBlock period="crepusculo" color="#7F77DD" bgClass="bg-[rgba(127,119,221,0.06)] border-[rgba(127,119,221,0.15)]" items={[]} habits={[]} showWrap={today} />
+        <RitualBlock period="crepusculo" color="var(--color-accent-light)" bgClass="bg-accent-light/5 border-accent-light/15" items={[]} habits={[]} showWrap={today} />
 
         {dayItems.length === 0 && habits.length === 0 && (
           <p className="text-xs text-text-muted text-center py-6">nenhum item para este dia</p>
@@ -146,7 +146,7 @@ function RitualBlock({ period, color, bgClass, items, habits, showWrap }: {
       {items.map((item) => <CalendarItem key={item.id} item={item} />)}
       {habits.map((item) => <CalendarItem key={item.id} item={item} />)}
       {showWrap && (
-        <div className="flex items-center gap-2 p-1.5 px-2.5 rounded-lg bg-[rgba(127,119,221,0.08)] border border-[rgba(127,119,221,0.15)] text-[13px] text-[#534AB7]">
+        <div className="flex items-center gap-2 p-1.5 px-2.5 rounded-lg bg-accent-light/8 border border-accent-light/15 text-[13px] text-accent">
           <span>○</span> wrap
         </div>
       )}
@@ -155,9 +155,9 @@ function RitualBlock({ period, color, bgClass, items, habits, showWrap }: {
 }
 
 function CalendarItem({ item }: { item: AtomItem }) {
-  const moduleColor = item.module ? MODULE_COLORS[item.module] : '#8a8a8a';
+  const moduleColor = item.module ? MODULE_COLORS[item.module] : 'var(--color-mod-bridge)';
   const geo = STAGE_GEOMETRIES[item.genesis_stage] ?? '·';
-  const typeColor = item.type ? getTypeColor(item.type) : '#8a8a8a';
+  const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
 
   return (
     <div className="flex items-center gap-2 p-1.5 px-2.5 mb-[3px] rounded-lg bg-card border border-border text-[13px]">

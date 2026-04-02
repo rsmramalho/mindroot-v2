@@ -77,9 +77,9 @@ export function CompanionSheet({ open, onClose }: CompanionSheetProps) {
             {/* Header */}
             <div className="flex items-center gap-3 px-5 py-2 border-b border-border">
               {/* Avatar */}
-              <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-[#7F77DD] via-[#378ADD] to-[#1D9E75] flex items-center justify-center shrink-0">
+              <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-ai-purple via-ai-blue to-ai-green flex items-center justify-center shrink-0">
                 <span className="text-white text-sm font-light">○</span>
-                <div className="absolute inset-0 rounded-full border border-[#7F77DD]/30 animate-pulse" style={{ animationDuration: '3s' }} />
+                <div className="absolute inset-0 rounded-full border border-ai-purple/30 animate-pulse" style={{ animationDuration: '3s' }} />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-medium">companion</div>
@@ -101,7 +101,7 @@ export function CompanionSheet({ open, onClose }: CompanionSheetProps) {
                     className={`rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed ${
                       msg.role === 'user'
                         ? 'bg-text text-bg rounded-br-md'
-                        : 'bg-[#F0EFFE] text-text-heading rounded-bl-md'
+                        : 'bg-accent-hover text-text-heading rounded-bl-md'
                     }`}
                   >
                     {msg.content}
@@ -115,7 +115,7 @@ export function CompanionSheet({ open, onClose }: CompanionSheetProps) {
                   <button
                     key={qr}
                     onClick={() => handleQuickReply(qr)}
-                    className="text-xs px-3 py-1.5 rounded-xl border border-[#7F77DD]/30 text-[#534AB7] bg-card hover:bg-[#F0EFFE] transition-colors"
+                    className="text-xs px-3 py-1.5 rounded-xl border border-accent-light/30 text-accent bg-card hover:bg-accent-hover transition-colors"
                   >
                     {qr}
                   </button>
@@ -135,7 +135,7 @@ export function CompanionSheet({ open, onClose }: CompanionSheetProps) {
               <button
                 onClick={send}
                 disabled={!input.trim()}
-                className="w-9 h-9 rounded-full bg-[#534AB7] text-white flex items-center justify-center text-sm disabled:opacity-30 shrink-0"
+                className="w-9 h-9 rounded-full bg-accent text-white flex items-center justify-center text-sm disabled:opacity-30 shrink-0"
               >
                 ↑
               </button>

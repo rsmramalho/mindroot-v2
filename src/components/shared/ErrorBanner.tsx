@@ -8,10 +8,10 @@ interface ErrorBannerProps {
 
 export function ErrorBanner({ message, onDismiss }: ErrorBannerProps) {
   return (
-    <div className="bg-[#FAEEDA] text-[#854F0B] text-xs font-medium px-4 py-2.5 flex items-center justify-between">
+    <div className="bg-warning-bg text-warning-text text-xs font-medium px-4 py-2.5 flex items-center justify-between">
       <span>{message}</span>
       {onDismiss && (
-        <button onClick={onDismiss} className="text-[#854F0B]/60 ml-2">✕</button>
+        <button onClick={onDismiss} className="text-warning-text/60 ml-2">✕</button>
       )}
     </div>
   );
