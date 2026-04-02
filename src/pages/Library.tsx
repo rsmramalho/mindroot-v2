@@ -4,7 +4,7 @@
 
 import { useState, useMemo } from 'react';
 import { useItems } from '@/hooks/useItems';
-import { useAppStore } from '@/store/app-store';
+import { useNav } from '@/hooks/useNav';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { AtomItem, AtomType } from '@/types/item';
@@ -19,6 +19,7 @@ const FILTER_PILLS: { key: 'all' | 'library' | 'reflections'; label: string }[] 
 
 export function LibraryPage() {
   const { items } = useItems();
+  const { selectItem } = useNav();
   const [filter, setFilter] = useState<'all' | 'library' | 'reflections'>('all');
   const [search, setSearch] = useState('');
 
@@ -85,7 +86,7 @@ export function LibraryPage() {
       ) : (
         <div className="space-y-2">
           {filtered.slice(0, 20).map((item) => (
-            <LibraryCard key={item.id} item={item} onClick={() => useAppStore.getState().selectItem(item.id)} />
+            <LibraryCard key={item.id} item={item} onClick={() => selectItem(item.id)} />
           ))}
         </div>
       )}

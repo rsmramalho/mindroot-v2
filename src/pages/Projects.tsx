@@ -6,7 +6,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useItems } from '@/hooks/useItems';
-import { useAppStore } from '@/store/app-store';
+import { useNav } from '@/hooks/useNav';
 import type { AtomItem } from '@/types/item';
 import { MODULE_COLORS, STAGE_COLORS, STAGE_GEOMETRIES } from '@/components/atoms/tokens';
 import { getTypeColor } from '@/components/atoms/tokens';
@@ -110,6 +110,7 @@ function ProjectCard({ project, childCount, onClick }: { project: AtomItem; chil
 }
 
 function ProjectDetail({ project, children, onBack }: { project: AtomItem; children: AtomItem[]; onBack: () => void }) {
+  const { selectItem } = useNav();
   const moduleColor = project.module ? MODULE_COLORS[project.module] : 'var(--color-mod-bridge)';
   const progress = project.body?.operations?.progress ?? 0;
   const stage = project.genesis_stage;
@@ -121,7 +122,7 @@ function ProjectDetail({ project, children, onBack }: { project: AtomItem; child
       <button onClick={onBack} className="text-[13px] text-accent pt-4 pb-2">← projects</button>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-medium mb-1.5">{project.title}</h1>
-        <button onClick={() => useAppStore.getState().selectItem(project.id)} className="text-xs text-accent">editar</button>
+        <button onClick={() => selectItem(project.id)} className="text-xs text-accent">editar</button>
       </div>
       <div className="text-[13px] text-text-muted mb-4 flex items-center gap-2">
         <span className={`text-[10px] px-2 py-px rounded-lg font-medium ${statusBg}`}>{project.status}</span>
@@ -150,7 +151,7 @@ function ProjectDetail({ project, children, onBack }: { project: AtomItem; child
           const stageColor = STAGE_COLORS[item.genesis_stage] ?? 'var(--color-stage-1)';
           const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
           return (
-            <div key={item.id} onClick={() => useAppStore.getState().selectItem(item.id)} className="bg-card border border-border rounded-lg p-2.5 px-3 mb-1.5 flex items-center gap-2.5 text-[13px] cursor-pointer hover:border-accent-light/30 transition-colors">
+            <div key={item.id} onClick={() => selectItem(item.id)} className="bg-card border border-border rounded-lg p-2.5 px-3 mb-1.5 flex items-center gap-2.5 text-[13px] cursor-pointer hover:border-accent-light/30 transition-colors">
               <span style={{ color: stageColor }}>{geo}</span>
               <span className="flex-1 truncate">{item.title}</span>
               {item.type && (

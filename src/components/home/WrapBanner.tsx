@@ -2,7 +2,7 @@
 // Wireframe: purple gradient, "hora do wrap ○", stats, "iniciar" button
 
 import { motion } from 'framer-motion';
-import { useAppStore } from '@/store/app-store';
+import { useNav } from '@/hooks/useNav';
 
 interface WrapBannerProps {
   createdCount: number;
@@ -10,7 +10,7 @@ interface WrapBannerProps {
 }
 
 export function WrapBanner({ createdCount, modifiedCount }: WrapBannerProps) {
-  const navigate = useAppStore((s) => s.navigate);
+  const { navigate } = useNav();
 
   return (
     <motion.div

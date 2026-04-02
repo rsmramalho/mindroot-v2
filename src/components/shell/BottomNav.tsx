@@ -3,6 +3,7 @@
 // Inbox badge on Home when inbox > 0
 
 import { useAppStore } from '@/store/app-store';
+import { useNav } from '@/hooks/useNav';
 import { useItems } from '@/hooks/useItems';
 import type { AppPage } from '@/types/ui';
 
@@ -22,7 +23,7 @@ const NAV_ITEMS: NavItem[] = [
 
 export function BottomNav() {
   const currentPage = useAppStore((s) => s.currentPage);
-  const navigate = useAppStore((s) => s.navigate);
+  const { navigate } = useNav();
   const { items } = useItems();
   const inboxCount = items.filter((i) => i.state === 'inbox').length;
 

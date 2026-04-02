@@ -6,7 +6,7 @@ import { useState, useMemo } from 'react';
 import { format, startOfWeek, addDays, isSameDay, isToday as isDateToday, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useItems } from '@/hooks/useItems';
-import { useAppStore } from '@/store/app-store';
+import { useNav } from '@/hooks/useNav';
 import type { AtomItem, SoulExtension } from '@/types/item';
 import { MODULE_COLORS, STAGE_GEOMETRIES } from '@/components/atoms/tokens';
 import { getTypeColor } from '@/components/atoms/tokens';
@@ -151,6 +151,7 @@ export function CalendarPage() {
 function RitualBlock({ period, color, bgClass, items, habits, showWrap, wrapItem }: {
   period: string; color: string; bgClass: string; items: AtomItem[]; habits: AtomItem[]; showWrap?: boolean; wrapItem?: AtomItem | null;
 }) {
+  const { selectItem } = useNav();
   const hours = period === 'aurora' ? '05h–12h' : period === 'zenite' ? '12h–18h' : '18h–05h';
 
   if (items.length === 0 && habits.length === 0 && !showWrap) return null;
@@ -169,7 +170,7 @@ function RitualBlock({ period, color, bgClass, items, habits, showWrap, wrapItem
       {habits.map((item) => <CalendarItem key={item.id} item={item} />)}
       {showWrap && (
         <div
-          onClick={() => wrapItem && useAppStore.getState().selectItem(wrapItem.id)}
+          onClick={() => wrapItem && selectItem(wrapItem.id)}
           className="flex items-center gap-2 p-1.5 px-2.5 rounded-lg bg-accent-light/8 border border-accent-light/15 text-[13px] text-accent cursor-pointer"
         >
           <span>○</span> wrap
@@ -180,7 +181,7 @@ function RitualBlock({ period, color, bgClass, items, habits, showWrap, wrapItem
 }
 
 function CalendarItem({ item }: { item: AtomItem }) {
-  const selectItem = useAppStore((s) => s.selectItem);
+  const { selectItem } = useNav();
   const moduleColor = item.module ? MODULE_COLORS[item.module] : 'var(--color-mod-bridge)';
   const geo = STAGE_GEOMETRIES[item.genesis_stage] ?? '·';
   const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';

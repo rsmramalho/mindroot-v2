@@ -1,7 +1,8 @@
 // App.tsx — MindRoot v2
-// Landing → Auth → Onboarding → Shell + pages + companion
+// BrowserRouter + lazy pages + auth gate + companion
 
 import { useState, useLayoutEffect, lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,6 +13,7 @@ import { CompanionSheet } from '@/components/companion/CompanionSheet';
 import { OfflineBanner } from '@/components/shared/OfflineBanner';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { ToastContainer } from '@/components/shared/ToastContainer';
+import type { AppPage } from '@/types/ui';
 
 // Static pages (pre-auth)
 import { LandingPage } from '@/pages/Landing';
@@ -49,41 +51,71 @@ function PageSkeleton() {
   );
 }
 
-// ─── Page Router ──────────────────────────────────────
+// ─── Route → Zustand sync ─────────────────────────────
 
-function PageRouter() {
-  const currentPage = useAppStore((s) => s.currentPage);
+const PATH_TO_PAGE: Record<string, AppPage> = {
+  '/': 'home',
+  '/home': 'home',
+  '/inbox': 'inbox',
+  '/pipeline': 'pipeline',
+  '/wrap': 'wrap',
+  '/projects': 'projects',
+  '/calendar': 'calendar',
+  '/raiz': 'raiz',
+  '/analytics': 'analytics',
+  '/library': 'library',
+  '/search': 'search',
+  '/settings': 'settings',
+};
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'home': return <HomePage />;
-      case 'pipeline': return <PipelinePage />;
-      case 'triage': return <PipelinePage />;
-      case 'wrap': return <WrapPage />;
-      case 'projects': return <ProjectsPage />;
-      case 'project-detail': return <ProjectsPage />;
-      case 'calendar': return <CalendarPage />;
-      case 'raiz': return <RaizPage />;
-      case 'analytics': return <AnalyticsPage />;
-      case 'library': return <LibraryPage />;
-      case 'search': return <SearchPage />;
-      case 'item-detail': return <ItemDetailPage />;
-      case 'settings': return <SettingsPage />;
-      default: return <HomePage />;
+function RouteSync() {
+  const location = useLocation();
+  const setPage = useAppStore((s) => s.navigate);
+
+  useLayoutEffect(() => {
+    const path = location.pathname;
+    const page = PATH_TO_PAGE[path];
+    if (page) {
+      setPage(page);
+    } else if (path.startsWith('/item/')) {
+      setPage('item-detail');
     }
-  };
+  }, [location.pathname, setPage]);
+
+  return null;
+}
+
+// ─── Animated Routes ──────────────────────────────────
+
+function AnimatedRoutes() {
+  const location = useLocation();
 
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={currentPage}
+        key={location.pathname}
         initial={{ opacity: 0, y: 4 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -4 }}
         transition={{ duration: 0.12, ease: 'easeOut' }}
       >
         <Suspense fallback={<PageSkeleton />}>
-          {renderPage()}
+          <Routes location={location}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/pipeline" element={<PipelinePage />} />
+            <Route path="/wrap" element={<WrapPage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/raiz" element={<RaizPage />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/library" element={<LibraryPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/item/:id" element={<ItemDetailPage />} />
+            <Route path="/auth/callback" element={<HomePage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </Suspense>
       </motion.div>
     </AnimatePresence>
@@ -101,7 +133,8 @@ function AuthenticatedApp() {
       <ToastContainer />
       <AppShell onOpenSettings={() => useAppStore.getState().navigate('settings')}>
         <OfflineBanner />
-        <PageRouter />
+        <RouteSync />
+        <AnimatedRoutes />
       {/* FAB for companion */}
       <motion.button
         onClick={() => setCompanionOpen(true)}
@@ -141,8 +174,10 @@ function AppContent() {
 
   useLayoutEffect(() => {
     if (user) {
-      const key = `mindroot_onboarding_${user.id}`;
-      setOnboardingDone(localStorage.getItem(key) === 'done');
+      // Check Supabase user_metadata first, then localStorage fallback
+      const metaDone = user.user_metadata?.onboarding_done === true;
+      const localDone = localStorage.getItem(`mindroot_onboarding_${user.id}`) === 'done';
+      setOnboardingDone(metaDone || localDone);
     }
   }, [user]);
 
@@ -185,9 +220,11 @@ function AppContent() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AppContent />
-      </QueryClientProvider>
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <AppContent />
+        </QueryClientProvider>
+      </BrowserRouter>
     </ErrorBoundary>
   );
 }

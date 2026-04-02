@@ -5,6 +5,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePipeline } from '@/hooks/usePipeline';
+import { useAppStore } from '@/store/app-store';
+import { supabase } from '@/service/supabase';
 import { RAIZ_DOMAINS, RAIZ_ENTRY_MODES, type RaizEntryMode } from '@/config/raiz';
 
 interface OnboardingProps {
@@ -38,6 +40,14 @@ export function OnboardingPage({ onComplete }: OnboardingProps) {
         await captureWithModule(text, module);
       }
     }
+
+    // Persist onboarding to Supabase user_metadata
+    await supabase.auth.updateUser({ data: { onboarding_done: true } });
+
+    // Also keep localStorage for backwards compat
+    const user = useAppStore.getState().user;
+    if (user) localStorage.setItem(`mindroot_onboarding_${user.id}`, 'done');
+
     onComplete();
   };
 

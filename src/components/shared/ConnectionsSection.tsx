@@ -1,7 +1,7 @@
 // shared/ConnectionsSection.tsx — View/create/delete connections on any item
 import { useState, useEffect, useMemo } from 'react';
 import { useItems } from '@/hooks/useItems';
-import { useAppStore } from '@/store/app-store';
+import { useNav } from '@/hooks/useNav';
 import { usePipeline } from '@/hooks/usePipeline';
 import { connectionService } from '@/service/item-service';
 import type { ItemConnection, AtomRelation, AtomItem } from '@/types/item';
@@ -26,7 +26,7 @@ interface ConnectionsSectionProps {
 export function ConnectionsSection({ itemId }: ConnectionsSectionProps) {
   const { items } = useItems();
   const { connect } = usePipeline();
-  const selectItem = useAppStore((s) => s.selectItem);
+  const { selectItem } = useNav();
   const [connections, setConnections] = useState<ItemConnection[]>([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);

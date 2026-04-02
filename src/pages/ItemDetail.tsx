@@ -2,11 +2,13 @@
 // Stage bar, title, type/module/status chips, notes, tags, actions
 
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useItems } from '@/hooks/useItems';
 import { useItemMutations } from '@/hooks/useItemMutations';
+import { useNav } from '@/hooks/useNav';
 import { useAppStore } from '@/store/app-store';
 import { MODULES } from '@/types/item';
 import type { AtomType, AtomModule, AtomStatus } from '@/types/item';
@@ -25,12 +27,14 @@ const STATUS_OPTIONS: { key: AtomStatus; label: string }[] = [
 ];
 
 export function ItemDetailPage() {
+  const { id: urlId } = useParams<{ id: string }>();
   const { items } = useItems();
   const { updateMutation, deleteMutation } = useItemMutations();
-  const selectedItemId = useAppStore((s) => s.selectedItemId);
-  const navigate = useAppStore((s) => s.navigate);
+  const storeId = useAppStore((s) => s.selectedItemId);
+  const { navigate, goBack } = useNav();
 
-  const item = items.find((i) => i.id === selectedItemId);
+  const itemId = urlId ?? storeId;
+  const item = items.find((i) => i.id === itemId);
 
   if (!item) {
     return (
@@ -58,7 +62,7 @@ export function ItemDetailPage() {
     >
       {/* Header */}
       <div className="pt-4 pb-3 flex items-center justify-between">
-        <button onClick={() => navigate('home')} className="text-sm text-accent">← voltar</button>
+        <button onClick={() => goBack()} className="text-sm text-accent">← voltar</button>
       </div>
 
       {/* Stage bar */}
@@ -109,12 +113,12 @@ export function ItemDetailPage() {
       {/* Actions */}
       <div className="flex gap-2 mt-4">
         <button
-          onClick={() => { update({ status: 'archived' }); navigate('home'); }}
+          onClick={() => { update({ status: 'archived' }); goBack(); }}
           className="flex-1 py-2.5 text-center text-sm border border-border rounded-xl text-text-muted"
         >
           arquivar
         </button>
-        <DeleteButton itemId={item.id} onDelete={() => navigate('home')} deleteMutation={deleteMutation} />
+        <DeleteButton itemId={item.id} onDelete={() => goBack()} deleteMutation={deleteMutation} />
       </div>
     </motion.div>
   );

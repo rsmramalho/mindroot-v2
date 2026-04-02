@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useItems } from '@/hooks/useItems';
 import { usePipeline } from '@/hooks/usePipeline';
+import { useNav } from '@/hooks/useNav';
 import { useAppStore } from '@/store/app-store';
 import { getCurrentPeriod } from '@/types/ui';
 import { getCreatedToday, getModifiedToday } from '@/engine/wrap';
@@ -24,7 +25,7 @@ export function HomePage() {
   const { items, isLoading: loading } = useItems();
   const { capture } = usePipeline();
   const user = useAppStore((s) => s.user);
-  const navigate = useAppStore((s) => s.navigate);
+  const { navigate, selectItem } = useNav();
   const currentEmotion = useAppStore((s) => s.currentEmotion);
   const period = getCurrentPeriod();
   const now = new Date();
@@ -132,7 +133,7 @@ export function HomePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05, duration: 0.2 }}
               >
-                <ItemCard item={item} onClick={() => useAppStore.getState().selectItem(item.id)} />
+                <ItemCard item={item} onClick={() => selectItem(item.id)} />
               </motion.div>
             ))}
           </div>

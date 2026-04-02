@@ -24,6 +24,8 @@ export interface ListItemsFilters {
   status?: AtomStatus;
   genesis_stage?: number;
   project_id?: string;
+  limit?: number;
+  offset?: number;
 }
 
 export const itemService = {
@@ -94,6 +96,11 @@ export const itemService = {
     if (filters?.status) query = query.eq('status', filters.status);
     if (filters?.genesis_stage) query = query.eq('genesis_stage', filters.genesis_stage);
     if (filters?.project_id) query = query.eq('project_id', filters.project_id);
+
+    // Pagination
+    const limit = filters?.limit ?? 200;
+    const offset = filters?.offset ?? 0;
+    query = query.range(offset, offset + limit - 1);
 
     const { data, error } = await query;
     if (error) throw error;

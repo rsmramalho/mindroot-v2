@@ -1,5 +1,6 @@
 // store/app-store.ts — Zustand global UI state
 import { create } from 'zustand';
+import { supabase } from '@/service/supabase';
 import type { AppPage, AppFilters } from '@/types/ui';
 import { DEFAULT_FILTERS } from '@/types/ui';
 import type { Emotion } from '@/types/item';
@@ -74,6 +75,8 @@ export const useAppStore = create<AppState>((set) => ({
     localStorage.setItem('mindroot-theme', theme);
     set({ theme });
     applyTheme(theme);
+    // Persist to Supabase (fire and forget)
+    supabase.auth.updateUser({ data: { theme } }).catch(() => {});
   },
 
   // Item detail

@@ -1,14 +1,14 @@
 // shell/TopBar.tsx — Minimal top bar
 // Wireframe: search + menu icons on right. Greeting is on the page, not here.
 
-import { useAppStore } from '@/store/app-store';
+import { useNav } from '@/hooks/useNav';
 
 interface TopBarProps {
   onOpenSettings?: () => void;
 }
 
 export function TopBar({ onOpenSettings }: TopBarProps) {
-  const navigate = useAppStore((s) => s.navigate);
+  const { navigate } = useNav();
 
   return (
     <header className="flex items-center justify-between px-5 pt-3 pb-2 bg-bg">

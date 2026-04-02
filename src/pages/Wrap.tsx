@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useWrap } from '@/hooks/useWrap';
 import { useItems } from '@/hooks/useItems';
 import { useFullAudit } from '@/hooks/useAudit';
-import { useAppStore } from '@/store/app-store';
+import { useNav } from '@/hooks/useNav';
 import { getCreatedToday, getModifiedToday, computeAudit } from '@/engine/wrap';
 import { StageBadge } from '@/components/atoms/StageBadge';
 import { EMOTIONS } from '@/types/item';
@@ -32,7 +32,7 @@ export function WrapPage() {
   const [confirmCommit, setConfirmCommit] = useState(false);
   const { items } = useItems();
   const { startWrap, session, updateSession, commitWrap, loading } = useWrap();
-  const navigate = useAppStore((s) => s.navigate);
+  const { navigate } = useNav();
 
   // Local state for soul step
   const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);

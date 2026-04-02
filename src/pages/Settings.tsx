@@ -2,6 +2,7 @@
 // Wireframe: mindroot-wireframe-settings.html
 
 import { useAppStore } from '@/store/app-store';
+import { useNav } from '@/hooks/useNav';
 import { useItems } from '@/hooks/useItems';
 import { useAuth } from '@/hooks/useAuth';
 import { MODULES } from '@/types/item';
@@ -11,7 +12,7 @@ import { toast } from '@/store/toast-store';
 
 export function SettingsPage() {
   const user = useAppStore((s) => s.user);
-  const navigate = useAppStore((s) => s.navigate);
+  const { navigate } = useNav();
   const theme = useAppStore((s) => s.theme);
   const setTheme = useAppStore((s) => s.setTheme);
   const { items } = useItems();

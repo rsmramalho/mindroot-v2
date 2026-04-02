@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useItems } from '@/hooks/useItems';
-import { useAppStore } from '@/store/app-store';
+import { useNav } from '@/hooks/useNav';
 import { parseSearchQuery, searchItems, hasActiveFilters, getFilterLabels } from '@/engine/search';
 import { MODULES } from '@/types/item';
 import type { AtomModule } from '@/types/item';
@@ -12,7 +12,7 @@ import { getTypeColor } from '@/components/atoms/tokens';
 
 export function SearchPage() {
   const { items } = useItems();
-  const navigate = useAppStore((s) => s.navigate);
+  const { navigate, selectItem } = useNav();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
   const [moduleFilter, setModuleFilter] = useState<AtomModule | null>(null);
@@ -102,7 +102,7 @@ export function SearchPage() {
           const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
 
           return (
-            <div key={item.id} onClick={() => useAppStore.getState().selectItem(item.id)} className="flex items-center gap-2.5 p-2.5 bg-card border border-border rounded-xl cursor-pointer">
+            <div key={item.id} onClick={() => selectItem(item.id)} className="flex items-center gap-2.5 p-2.5 bg-card border border-border rounded-xl cursor-pointer">
               <div className="w-[3px] h-6 rounded-sm shrink-0" style={{ background: moduleColor }} />
               <span className="text-xs text-text-muted">{geo}</span>
               <div className="flex-1 min-w-0">

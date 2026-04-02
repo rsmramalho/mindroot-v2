@@ -6,7 +6,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useItems } from '@/hooks/useItems';
 import { usePipeline } from '@/hooks/usePipeline';
-import { useAppStore } from '@/store/app-store';
+import { useNav } from '@/hooks/useNav';
 import { useTriage } from '@/hooks/useTriage';
 import { getConfidenceBand } from '@/service/triage-service';
 import type { TriageResult } from '@/service/triage-service';
@@ -169,7 +169,7 @@ function PipelineView() {
 }
 
 function StageItem({ item }: { item: AtomItem }) {
-  const selectItem = useAppStore((s) => s.selectItem);
+  const { selectItem } = useNav();
   const moduleColor = item.module ? MODULE_COLORS[item.module] : 'var(--color-mod-bridge)';
   const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
 

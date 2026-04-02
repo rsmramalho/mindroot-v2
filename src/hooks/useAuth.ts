@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { authService } from '@/service/auth-service';
 import { useAppStore } from '@/store/app-store';
+import type { ThemeMode } from '@/store/app-store';
 
 export function useAuth() {
   const { user, setUser } = useAppStore();
@@ -31,6 +32,12 @@ export function useAuth() {
 
       setUser(session?.user ?? null);
       setLoading(false);
+
+      // Restore theme from user_metadata
+      if (session?.user?.user_metadata?.theme) {
+        const saved = session.user.user_metadata.theme as ThemeMode;
+        useAppStore.getState().setTheme(saved);
+      }
 
       // Clean OAuth callback URL after successful exchange
       if (window.location.pathname === '/auth/callback') {
