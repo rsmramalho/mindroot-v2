@@ -3,10 +3,10 @@
 // Week strip with day dots, ritual blocks (aurora/zenite/crepúsculo), items by period
 
 import { useState, useMemo } from 'react';
-import { format, startOfWeek, addDays, isSameDay, isToday as isDateToday } from 'date-fns';
+import { format, startOfWeek, addDays, isSameDay, isToday as isDateToday, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useItems } from '@/hooks/useItems';
-import type { AtomItem } from '@/types/item';
+import type { AtomItem, SoulExtension } from '@/types/item';
 import { MODULE_COLORS, STAGE_GEOMETRIES } from '@/components/atoms/tokens';
 import { getTypeColor } from '@/components/atoms/tokens';
 
@@ -45,9 +45,30 @@ export function CalendarPage() {
   const selectedKey = format(selectedDate, 'yyyy-MM-dd');
   const dayItems = itemsByDate[selectedKey] ?? [];
 
-  // Split by ritual period
-  const aurora = dayItems.filter(() => true); // All items shown under aurora for now
+  // Group items by ritual slot
+  const { aurora, zenite, crepusculo: crepItems } = useMemo(() => {
+    const a: AtomItem[] = [];
+    const z: AtomItem[] = [];
+    const c: AtomItem[] = [];
+    const unslotted: AtomItem[] = [];
+
+    dayItems.forEach((item) => {
+      const slot = (item.body?.soul as SoulExtension | undefined)?.ritual_slot;
+      if (slot === 'aurora') a.push(item);
+      else if (slot === 'zenite') z.push(item);
+      else if (slot === 'crepusculo') c.push(item);
+      else unslotted.push(item);
+    });
+
+    // Unslotted items go to aurora by default
+    return { aurora: [...a, ...unslotted], zenite: z, crepusculo: c };
+  }, [dayItems]);
+
   const today = isDateToday(selectedDate);
+  const todayWrap = useMemo(
+    () => items.find((i) => i.type === 'wrap' && isDateToday(parseISO(i.created_at))),
+    [items],
+  );
 
   return (
     <div className="px-5 pb-4">
@@ -113,10 +134,10 @@ export function CalendarPage() {
         <RitualBlock period="aurora" color="var(--color-warning)" bgClass="bg-warning/5 border-warning/15" items={aurora} habits={habits.slice(0, 2)} />
 
         {/* Zenite block */}
-        <RitualBlock period="zenite" color="var(--color-ai-blue)" bgClass="bg-ai-blue/4 border-ai-blue/10" items={[]} habits={[]} />
+        <RitualBlock period="zenite" color="var(--color-ai-blue)" bgClass="bg-ai-blue/4 border-ai-blue/10" items={zenite} habits={[]} />
 
         {/* Crepúsculo block */}
-        <RitualBlock period="crepusculo" color="var(--color-accent-light)" bgClass="bg-accent-light/5 border-accent-light/15" items={[]} habits={[]} showWrap={today} />
+        <RitualBlock period="crepusculo" color="var(--color-accent-light)" bgClass="bg-accent-light/5 border-accent-light/15" items={crepItems} habits={[]} showWrap={today && !!todayWrap} />
 
         {dayItems.length === 0 && habits.length === 0 && (
           <p className="text-xs text-text-muted text-center py-6">nenhum item para este dia</p>

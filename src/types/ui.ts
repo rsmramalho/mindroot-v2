@@ -13,6 +13,7 @@ export type AppPage =
   | 'raiz'
   | 'analytics'
   | 'library'
+  | 'search'
   | 'settings';
 
 export interface AppFilters {

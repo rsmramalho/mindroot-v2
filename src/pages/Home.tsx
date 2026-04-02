@@ -24,6 +24,7 @@ export function HomePage() {
   const { items, isLoading: loading } = useItems();
   const { capture } = usePipeline();
   const user = useAppStore((s) => s.user);
+  const navigate = useAppStore((s) => s.navigate);
   const currentEmotion = useAppStore((s) => s.currentEmotion);
   const period = getCurrentPeriod();
   const now = new Date();
@@ -82,8 +83,17 @@ export function HomePage() {
         </div>
       </div>
 
+      {/* Search */}
+      <button
+        onClick={() => navigate('search')}
+        className="w-full flex items-center gap-2 px-4 py-2.5 bg-surface rounded-xl text-text-muted text-sm mb-3 mt-2"
+      >
+        <span className="text-xs">⌕</span>
+        <span>buscar items...</span>
+      </button>
+
       {/* Soul */}
-      <div className="mt-2">
+      <div>
         <SectionLabel>soul</SectionLabel>
         <SoulCard
           period={period.key}

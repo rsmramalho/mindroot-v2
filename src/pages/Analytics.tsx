@@ -3,12 +3,16 @@
 // Tabs: Pipeline / Soul / Connections
 
 import { useState } from 'react';
+import { useItems } from '@/hooks/useItems';
 import { AuditPanel } from '@/components/audit/AuditPanel';
+import { SoulPanel } from '@/components/analytics/SoulPanel';
+import { ConnectionsPanel } from '@/components/analytics/ConnectionsPanel';
 
 type Tab = 'pipeline' | 'soul' | 'connections';
 
 export function AnalyticsPage() {
   const [tab, setTab] = useState<Tab>('pipeline');
+  const { items } = useItems();
 
   return (
     <div className="px-5 pb-4">
@@ -32,22 +36,8 @@ export function AnalyticsPage() {
       </div>
 
       {tab === 'pipeline' && <AuditPanel />}
-
-      {tab === 'soul' && (
-        <div className="text-center py-12">
-          <div className="text-3xl text-text-muted mb-3">◆</div>
-          <p className="text-sm text-text-muted">soul patterns</p>
-          <p className="text-xs text-text-muted mt-1">tendencias emocionais, energy, shifts — Fase 7</p>
-        </div>
-      )}
-
-      {tab === 'connections' && (
-        <div className="text-center py-12">
-          <div className="text-3xl text-text-muted mb-3">⬡</div>
-          <p className="text-sm text-text-muted">connection graph</p>
-          <p className="text-xs text-text-muted mt-1">visualizacao do grafo — Fase 7</p>
-        </div>
-      )}
+      {tab === 'soul' && <SoulPanel items={items} />}
+      {tab === 'connections' && <ConnectionsPanel />}
     </div>
   );
 }

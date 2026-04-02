@@ -25,6 +25,7 @@ const AnalyticsPage = lazy(() => import('@/pages/Analytics').then((m) => ({ defa
 const LibraryPage = lazy(() => import('@/pages/Library').then((m) => ({ default: m.LibraryPage })));
 const SettingsPage = lazy(() => import('@/pages/Settings').then((m) => ({ default: m.SettingsPage })));
 const RaizPage = lazy(() => import('@/pages/Raiz').then((m) => ({ default: m.RaizPage })));
+const SearchPage = lazy(() => import('@/pages/Search').then((m) => ({ default: m.SearchPage })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -61,6 +62,7 @@ function PageRouter() {
       case 'raiz': return <RaizPage />;
       case 'analytics': return <AnalyticsPage />;
       case 'library': return <LibraryPage />;
+      case 'search': return <SearchPage />;
       case 'settings': return <SettingsPage />;
       default: return <HomePage />;
     }
