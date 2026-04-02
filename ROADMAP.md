@@ -162,23 +162,28 @@ Entregáveis:
 
 **Debt:** 136 hex hardcoded em 27 files → dark mode blocker
 
-### ⚪ Fase 7 ○ Completude (effort: 13)
-**Status:** futuro
-**Escopo:** Export real, dark mode, refinements, tudo que falta pra o app ser usável no dia a dia
+### ✅ Fase 7 ○ Completude (effort: 13)
+**Commits:** 79380bd (dark mode) → c8dceb4 (search, analytics) → 070bc5e (export, toggle) → this commit (offline, polish)
+**Escopo:** Everything needed for daily use
 
-Entregáveis planejados:
-- Dark mode toggle (resolver 136 hex → CSS variables)
-- Export to Drive (botão manual, ATOM ENVELOPE)
-- Obsidian vault generation (YAML frontmatter + wikilinks)
-- Analytics soul tab (padrões emocionais com dados reais)
-- Analytics connections tab (grafo visual)
-- Search global (full-text no Supabase)
-- Notifications (push via service worker)
-- Offline mode (service worker cache + sync queue)
-- Calendar com ritual bands (aurora/zênite/crepúsculo)
-- Polish final: responsividade, acessibilidade, performance audit
+Entregáveis:
+- Dark mode: CSS var migration (226 hex → 0) + manual toggle (system/light/dark)
+- Search: global search page with engine + filter chips (prefix syntax)
+- Analytics soul tab: energy trends (14d), emotion frequency, shift history
+- Analytics connections tab: stats, most connected items, relation breakdown
+- Calendar ritual bands: real ritual slot grouping + today's wrap indicator
+- Export: ATOM ENVELOPE download (.txt), Obsidian .md download (YAML + wikilinks), JSON backup
+- Offline lite: enhanced SW caching (cache-first assets, network-first HTML) + offline banner
+- Polish: a11y (ARIA roles on tabs, aria-current on nav), responsive safety, loading/error states
 
-**Quando F7 fechar:** Espiral 1 completa. O app funciona. Seed da Espiral 2 nasce.
+---
+
+### Espiral 1 — Corpo — COMPLETA ○
+
+F1 Sementes → F2 Raízes → F3 Geometria → F4 Fundação → F5 Conexão → F6 Inteligência → F7 Completude.
+De dentro pra fora. Ponto → Círculo. O app funciona.
+
+A seed da Espiral 2 nasce aqui.
 
 ---
 
@@ -222,18 +227,17 @@ A segunda espiral transforma o Atom HS de app em organismo. Nasce da completude 
 
 | Métrica | Valor |
 |---------|-------|
-| Commits | 23 |
-| Files | 72 (.ts/.tsx) |
-| LOC | 7,000 |
-| Pages | 12 |
-| Components | 21 |
-| Services | 8 |
+| Commits | 30 |
+| Files | 76 (.ts/.tsx) |
+| LOC | ~7,800 |
+| Pages | 13 |
+| Components | 23 |
+| Services | 9 |
 | Engines | 6 |
 | Stores | 3 |
 | Hooks | 9 |
 | Tests | 41 (vitest) |
 | Bundle (gzip) | ~71KB main |
-| Build time | ~224ms (Vercel) |
 | TS errors | 0 |
 
 ---
@@ -260,6 +264,7 @@ A segunda espiral transforma o Atom HS de app em organismo. Nasce da completude 
 | 3.1 | 02 Abr 2026 | F6 Inteligência DONE. Métricas atualizadas. Dark mode debt documentado. |
 | 4.0 | 02 Abr 2026 | Atom OS → Atom HS (Human Systems). V1 no centro do Pentágono. V6 Lab adicionado. Formato PHI template. Cross-check com PENTAGON.md. |
 | 4.1 | 02 Abr 2026 | Duas espirais: Corpo (app, F1-F7) + Mente (organismo, planejada). Yugar Vision Doc decomposto — features de Engine/MindRoot mapeadas pra Espiral 2. F7 mantém escopo limpo. |
+| 4.2 | 03 Abr 2026 | F7 Completude DONE. Espiral 1 completa. Dark mode toggle, search, analytics soul/connections, export download, calendar ritual bands, offline lite, polish. 30 commits, 76 files, ~7.8K LOC. |
 
 ---
 

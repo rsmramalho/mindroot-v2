@@ -1,12 +1,18 @@
 // Service Worker — MindRoot v2
-// Cache-first for shell, stale-while-revalidate for data
+// Strategy: cache-first for hashed assets, network-first for HTML
 
-const CACHE_NAME = 'mindroot-v2-v1';
-const SHELL_URLS = ['/', '/index.html'];
+const CACHE_NAME = 'mindroot-v2-v2';
+const STATIC_ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png',
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL_URLS))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
   self.skipWaiting();
 });
@@ -24,20 +30,41 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
 
-  // Skip supabase API calls
-  if (request.url.includes('supabase.co')) return;
+  const url = new URL(request.url);
 
+  // Skip Supabase API and auth
+  if (url.hostname.includes('supabase')) return;
+
+  // Skip external resources
+  if (url.origin !== self.location.origin) return;
+
+  // Built assets (hashed filenames) — cache-first, long-lived
+  if (url.pathname.startsWith('/assets/')) {
+    event.respondWith(
+      caches.match(request).then((cached) => {
+        if (cached) return cached;
+        return fetch(request).then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          }
+          return response;
+        });
+      })
+    );
+    return;
+  }
+
+  // HTML/navigation — network-first with cache fallback
   event.respondWith(
-    caches.match(request).then((cached) => {
-      const fetching = fetch(request).then((response) => {
+    fetch(request)
+      .then((response) => {
         if (response.ok) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         }
         return response;
-      }).catch(() => cached);
-
-      return cached || fetching;
-    })
+      })
+      .catch(() => caches.match(request).then((cached) => cached || caches.match('/')))
   );
 });

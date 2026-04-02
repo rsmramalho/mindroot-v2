@@ -9,6 +9,7 @@ import { useRealtime } from '@/hooks/useRealtime';
 import { useAppStore } from '@/store/app-store';
 import { AppShell } from '@/components/shell/AppShell';
 import { CompanionSheet } from '@/components/companion/CompanionSheet';
+import { OfflineBanner } from '@/components/shared/OfflineBanner';
 
 // Static pages (pre-auth)
 import { LandingPage } from '@/pages/Landing';
@@ -93,6 +94,7 @@ function AuthenticatedApp() {
 
   return (
     <AppShell onOpenSettings={() => useAppStore.getState().navigate('settings')}>
+      <OfflineBanner />
       <PageRouter />
       {/* FAB for companion */}
       <motion.button

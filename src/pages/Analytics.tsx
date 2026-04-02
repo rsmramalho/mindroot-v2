@@ -21,10 +21,12 @@ export function AnalyticsPage() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex bg-surface rounded-lg p-[3px] mb-4">
+      <div className="flex bg-surface rounded-lg p-[3px] mb-4" role="tablist" aria-label="Analytics tabs">
         {(['pipeline', 'soul', 'connections'] as Tab[]).map((t) => (
           <button
             key={t}
+            role="tab"
+            aria-selected={tab === t}
             onClick={() => setTab(t)}
             className={`flex-1 text-center py-2 text-[13px] rounded-lg transition-all ${
               tab === t ? 'bg-card font-medium text-text-heading shadow-sm' : 'text-text-muted'
