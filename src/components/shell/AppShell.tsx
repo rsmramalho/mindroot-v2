@@ -12,7 +12,7 @@ interface AppShellProps {
 
 export function AppShell({ children, onOpenSettings }: AppShellProps) {
   return (
-    <div className="min-h-dvh bg-bg text-text font-sans flex flex-col mx-auto w-full max-w-[430px] shadow-sm">
+    <div className="min-h-dvh bg-bg text-text font-sans flex flex-col mx-auto w-full max-w-[430px] border-x border-border/50 relative pt-[env(safe-area-inset-top)]">
       <TopBar onOpenSettings={onOpenSettings} />
 
       <main className="flex-1 pb-16 overflow-y-auto">

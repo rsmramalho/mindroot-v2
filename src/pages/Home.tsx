@@ -146,6 +146,29 @@ export function HomePage() {
         />
       ) : null}
 
+      {/* Created today */}
+      {createdToday.length > 0 && (
+        <div className="mt-3">
+          <SectionLabel>
+            criados hoje <span className="text-success text-[13px] normal-case tracking-normal font-medium">{createdToday.length}</span>
+          </SectionLabel>
+          <div className="flex flex-wrap gap-1.5">
+            {createdToday.slice(0, 5).map((item) => (
+              <button
+                key={item.id}
+                onClick={() => selectItem(item.id)}
+                className="text-[11px] px-2.5 py-1 rounded-lg bg-success-bg text-success-text truncate max-w-[180px]"
+              >
+                · {item.title}
+              </button>
+            ))}
+            {createdToday.length > 5 && (
+              <span className="text-[11px] text-text-muted py-1">+{createdToday.length - 5}</span>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Inbox */}
       {inboxItems.length > 0 && (
         <div className="mt-3">

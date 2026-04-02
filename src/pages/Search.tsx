@@ -11,7 +11,7 @@ import { MODULE_COLORS, STAGE_GEOMETRIES } from '@/components/atoms/tokens';
 import { getTypeColor } from '@/components/atoms/tokens';
 
 export function SearchPage() {
-  const { items } = useItems();
+  const { items, isLoading } = useItems();
   const { navigate, selectItem } = useNav();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
@@ -92,6 +92,15 @@ export function SearchPage() {
       {/* Result count */}
       {(query || moduleFilter) && (
         <p className="text-[11px] text-text-muted mb-2">{results.length} resultados</p>
+      )}
+
+      {/* Loading */}
+      {isLoading && (
+        <div className="space-y-2 mt-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-12 bg-surface rounded-xl animate-pulse" />
+          ))}
+        </div>
       )}
 
       {/* Results */}

@@ -238,6 +238,7 @@ html.light {
 
   body {
     min-height: 100dvh;
+    background: var(--color-bg);
   }
 
   #root {

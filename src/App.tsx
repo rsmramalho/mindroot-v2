@@ -1,5 +1,5 @@
 // App.tsx — MindRoot v2
-// BrowserRouter + lazy pages + auth gate + companion
+// BrowserRouter + lazy pages + auth gate
 
 import { useState, useLayoutEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
@@ -9,7 +9,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRealtime } from '@/hooks/useRealtime';
 import { useAppStore } from '@/store/app-store';
 import { AppShell } from '@/components/shell/AppShell';
-import { CompanionSheet } from '@/components/companion/CompanionSheet';
 import { OfflineBanner } from '@/components/shared/OfflineBanner';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { ToastContainer } from '@/components/shared/ToastContainer';
@@ -127,7 +126,6 @@ function AnimatedRoutes() {
 
 function AuthenticatedApp() {
   useRealtime();
-  const [companionOpen, setCompanionOpen] = useState(false);
 
   return (
     <>
@@ -136,19 +134,6 @@ function AuthenticatedApp() {
         <OfflineBanner />
         <RouteSync />
         <AnimatedRoutes />
-      {/* FAB for companion */}
-      <motion.button
-        onClick={() => setCompanionOpen(true)}
-        className="fixed bottom-20 right-5 w-12 h-12 rounded-full bg-gradient-to-br from-ai-purple via-ai-blue to-ai-green text-white flex items-center justify-center text-lg font-light shadow-lg shadow-accent/20 z-30"
-        aria-label="Abrir companion"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.3 }}
-        whileTap={{ scale: 0.9 }}
-      >
-        ○
-      </motion.button>
-        <CompanionSheet open={companionOpen} onClose={() => setCompanionOpen(false)} />
       </AppShell>
     </>
   );

@@ -13,7 +13,7 @@ export function ToastContainer() {
   const dismiss = useToastStore((s) => s.dismiss);
 
   return (
-    <div className="fixed top-4 left-0 right-0 z-50 flex flex-col items-center gap-2 pointer-events-none px-4">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 flex flex-col items-center gap-2 pointer-events-none px-4">
       <AnimatePresence>
         {toasts.map((t) => (
           <motion.div

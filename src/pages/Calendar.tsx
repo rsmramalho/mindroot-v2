@@ -141,7 +141,17 @@ export function CalendarPage() {
         <RitualBlock period="crepusculo" color="var(--color-accent-light)" bgClass="bg-accent-light/5 border-accent-light/15" items={crepItems} habits={[]} showWrap={today && !!todayWrap} wrapItem={todayWrap} />
 
         {dayItems.length === 0 && habits.length === 0 && (
-          <p className="text-xs text-text-muted text-center py-6">nenhum item para este dia</p>
+          <>
+            <div className="space-y-1.5 mb-4">
+              <GhostRitualBlock period="aurora" hours="05h-12h" color="var(--color-warning)" />
+              <GhostRitualBlock period="zenite" hours="12h-18h" color="var(--color-ai-blue)" />
+              <GhostRitualBlock period="crepusculo" hours="18h-05h" color="var(--color-accent-light)" />
+            </div>
+            <div className="text-center py-4">
+              <div className="text-2xl text-text-muted/30 mb-2">·</div>
+              <p className="text-xs text-text-muted">dia livre</p>
+            </div>
+          </>
         )}
       </div>
     </div>
@@ -196,6 +206,20 @@ function CalendarItem({ item }: { item: AtomItem }) {
           {item.type}
         </span>
       )}
+    </div>
+  );
+}
+
+function GhostRitualBlock({ period, hours, color }: { period: string; hours: string; color: string }) {
+  return (
+    <div className="rounded-xl p-2.5 px-3.5 border border-border/30 opacity-40">
+      <div className="flex items-center gap-2">
+        <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px]" style={{ color }}>
+          {period === 'aurora' ? '☀' : period === 'zenite' ? '◆' : '☽'}
+        </div>
+        <span className="text-xs" style={{ color }}>{period}</span>
+        <span className="text-[10px] text-text-muted ml-auto">{hours}</span>
+      </div>
     </div>
   );
 }

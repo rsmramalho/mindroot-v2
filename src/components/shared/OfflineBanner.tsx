@@ -18,7 +18,7 @@ export function OfflineBanner() {
   if (online) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-warning-bg text-warning-text text-xs font-medium text-center py-2 px-4">
+    <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 bg-warning-bg text-warning-text text-xs font-medium text-center py-2 px-4">
       sem conexao — dados podem estar desatualizados
     </div>
   );
