@@ -44,10 +44,80 @@ export function SoulPanel({ items }: SoulPanelProps) {
 
   return (
     <div className="space-y-4">
+      <SoulStreak wraps={wraps} />
       <EnergyTrend wraps={wraps} />
       <EmotionFrequency wraps={wraps} />
       <ShiftHistory wraps={wraps} />
     </div>
+  );
+}
+
+// ─── Soul Streak ────────────────────────────────────
+
+function SoulStreak({ wraps }: { wraps: WrapSoul[] }) {
+  const today = new Date();
+  const wrapDates = new Set(wraps.map((w) => w.date.substring(0, 10)));
+
+  // Best streak
+  const sorted = [...wraps].sort((a, b) => a.date.localeCompare(b.date));
+  let bestStreak = 0;
+  let tempStreak = 0;
+  let prevDate: string | null = null;
+
+  sorted.forEach((w) => {
+    const dateStr = w.date.substring(0, 10);
+    if (prevDate) {
+      const diffDays = Math.round((new Date(dateStr).getTime() - new Date(prevDate).getTime()) / (1000 * 60 * 60 * 24));
+      if (diffDays === 1) {
+        tempStreak++;
+      } else if (diffDays > 1) {
+        bestStreak = Math.max(bestStreak, tempStreak);
+        tempStreak = 1;
+      }
+    } else {
+      tempStreak = 1;
+    }
+    prevDate = dateStr;
+  });
+  bestStreak = Math.max(bestStreak, tempStreak);
+
+  // Current streak (count backwards from today)
+  let currentStreak = 0;
+  for (let i = 0; i <= 30; i++) {
+    const checkDate = format(subDays(today, i), 'yyyy-MM-dd');
+    if (wrapDates.has(checkDate)) {
+      currentStreak++;
+    } else if (i > 0) {
+      break;
+    }
+  }
+
+  // Last 7 days as dots
+  const last7 = Array.from({ length: 7 }, (_, i) => {
+    const d = format(subDays(today, 6 - i), 'yyyy-MM-dd');
+    return wrapDates.has(d);
+  });
+
+  return (
+    <section>
+      <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-4">
+        <div className="text-center">
+          <div className="text-2xl font-medium text-accent">{currentStreak}</div>
+          <div className="text-[10px] text-text-muted leading-tight">dias com<br />soul registrado</div>
+        </div>
+        <div className="flex-1">
+          <div className="text-xs text-text-muted mb-1.5">melhor streak: {bestStreak} dias</div>
+          <div className="flex gap-1.5">
+            {last7.map((has, i) => (
+              <div
+                key={i}
+                className={`w-3 h-3 rounded-full ${has ? 'bg-accent' : 'bg-border'}`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 

@@ -29,6 +29,14 @@ export function ProjectsPage() {
     return map;
   }, [items, projects]);
 
+  const connectionCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    items.forEach((i) => {
+      if (i.project_id) counts[i.project_id] = (counts[i.project_id] ?? 0) + 1;
+    });
+    return counts;
+  }, [items]);
+
   const byModule = useMemo(() => {
     const grouped: Record<string, AtomItem[]> = {};
     projects.forEach((p) => {
@@ -71,6 +79,7 @@ export function ProjectsPage() {
                 key={p.id}
                 project={p}
                 childCount={projectChildren[p.id]?.length ?? 0}
+                connectionCount={connectionCounts[p.id] ?? 0}
                 onClick={() => setSelectedId(p.id)}
               />
             ))}
@@ -81,7 +90,7 @@ export function ProjectsPage() {
   );
 }
 
-function ProjectCard({ project, childCount, onClick }: { project: AtomItem; childCount: number; onClick: () => void }) {
+function ProjectCard({ project, childCount, connectionCount, onClick }: { project: AtomItem; childCount: number; connectionCount: number; onClick: () => void }) {
   const moduleColor = project.module ? MODULE_COLORS[project.module] : 'var(--color-mod-bridge)';
   const progress = project.body?.operations?.progress ?? 0;
   const stage = project.genesis_stage;
@@ -100,7 +109,7 @@ function ProjectCard({ project, childCount, onClick }: { project: AtomItem; chil
         <span className={`text-[10px] px-2 py-px rounded-lg font-medium ${statusBg}`}>{statusLabel}</span>
       </div>
       <div className="text-[11px] text-text-muted mb-2">
-        {childCount} items · {geometry} stage {stage}
+        {childCount} items · {geometry} stage {stage}{connectionCount > 0 ? ` · ${connectionCount} connections` : ''}
       </div>
       <div className="h-1 rounded-sm bg-surface overflow-hidden">
         <div className="h-full rounded-sm" style={{ width: `${progress}%`, background: `linear-gradient(90deg, ${moduleColor}, ${moduleColor}88)` }} />

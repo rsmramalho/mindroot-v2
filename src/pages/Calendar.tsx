@@ -94,7 +94,6 @@ export function CalendarPage() {
           const key = format(day, 'yyyy-MM-dd');
           const isSelected = isSameDay(day, selectedDate);
           const isToday = isDateToday(day);
-          const dayItemCount = (itemsByDate[key] ?? []).length;
 
           return (
             <button
@@ -113,9 +112,13 @@ export function CalendarPage() {
                 {format(day, 'd')}
               </div>
               <div className="flex justify-center gap-[3px] min-h-[6px]">
-                {dayItemCount > 0 && Array.from({ length: Math.min(dayItemCount, 3) }).map((_, i) => (
-                  <div key={i} className="w-[5px] h-[5px] rounded-full bg-ai-blue" />
-                ))}
+                {(() => {
+                  const dayKey = format(day, 'yyyy-MM-dd');
+                  const dayModules = [...new Set((itemsByDate[dayKey] ?? []).map((i) => i.module).filter(Boolean))];
+                  return dayModules.slice(0, 3).map((mod) => (
+                    <div key={mod} className="w-[5px] h-[5px] rounded-full" style={{ background: MODULE_COLORS[mod!] }} />
+                  ));
+                })()}
               </div>
             </button>
           );

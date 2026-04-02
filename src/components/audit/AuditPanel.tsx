@@ -23,12 +23,101 @@ export function AuditPanel() {
 
   return (
     <div className="space-y-4">
+      <MetricsRow byStage={audit.items_by_stage} />
+      <StageRingChart byStage={audit.items_by_stage} />
       <PipelineFunnel byStage={audit.items_by_stage} />
+      <ModulesOverview byModule={audit.items_by_module} />
       <BelowFloorSection items={audit.below_floor} />
       <OrphansSection items={audit.orphans} />
       <StaleSection items={audit.stale} />
-      <ModulesOverview byModule={audit.items_by_module} />
     </div>
+  );
+}
+
+// ─── Metrics Row ─────────────────────────────────────
+
+function MetricsRow({ byStage }: { byStage: Record<number, number> }) {
+  const total = Object.values(byStage).reduce((a, b) => a + b, 0);
+  const committed = byStage[7] ?? 0;
+  const inboxCount = byStage[1] ?? 0;
+
+  return (
+    <div className="grid grid-cols-3 gap-2 mb-1">
+      <div className="bg-card border border-border rounded-xl p-3 text-center">
+        <div className="text-lg font-medium">{total}</div>
+        <div className="text-[10px] text-text-muted">total atoms</div>
+      </div>
+      <div className="bg-card border border-border rounded-xl p-3 text-center">
+        <div className="text-lg font-medium text-success">{committed}</div>
+        <div className="text-[10px] text-text-muted">committed</div>
+      </div>
+      <div className="bg-card border border-border rounded-xl p-3 text-center">
+        <div className="text-lg font-medium" style={{ color: inboxCount > 5 ? 'var(--color-warning)' : 'var(--color-text)' }}>{inboxCount}</div>
+        <div className="text-[10px] text-text-muted">inbox</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Stage Ring Chart ────────────────────────────────
+
+function StageRingChart({ byStage }: { byStage: Record<number, number> }) {
+  const total = Object.values(byStage).reduce((a, b) => a + b, 0);
+  if (total === 0) return null;
+
+  const radius = 50;
+  const circumference = 2 * Math.PI * radius;
+  let offset = 0;
+
+  const segments = GENESIS_STAGES.map((s) => {
+    const count = byStage[s.stage] ?? 0;
+    const pct = count / total;
+    const dashArray = `${pct * circumference} ${(1 - pct) * circumference}`;
+    const dashOffset = -offset * circumference;
+    offset += pct;
+    return { stage: s.stage, count, dashArray, dashOffset, color: STAGE_COLORS[s.stage], label: s.label };
+  }).filter((s) => s.count > 0);
+
+  return (
+    <section>
+      <SectionLabel>distribuicao por estagio</SectionLabel>
+      <div className="bg-card border border-border rounded-xl p-4">
+        <div className="flex items-center gap-6">
+          <div className="relative w-28 h-28 shrink-0">
+            <svg viewBox="0 0 120 120" className="w-full h-full" style={{ transform: 'rotate(-90deg)' }}>
+              {segments.map((seg) => (
+                <circle
+                  key={seg.stage}
+                  cx="60" cy="60" r={radius}
+                  fill="none"
+                  stroke={seg.color}
+                  strokeWidth="14"
+                  strokeDasharray={seg.dashArray}
+                  strokeDashoffset={seg.dashOffset}
+                  strokeLinecap="butt"
+                  opacity="0.85"
+                />
+              ))}
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-xl font-medium">{total}</div>
+                <div className="text-[9px] text-text-muted">atoms</div>
+              </div>
+            </div>
+          </div>
+          <div className="flex-1 space-y-1">
+            {segments.map((seg) => (
+              <div key={seg.stage} className="flex items-center gap-2 text-[11px]">
+                <div className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: seg.color }} />
+                <span className="text-text-muted flex-1">{STAGE_GEOMETRIES[seg.stage]} {seg.label}</span>
+                <span className="font-medium">{seg.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
