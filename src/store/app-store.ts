@@ -40,6 +40,10 @@ interface AppState {
   theme: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
 
+  // Item detail
+  selectedItemId: string | null;
+  selectItem: (id: string) => void;
+
   // UI
   isInputFocused: boolean;
   setInputFocused: (focused: boolean) => void;
@@ -71,6 +75,10 @@ export const useAppStore = create<AppState>((set) => ({
     set({ theme });
     applyTheme(theme);
   },
+
+  // Item detail
+  selectedItemId: null,
+  selectItem: (id) => set({ selectedItemId: id, currentPage: 'item-detail' }),
 
   // UI
   isInputFocused: false,

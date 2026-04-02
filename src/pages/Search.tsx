@@ -102,7 +102,7 @@ export function SearchPage() {
           const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
 
           return (
-            <div key={item.id} className="flex items-center gap-2.5 p-2.5 bg-card border border-border rounded-xl">
+            <div key={item.id} onClick={() => useAppStore.getState().selectItem(item.id)} className="flex items-center gap-2.5 p-2.5 bg-card border border-border rounded-xl cursor-pointer">
               <div className="w-[3px] h-6 rounded-sm shrink-0" style={{ background: moduleColor }} />
               <span className="text-xs text-text-muted">{geo}</span>
               <div className="flex-1 min-w-0">

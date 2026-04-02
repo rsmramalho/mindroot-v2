@@ -6,6 +6,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useItems } from '@/hooks/useItems';
 import { usePipeline } from '@/hooks/usePipeline';
+import { useAppStore } from '@/store/app-store';
 import { useTriage } from '@/hooks/useTriage';
 import { getConfidenceBand } from '@/service/triage-service';
 import type { TriageResult } from '@/service/triage-service';
@@ -168,11 +169,12 @@ function PipelineView() {
 }
 
 function StageItem({ item }: { item: AtomItem }) {
+  const selectItem = useAppStore((s) => s.selectItem);
   const moduleColor = item.module ? MODULE_COLORS[item.module] : 'var(--color-mod-bridge)';
   const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
 
   return (
-    <div className="flex items-center gap-2 p-2 px-2.5 mt-1 rounded-lg bg-card border border-border text-[13px]">
+    <div onClick={() => selectItem(item.id)} className="flex items-center gap-2 p-2 px-2.5 mt-1 rounded-lg bg-card border border-border text-[13px] cursor-pointer">
       <div className="w-[3px] h-6 rounded-sm shrink-0" style={{ background: moduleColor }} />
       <span className="flex-1 truncate">{item.title}</span>
       {item.type && (

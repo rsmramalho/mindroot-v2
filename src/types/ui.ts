@@ -14,7 +14,8 @@ export type AppPage =
   | 'analytics'
   | 'library'
   | 'search'
-  | 'settings';
+  | 'settings'
+  | 'item-detail';
 
 export interface AppFilters {
   module: AtomModule | null;

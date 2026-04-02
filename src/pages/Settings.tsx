@@ -3,6 +3,7 @@
 
 import { useAppStore } from '@/store/app-store';
 import { useItems } from '@/hooks/useItems';
+import { useAuth } from '@/hooks/useAuth';
 import { MODULES } from '@/types/item';
 import { RITUAL_PERIODS } from '@/types/ui';
 import { exportService } from '@/service/export-service';
@@ -14,6 +15,7 @@ export function SettingsPage() {
   const theme = useAppStore((s) => s.theme);
   const setTheme = useAppStore((s) => s.setTheme);
   const { items } = useItems();
+  const { signOut } = useAuth();
 
   const email = user?.email ?? '';
   const name = user?.user_metadata?.full_name ?? email.split('@')[0];
@@ -120,6 +122,16 @@ export function SettingsPage() {
       <div className="bg-card border border-border rounded-xl p-4 text-center">
         <div className="text-sm font-medium mb-0.5">MindRoot v2</div>
         <div className="text-xs text-text-muted">Genesis v5.0.1 · PHI spiral</div>
+      </div>
+
+      {/* Logout */}
+      <div className="mt-8 mb-4">
+        <button
+          onClick={() => signOut()}
+          className="w-full py-3 text-center text-sm text-error border border-error/20 rounded-xl hover:bg-error/5 transition-colors"
+        >
+          sair da conta
+        </button>
       </div>
     </div>
   );

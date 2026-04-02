@@ -132,7 +132,7 @@ export function HomePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05, duration: 0.2 }}
               >
-                <ItemCard item={item} />
+                <ItemCard item={item} onClick={() => useAppStore.getState().selectItem(item.id)} />
               </motion.div>
             ))}
           </div>

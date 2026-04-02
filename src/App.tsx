@@ -10,6 +10,8 @@ import { useAppStore } from '@/store/app-store';
 import { AppShell } from '@/components/shell/AppShell';
 import { CompanionSheet } from '@/components/companion/CompanionSheet';
 import { OfflineBanner } from '@/components/shared/OfflineBanner';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { ToastContainer } from '@/components/shared/ToastContainer';
 
 // Static pages (pre-auth)
 import { LandingPage } from '@/pages/Landing';
@@ -27,6 +29,7 @@ const LibraryPage = lazy(() => import('@/pages/Library').then((m) => ({ default:
 const SettingsPage = lazy(() => import('@/pages/Settings').then((m) => ({ default: m.SettingsPage })));
 const RaizPage = lazy(() => import('@/pages/Raiz').then((m) => ({ default: m.RaizPage })));
 const SearchPage = lazy(() => import('@/pages/Search').then((m) => ({ default: m.SearchPage })));
+const ItemDetailPage = lazy(() => import('@/pages/ItemDetail').then((m) => ({ default: m.ItemDetailPage })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,6 +67,7 @@ function PageRouter() {
       case 'analytics': return <AnalyticsPage />;
       case 'library': return <LibraryPage />;
       case 'search': return <SearchPage />;
+      case 'item-detail': return <ItemDetailPage />;
       case 'settings': return <SettingsPage />;
       default: return <HomePage />;
     }
@@ -93,9 +97,11 @@ function AuthenticatedApp() {
   const [companionOpen, setCompanionOpen] = useState(false);
 
   return (
-    <AppShell onOpenSettings={() => useAppStore.getState().navigate('settings')}>
-      <OfflineBanner />
-      <PageRouter />
+    <>
+      <ToastContainer />
+      <AppShell onOpenSettings={() => useAppStore.getState().navigate('settings')}>
+        <OfflineBanner />
+        <PageRouter />
       {/* FAB for companion */}
       <motion.button
         onClick={() => setCompanionOpen(true)}
@@ -108,8 +114,9 @@ function AuthenticatedApp() {
       >
         ○
       </motion.button>
-      <CompanionSheet open={companionOpen} onClose={() => setCompanionOpen(false)} />
-    </AppShell>
+        <CompanionSheet open={companionOpen} onClose={() => setCompanionOpen(false)} />
+      </AppShell>
+    </>
   );
 }
 
@@ -177,8 +184,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AppContent />
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AppContent />
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }

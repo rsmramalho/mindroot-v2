@@ -22,6 +22,7 @@ export function TopBar({ onOpenSettings }: TopBarProps) {
       <div className="flex items-center gap-2.5">
         {/* Search */}
         <button
+          onClick={() => navigate('search')}
           className="w-9 h-9 rounded-full bg-surface flex items-center justify-center"
           aria-label="Buscar"
         >

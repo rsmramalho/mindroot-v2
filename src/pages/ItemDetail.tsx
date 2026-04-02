@@ -1,0 +1,371 @@
+// pages/ItemDetail.tsx — Item detail view with inline editing
+// Stage bar, title, type/module/status chips, notes, tags, actions
+
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { useItems } from '@/hooks/useItems';
+import { useItemMutations } from '@/hooks/useItemMutations';
+import { useAppStore } from '@/store/app-store';
+import { MODULES } from '@/types/item';
+import type { AtomType, AtomModule, AtomStatus } from '@/types/item';
+import { ALL_TYPES } from '@/config/types';
+import { STAGE_COLORS, STAGE_GEOMETRIES, STAGE_NAMES, MODULE_COLORS } from '@/components/atoms/tokens';
+import { getTypeColor } from '@/components/atoms/tokens';
+
+const STATUS_OPTIONS: { key: AtomStatus; label: string }[] = [
+  { key: 'active', label: 'ativo' },
+  { key: 'paused', label: 'pausado' },
+  { key: 'waiting', label: 'aguardando' },
+  { key: 'someday', label: 'algum dia' },
+  { key: 'completed', label: 'concluido' },
+];
+
+export function ItemDetailPage() {
+  const { items } = useItems();
+  const { updateMutation, deleteMutation } = useItemMutations();
+  const selectedItemId = useAppStore((s) => s.selectedItemId);
+  const navigate = useAppStore((s) => s.navigate);
+
+  const item = items.find((i) => i.id === selectedItemId);
+
+  if (!item) {
+    return (
+      <div className="px-5 pt-8 text-center">
+        <div className="text-3xl text-text-muted/40 mb-3">·</div>
+        <p className="text-sm text-text-muted">item nao encontrado</p>
+        <button onClick={() => navigate('home')} className="text-xs text-accent mt-4">← voltar</button>
+      </div>
+    );
+  }
+
+  const stageColor = STAGE_COLORS[item.genesis_stage] ?? 'var(--color-stage-1)';
+  const geo = STAGE_GEOMETRIES[item.genesis_stage] ?? '·';
+  const stageName = STAGE_NAMES[item.genesis_stage] ?? 'Ponto';
+
+  const update = (updates: Record<string, unknown>) => {
+    updateMutation.mutate({ id: item.id, updates });
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="px-5 pb-8"
+    >
+      {/* Header */}
+      <div className="pt-4 pb-3 flex items-center justify-between">
+        <button onClick={() => navigate('home')} className="text-sm text-accent">← voltar</button>
+      </div>
+
+      {/* Stage bar */}
+      <div className="h-[3px] rounded-sm mb-3" style={{ background: stageColor }} />
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-lg" style={{ color: stageColor }}>{geo}</span>
+        <span className="text-xs text-text-muted">Stage {item.genesis_stage} · {stageName}</span>
+      </div>
+
+      {/* Title */}
+      <EditableTitle item={item} onSave={(title) => update({ title })} />
+
+      {/* Chips row */}
+      <div className="flex flex-wrap gap-1.5 mb-5">
+        <TypeSelector value={item.type} onChange={(type) => update({ type })} />
+        <ModuleSelector value={item.module} onChange={(module) => update({ module })} />
+        <StatusSelector value={item.status} onChange={(status) => update({ status })} />
+      </div>
+
+      <Divider />
+
+      {/* Notes */}
+      <EditableNotes item={item} onSave={(notes) => update({ notes })} />
+
+      <Divider />
+
+      {/* Tags */}
+      <TagsSection tags={item.tags} onAdd={(tag) => update({ tags: [...item.tags, tag] })} />
+
+      <Divider />
+
+      {/* Details */}
+      <SectionLabel>detalhes</SectionLabel>
+      <div className="space-y-1 mb-4">
+        <DetailRow label="criado em" value={formatDate(item.created_at)} />
+        <DetailRow label="atualizado" value={formatDate(item.updated_at)} />
+        {item.source && <DetailRow label="fonte" value={item.source} />}
+        {item.project_id && <DetailRow label="projeto" value={item.project_id.slice(0, 8)} />}
+      </div>
+
+      <Divider />
+
+      {/* Actions */}
+      <div className="flex gap-2 mt-4">
+        <button
+          onClick={() => { update({ status: 'archived' }); navigate('home'); }}
+          className="flex-1 py-2.5 text-center text-sm border border-border rounded-xl text-text-muted"
+        >
+          arquivar
+        </button>
+        <DeleteButton itemId={item.id} onDelete={() => navigate('home')} deleteMutation={deleteMutation} />
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Editable Title ──────────────────────────────────
+
+function EditableTitle({ item, onSave }: { item: { title: string }; onSave: (v: string) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(item.title);
+
+  const save = () => {
+    if (draft.trim() && draft !== item.title) onSave(draft.trim());
+    setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <input
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={save}
+        onKeyDown={(e) => e.key === 'Enter' && save()}
+        autoFocus
+        className="text-xl font-medium w-full bg-transparent outline-none border-b border-accent mb-4 pb-1"
+      />
+    );
+  }
+
+  return (
+    <h1
+      onClick={() => { setDraft(item.title); setEditing(true); }}
+      className="text-xl font-medium mb-4 cursor-text"
+    >
+      {item.title}
+    </h1>
+  );
+}
+
+// ─── Editable Notes ──────────────────────────────────
+
+function EditableNotes({ item, onSave }: { item: { notes: string | null }; onSave: (v: string) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(item.notes ?? '');
+
+  const save = () => {
+    if (draft !== (item.notes ?? '')) onSave(draft);
+    setEditing(false);
+  };
+
+  return (
+    <>
+      <SectionLabel>notas</SectionLabel>
+      {editing ? (
+        <textarea
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={save}
+          autoFocus
+          rows={4}
+          className="w-full text-sm bg-transparent outline-none border border-border rounded-xl p-3 mb-4 resize-none"
+        />
+      ) : (
+        <div
+          onClick={() => { setDraft(item.notes ?? ''); setEditing(true); }}
+          className="text-sm text-text-muted mb-4 min-h-[40px] cursor-text"
+        >
+          {item.notes || 'toque pra adicionar notas...'}
+        </div>
+      )}
+    </>
+  );
+}
+
+// ─── Type Selector ───────────────────────────────────
+
+function TypeSelector({ value, onChange }: { value: AtomType | null; onChange: (v: AtomType) => void }) {
+  const [open, setOpen] = useState(false);
+  const color = value ? getTypeColor(value) : 'var(--color-mod-bridge)';
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="text-[11px] font-medium px-2.5 py-1 rounded-lg"
+        style={{ background: `color-mix(in srgb, ${color} 12%, transparent)`, color }}
+      >
+        {value ?? 'tipo'}
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-xl shadow-lg z-20 max-h-48 overflow-y-auto w-36">
+          {ALL_TYPES.map((t) => (
+            <button
+              key={t}
+              onClick={() => { onChange(t as AtomType); setOpen(false); }}
+              className="w-full text-left px-3 py-1.5 text-xs hover:bg-surface transition-colors"
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Module Selector ─────────────────────────────────
+
+function ModuleSelector({ value, onChange }: { value: AtomModule | null; onChange: (v: AtomModule) => void }) {
+  const [open, setOpen] = useState(false);
+  const color = value ? MODULE_COLORS[value] : 'var(--color-mod-bridge)';
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="text-[11px] font-medium px-2.5 py-1 rounded-lg flex items-center gap-1.5"
+        style={{ background: `color-mix(in srgb, ${color} 12%, transparent)`, color }}
+      >
+        <span className="w-2 h-2 rounded-full" style={{ background: color }} />
+        {value ?? 'modulo'}
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-xl shadow-lg z-20 w-36">
+          {MODULES.map((m) => (
+            <button
+              key={m.key}
+              onClick={() => { onChange(m.key); setOpen(false); }}
+              className="w-full text-left px-3 py-1.5 text-xs hover:bg-surface transition-colors flex items-center gap-2"
+            >
+              <span className="w-2 h-2 rounded-full" style={{ background: m.color }} />
+              {m.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Status Selector ─────────────────────────────────
+
+function StatusSelector({ value, onChange }: { value: AtomStatus; onChange: (v: AtomStatus) => void }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-surface text-text-muted"
+      >
+        {value}
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-xl shadow-lg z-20 w-36">
+          {STATUS_OPTIONS.map((s) => (
+            <button
+              key={s.key}
+              onClick={() => { onChange(s.key); setOpen(false); }}
+              className={`w-full text-left px-3 py-1.5 text-xs hover:bg-surface transition-colors ${value === s.key ? 'font-medium text-accent' : ''}`}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Tags Section ────────────────────────────────────
+
+function TagsSection({ tags, onAdd }: { tags: string[]; onAdd: (tag: string) => void }) {
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState('');
+
+  const add = () => {
+    if (draft.trim()) {
+      onAdd(draft.trim());
+      setDraft('');
+      setAdding(false);
+    }
+  };
+
+  return (
+    <>
+      <SectionLabel>tags</SectionLabel>
+      <div className="flex flex-wrap gap-1.5 mb-4">
+        {tags.map((t) => (
+          <span key={t} className="text-[11px] px-2.5 py-1 rounded-lg bg-surface text-text-muted">
+            {t}
+          </span>
+        ))}
+        {adding ? (
+          <input
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onBlur={add}
+            onKeyDown={(e) => e.key === 'Enter' && add()}
+            autoFocus
+            placeholder="tag..."
+            className="text-[11px] px-2.5 py-1 rounded-lg border border-accent bg-transparent outline-none w-20"
+          />
+        ) : (
+          <button onClick={() => setAdding(true)} className="text-[11px] px-2.5 py-1 rounded-lg border border-border text-text-muted">
+            + tag
+          </button>
+        )}
+      </div>
+    </>
+  );
+}
+
+// ─── Delete Button ───────────────────────────────────
+
+function DeleteButton({ itemId, onDelete, deleteMutation }: { itemId: string; onDelete: () => void; deleteMutation: any }) {
+  const [confirm, setConfirm] = useState(false);
+
+  if (confirm) {
+    return (
+      <div className="flex-1 flex items-center gap-2 justify-center py-2.5 border border-error/20 rounded-xl">
+        <span className="text-xs text-error">certeza?</span>
+        <button onClick={() => { deleteMutation.mutate(itemId); onDelete(); }} className="text-xs text-error font-medium">sim</button>
+        <button onClick={() => setConfirm(false)} className="text-xs text-text-muted">nao</button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => setConfirm(true)}
+      className="flex-1 py-2.5 text-center text-sm border border-error/20 rounded-xl text-error"
+    >
+      excluir
+    </button>
+  );
+}
+
+// ─── Shared ──────────────────────────────────────────
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-1.5">{children}</div>;
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between text-xs">
+      <span className="text-text-muted">{label}</span>
+      <span>{value}</span>
+    </div>
+  );
+}
+
+function Divider() {
+  return <div className="border-b border-border my-4" />;
+}
+
+function formatDate(iso: string): string {
+  try { return format(parseISO(iso), "d MMM yyyy", { locale: ptBR }); }
+  catch { return iso; }
+}

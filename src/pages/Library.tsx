@@ -4,6 +4,7 @@
 
 import { useState, useMemo } from 'react';
 import { useItems } from '@/hooks/useItems';
+import { useAppStore } from '@/store/app-store';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { AtomItem, AtomType } from '@/types/item';
@@ -84,7 +85,7 @@ export function LibraryPage() {
       ) : (
         <div className="space-y-2">
           {filtered.slice(0, 20).map((item) => (
-            <LibraryCard key={item.id} item={item} />
+            <LibraryCard key={item.id} item={item} onClick={() => useAppStore.getState().selectItem(item.id)} />
           ))}
         </div>
       )}
@@ -92,11 +93,11 @@ export function LibraryPage() {
   );
 }
 
-function LibraryCard({ item }: { item: AtomItem }) {
+function LibraryCard({ item, onClick }: { item: AtomItem; onClick?: () => void }) {
   const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
 
   return (
-    <div className="bg-card border border-border rounded-xl p-3 px-3.5">
+    <div onClick={onClick} className="bg-card border border-border rounded-xl p-3 px-3.5 cursor-pointer">
       <div className="flex items-start justify-between mb-1">
         <span className="text-sm font-medium flex-1">{item.title}</span>
         {item.type && (

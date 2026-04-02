@@ -32,7 +32,8 @@ export function InboxPreview({ items }: InboxPreviewProps) {
         {items.slice(0, 5).map((item) => (
           <div
             key={item.id}
-            className="text-[13px] py-1.5 border-b border-surface last:border-0 flex items-center gap-2 text-text-muted"
+            onClick={() => useAppStore.getState().selectItem(item.id)}
+            className="text-[13px] py-1.5 border-b border-surface last:border-0 flex items-center gap-2 text-text-muted cursor-pointer"
           >
             <span className="w-[5px] h-[5px] rounded-full bg-error shrink-0" />
             <span className="truncate">"{item.title}"</span>
