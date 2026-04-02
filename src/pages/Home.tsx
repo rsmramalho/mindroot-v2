@@ -7,10 +7,12 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useItems } from '@/hooks/useItems';
 import { usePipeline } from '@/hooks/usePipeline';
+import { useTriage } from '@/hooks/useTriage';
 import { useNav } from '@/hooks/useNav';
 import { useAppStore } from '@/store/app-store';
 import { getCurrentPeriod } from '@/types/ui';
 import { getCreatedToday, getModifiedToday } from '@/engine/wrap';
+import { getConfidenceBand } from '@/service/triage-service';
 import { motion } from 'framer-motion';
 import { SoulCard } from '@/components/home/SoulCard';
 import { WrapBanner } from '@/components/home/WrapBanner';
@@ -20,10 +22,12 @@ import { InboxPreview } from '@/components/home/InboxPreview';
 import { HealthBar } from '@/components/audit/HealthBar';
 import { SoulCardSkeleton, CardSkeleton } from '@/components/shared/Skeleton';
 import { EmptyState } from '@/components/shared/EmptyState';
+import type { AtomType, AtomModule } from '@/types/item';
 
 export function HomePage() {
   const { items, isLoading: loading } = useItems();
-  const { capture } = usePipeline();
+  const { capture, classify } = usePipeline();
+  const { classify: aiClassify } = useTriage();
   const user = useAppStore((s) => s.user);
   const { navigate, selectItem } = useNav();
   const currentEmotion = useAppStore((s) => s.currentEmotion);
@@ -117,7 +121,19 @@ export function HomePage() {
         <SectionLabel>captura</SectionLabel>
         <AtomInput
           placeholder={isCrepusculo ? 'ultima captura antes do wrap...' : 'o que esta na cabeca?'}
-          onSubmit={(text) => capture(text)}
+          onSubmit={async (text) => {
+            const item = await capture(text);
+            if (item) {
+              // Auto-triage in background
+              try {
+                const result = await aiClassify({ input: text });
+                const band = getConfidenceBand(result);
+                if (band === 'auto') {
+                  await classify(item.id, result.type as AtomType, result.module as AtomModule);
+                }
+              } catch { /* triage failure is non-blocking */ }
+            }
+          }}
         />
       </div>
 
