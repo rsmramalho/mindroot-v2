@@ -6,14 +6,25 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useItems } from '@/hooks/useItems';
+import { usePipeline } from '@/hooks/usePipeline';
 import { useNav } from '@/hooks/useNav';
-import type { AtomItem } from '@/types/item';
+import { useAppStore } from '@/store/app-store';
+import type { AtomItem, AtomModule } from '@/types/item';
+import { MODULES } from '@/types/item';
 import { MODULE_COLORS, STAGE_COLORS, STAGE_GEOMETRIES } from '@/components/atoms/tokens';
 import { getTypeColor } from '@/components/atoms/tokens';
 
 export function ProjectsPage() {
   const { items } = useItems();
+  const { capture } = usePipeline();
+  const { classify } = usePipeline();
+  const { selectItem } = useNav();
+  const user = useAppStore((s) => s.user);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newModule, setNewModule] = useState<AtomModule>('work');
+  const [filter, setFilter] = useState<'all' | 'active' | 'paused' | 'completed'>('all');
 
   const projects = useMemo(
     () => items.filter((i) => i.type === 'project' && i.status !== 'archived'),
@@ -37,19 +48,35 @@ export function ProjectsPage() {
     return counts;
   }, [items]);
 
-  const byModule = useMemo(() => {
+  const selected = selectedId ? projects.find((p) => p.id === selectedId) : null;
+  const totalItems = projects.reduce((sum, p) => sum + (projectChildren[p.id]?.length ?? 0), 0);
+  const activeCount = projects.filter((p) => p.status === 'active').length;
+
+  const filteredProjects = useMemo(() => {
+    if (filter === 'all') return projects;
+    return projects.filter((p) => p.status === filter);
+  }, [projects, filter]);
+
+  const filteredByModule = useMemo(() => {
     const grouped: Record<string, AtomItem[]> = {};
-    projects.forEach((p) => {
+    filteredProjects.forEach((p) => {
       const key = p.module ?? 'bridge';
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(p);
     });
     return grouped;
-  }, [projects]);
+  }, [filteredProjects]);
 
-  const selected = selectedId ? projects.find((p) => p.id === selectedId) : null;
-  const totalItems = projects.reduce((sum, p) => sum + (projectChildren[p.id]?.length ?? 0), 0);
-  const activeCount = projects.filter((p) => p.status === 'active').length;
+  const handleCreate = async () => {
+    if (!newTitle.trim() || !user) return;
+    const item = await capture(newTitle.trim());
+    if (item) {
+      await classify(item.id, 'project', newModule);
+      setCreating(false);
+      setNewTitle('');
+      selectItem(item.id);
+    }
+  };
 
   if (selected) {
     return <ProjectDetail project={selected} children={projectChildren[selected.id] ?? []} onBack={() => setSelectedId(null)} />;
@@ -57,19 +84,80 @@ export function ProjectsPage() {
 
   return (
     <div className="px-5 pb-4">
-      <div className="pt-4 pb-4">
-        <h1 className="text-[22px] font-medium">projects</h1>
-        <p className="text-[13px] text-text-muted mt-0.5">{projects.length} projetos · {activeCount} ativos · {totalItems} items</p>
+      <div className="pt-4 pb-3 flex items-center justify-between">
+        <div>
+          <h1 className="text-[22px] font-medium">projects</h1>
+          <p className="text-[13px] text-text-muted mt-0.5">{projects.length} projetos · {activeCount} ativos · {totalItems} items</p>
+        </div>
+        <button
+          onClick={() => setCreating(true)}
+          className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center text-lg shadow-lg shadow-accent/20"
+          aria-label="Criar projeto"
+        >
+          +
+        </button>
+      </div>
+
+      {/* Create modal */}
+      {creating && (
+        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-border rounded-xl p-4 mb-4">
+          <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">novo projeto</div>
+          <input
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
+            autoFocus
+            placeholder="titulo do projeto..."
+            className="w-full text-sm bg-transparent border border-border rounded-lg px-3 py-2.5 outline-none focus:border-accent-light mb-2"
+          />
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {MODULES.map((m) => (
+              <button
+                key={m.key}
+                onClick={() => setNewModule(m.key)}
+                className={`text-[10px] px-2.5 py-1 rounded-lg border transition-colors flex items-center gap-1.5 ${
+                  newModule === m.key ? 'border-accent bg-accent-bg text-accent font-medium' : 'border-border text-text-muted'
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full" style={{ background: m.color }} />
+                {m.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => { setCreating(false); setNewTitle(''); }} className="flex-1 py-2.5 text-center text-xs border border-border rounded-lg text-text-muted">cancelar</button>
+            <button onClick={handleCreate} disabled={!newTitle.trim()} className="flex-1 py-2.5 text-center text-xs bg-accent text-white rounded-lg font-medium disabled:opacity-40">criar</button>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Filter chips */}
+      <div className="flex gap-1.5 mb-4 overflow-x-auto">
+        {([['all', 'todos'], ['active', 'ativos'], ['paused', 'pausados'], ['completed', 'completos']] as const).map(([key, label]) => (
+          <button
+            key={key}
+            onClick={() => setFilter(key)}
+            className={`px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all ${
+              filter === key ? 'bg-accent-bg text-accent font-medium' : 'bg-surface text-text-muted'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       {projects.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-3xl text-text-muted mb-3">□</div>
           <p className="text-sm text-text-muted">nenhum projeto ainda</p>
-          <p className="text-xs text-text-muted mt-1">projetos sao items type=project</p>
+          <button onClick={() => setCreating(true)} className="text-xs text-accent mt-2">+ criar primeiro projeto</button>
+        </div>
+      ) : filteredProjects.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-sm text-text-muted">nenhum projeto {filter}</p>
         </div>
       ) : (
-        Object.entries(byModule).map(([mod, projs]) => (
+        Object.entries(filteredByModule).map(([mod, projs]) => (
           <div key={mod}>
             <div className="text-[11px] text-text-muted tracking-wider uppercase mb-2 mt-4 first:mt-0">
               mod-{mod} · {projs.length}
