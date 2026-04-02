@@ -1,11 +1,14 @@
-// config/raiz.ts — 9 Raiz domains + prompts
-// Used in onboarding (Raiz inventory) and Raiz dashboard.
+// config/raiz.ts — 9 Raiz life domains + session doors
+// Raiz = the Genesis applied to life. Not just productivity — everything.
+// Philosophy: "uma gaveta por vez" — see what exists before changing anything.
+// Zero new schema. Existing types + tags #domain:* + #raiz.
 
 import type { AtomModule } from '@/types/item';
 
 export interface RaizDomain {
   key: string;
   label: string;
+  emoji: string;
   module: AtomModule;
   prompt: string;
   examples: string[];
@@ -13,74 +16,116 @@ export interface RaizDomain {
 
 export const RAIZ_DOMAINS: RaizDomain[] = [
   {
-    key: 'carreira',
-    label: 'Carreira',
-    module: 'work',
-    prompt: 'O que voce quer construir profissionalmente?',
-    examples: ['Mudar de area', 'Conseguir promocao', 'Comecar negocio proprio'],
+    key: 'identidade',
+    label: 'identidade',
+    emoji: '🔑',
+    module: 'bridge',
+    prompt: 'quais contas e logins voce tem?',
+    examples: ['email pessoal', 'email do trabalho', 'gmail antigo', 'conta apple', 'login do banco'],
   },
   {
-    key: 'projetos',
-    label: 'Projetos',
-    module: 'work',
-    prompt: 'Quais projetos estao na sua cabeca?',
-    examples: ['App pessoal', 'Reformar a casa', 'Curso online'],
+    key: 'documentos',
+    label: 'documentos',
+    emoji: '📄',
+    module: 'bridge',
+    prompt: 'onde estao seus documentos importantes?',
+    examples: ['passaporte', 'contrato do aluguel', 'certidao', 'receitas medicas', 'diploma'],
   },
   {
     key: 'saude',
-    label: 'Saude',
+    label: 'saude',
+    emoji: '❤️',
     module: 'body',
-    prompt: 'Como esta seu corpo e sua energia?',
-    examples: ['Voltar a treinar', 'Melhorar sono', 'Cuidar da alimentacao'],
-  },
-  {
-    key: 'mente',
-    label: 'Mente',
-    module: 'mind',
-    prompt: 'O que voce quer aprender ou entender melhor?',
-    examples: ['Ler mais', 'Estudar filosofia', 'Meditar regularmente'],
-  },
-  {
-    key: 'relacoes',
-    label: 'Relacoes',
-    module: 'family',
-    prompt: 'Como estao suas relacoes mais importantes?',
-    examples: ['Mais tempo com familia', 'Reconectar com amigos', 'Resolver conflito'],
+    prompt: 'como esta seu corpo e sua saude agora?',
+    examples: ['academia', 'exame pendente', 'remedio que tomo', 'dentista atrasado', 'sono ruim'],
   },
   {
     key: 'financas',
-    label: 'Financas',
+    label: 'financas',
+    emoji: '💰',
     module: 'finance',
-    prompt: 'Qual a sua relacao com dinheiro agora?',
-    examples: ['Montar reserva', 'Quitar divida', 'Investir melhor'],
+    prompt: 'onde esta o seu dinheiro?',
+    examples: ['conta corrente', 'cartao de credito', 'investimento', 'divida', 'assinatura mensal'],
   },
   {
-    key: 'proposito',
-    label: 'Proposito',
-    module: 'purpose',
-    prompt: 'O que da sentido pra voce?',
-    examples: ['Contribuir com comunidade', 'Encontrar vocacao', 'Criar algo duradouro'],
-  },
-  {
-    key: 'social',
-    label: 'Social',
-    module: 'social',
-    prompt: 'Como voce se conecta com o mundo?',
-    examples: ['Participar de grupos', 'Fazer networking', 'Voluntariado'],
-  },
-  {
-    key: 'ponte',
-    label: 'Ponte',
+    key: 'arquivos',
+    label: 'arquivos',
+    emoji: '☁️',
     module: 'bridge',
-    prompt: 'O que conecta as diferentes areas da sua vida?',
-    examples: ['Rotina matinal', 'Planejamento semanal', 'Ritual de encerramento'],
+    prompt: 'onde voce guarda seus arquivos digitais?',
+    examples: ['google drive', 'icloud', 'hd externo', 'dropbox', 'fotos no celular'],
+  },
+  {
+    key: 'memorias',
+    label: 'memorias',
+    emoji: '📸',
+    module: 'family',
+    prompt: 'onde estao suas fotos e memorias?',
+    examples: ['google photos', 'icloud photos', 'fotos no whatsapp', 'album fisico', 'videos antigos'],
+  },
+  {
+    key: 'tempo',
+    label: 'tempo',
+    emoji: '📅',
+    module: 'bridge',
+    prompt: 'como voce organiza seu tempo?',
+    examples: ['google calendar', 'agenda fisica', 'alarmes', 'nenhum sistema', 'monday.com'],
+  },
+  {
+    key: 'comunicacao',
+    label: 'comunicacao',
+    emoji: '💬',
+    module: 'social',
+    prompt: 'por onde voce se comunica?',
+    examples: ['whatsapp', 'email', 'instagram', 'telegram', 'slack', 'linkedin'],
+  },
+  {
+    key: 'projetos',
+    label: 'projetos',
+    emoji: '🚀',
+    module: 'work',
+    prompt: 'quais projetos estao na sua cabeca agora?',
+    examples: ['projeto do trabalho', 'ideia de negocio', 'reforma', 'curso', 'side project'],
   },
 ];
 
-export const RAIZ_ENTRY_MODES = [
-  { key: 'micro', label: 'Rapido', description: '3 dominios, 1 item cada', domains: 3 },
-  { key: 'padrao', label: 'Padrao', description: '6 dominios, 2-3 items cada', domains: 6 },
-  { key: 'deep', label: 'Profundo', description: 'Todos os 9 dominios', domains: 9 },
-] as const;
+// 3 doors for guided sessions — different APPROACHES, not quantities
+export interface RaizDoor {
+  key: string;
+  emoji: string;
+  title: string;
+  description: string;
+  tag: string;
+  recommended?: boolean;
+  domainKeys: string[];
+}
 
-export type RaizEntryMode = (typeof RAIZ_ENTRY_MODES)[number]['key'];
+export const RAIZ_DOORS: RaizDoor[] = [
+  {
+    key: 'easy',
+    emoji: '✨',
+    title: 'o mais facil',
+    description: 'comunicacao ou calendario — quick win pra criar momentum.',
+    tag: 'pra quem precisa de uma vitoria rapida',
+    domainKeys: ['comunicacao', 'tempo', 'projetos'],
+  },
+  {
+    key: 'pain',
+    emoji: '🎯',
+    title: 'o que mais incomoda',
+    description: 'o que tira sono. resolver alivia rapido — e o alivio move o resto.',
+    tag: 'pra quem sabe onde doi',
+    domainKeys: ['financas', 'saude', 'identidade', 'documentos', 'arquivos'],
+  },
+  {
+    key: 'guide',
+    emoji: '○',
+    title: 'me guia',
+    description: 'identidade primeiro — contas, emails, logins. de dentro pra fora.',
+    tag: 'pra quem ta perdido',
+    recommended: true,
+    domainKeys: ['identidade', 'documentos', 'saude', 'financas', 'arquivos', 'memorias', 'tempo', 'comunicacao', 'projetos'],
+  },
+];
+
+export type RaizDoorKey = (typeof RAIZ_DOORS)[number]['key'];

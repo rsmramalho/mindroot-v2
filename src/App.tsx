@@ -1,8 +1,8 @@
 // App.tsx — MindRoot v2
 // BrowserRouter + lazy pages + auth gate
 
-import { useState, useLayoutEffect, lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useState, useEffect, useLayoutEffect, lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
@@ -17,7 +17,6 @@ import type { AppPage } from '@/types/ui';
 // Static pages (pre-auth)
 import { LandingPage } from '@/pages/Landing';
 import { AuthPage } from '@/pages/Auth';
-import { OnboardingPage } from '@/pages/Onboarding';
 
 // Lazy-loaded pages (post-auth)
 const HomePage = lazy(() => import('@/pages/Home').then((m) => ({ default: m.HomePage })));
@@ -124,6 +123,23 @@ function AnimatedRoutes() {
 
 // ─── Authenticated App ────────────────────────────────
 
+// First-time redirect to Raiz (non-blocking)
+function FirstTimeRaizRedirect() {
+  const user = useAppStore((s) => s.user);
+  const routerNavigate = useNavigate();
+  const location = useLocation();
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    if (!checked && user && !user.user_metadata?.raiz_welcomed && location.pathname === '/') {
+      routerNavigate('/raiz', { replace: true });
+    }
+    setChecked(true);
+  }, [user, checked, routerNavigate, location.pathname]);
+
+  return null;
+}
+
 function AuthenticatedApp() {
   useRealtime();
 
@@ -133,6 +149,7 @@ function AuthenticatedApp() {
       <AppShell onOpenSettings={() => useAppStore.getState().navigate('settings')}>
         <OfflineBanner />
         <RouteSync />
+        <FirstTimeRaizRedirect />
         <AnimatedRoutes />
       </AppShell>
     </>
@@ -152,27 +169,10 @@ function AppContent() {
   }, []);
   const { user, loading } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
-  const [onboardingDone, setOnboardingDone] = useState(false);
 
   useLayoutEffect(() => {
     if (!user) setShowAuth(false);
   }, [user]);
-
-  useLayoutEffect(() => {
-    if (user) {
-      // Check Supabase user_metadata first, then localStorage fallback
-      const metaDone = user.user_metadata?.onboarding_done === true;
-      const localDone = localStorage.getItem(`mindroot_onboarding_${user.id}`) === 'done';
-      setOnboardingDone(metaDone || localDone);
-    }
-  }, [user]);
-
-  const completeOnboarding = () => {
-    if (user) {
-      localStorage.setItem(`mindroot_onboarding_${user.id}`, 'done');
-    }
-    setOnboardingDone(true);
-  };
 
   if (loading) {
     return (
@@ -197,10 +197,6 @@ function AppContent() {
   if (!user) {
     if (showAuth) return <AuthPage onBack={() => setShowAuth(false)} />;
     return <LandingPage onLogin={() => setShowAuth(true)} />;
-  }
-
-  if (!onboardingDone) {
-    return <OnboardingPage onComplete={completeOnboarding} />;
   }
 
   return <AuthenticatedApp />;
