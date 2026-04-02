@@ -6,6 +6,7 @@ import { useState, useMemo } from 'react';
 import { format, startOfWeek, addDays, isSameDay, isToday as isDateToday, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useItems } from '@/hooks/useItems';
+import { useAppStore } from '@/store/app-store';
 import type { AtomItem, SoulExtension } from '@/types/item';
 import { MODULE_COLORS, STAGE_GEOMETRIES } from '@/components/atoms/tokens';
 import { getTypeColor } from '@/components/atoms/tokens';
@@ -137,7 +138,7 @@ export function CalendarPage() {
         <RitualBlock period="zenite" color="var(--color-ai-blue)" bgClass="bg-ai-blue/4 border-ai-blue/10" items={zenite} habits={[]} />
 
         {/* Crepúsculo block */}
-        <RitualBlock period="crepusculo" color="var(--color-accent-light)" bgClass="bg-accent-light/5 border-accent-light/15" items={crepItems} habits={[]} showWrap={today && !!todayWrap} />
+        <RitualBlock period="crepusculo" color="var(--color-accent-light)" bgClass="bg-accent-light/5 border-accent-light/15" items={crepItems} habits={[]} showWrap={today && !!todayWrap} wrapItem={todayWrap} />
 
         {dayItems.length === 0 && habits.length === 0 && (
           <p className="text-xs text-text-muted text-center py-6">nenhum item para este dia</p>
@@ -147,8 +148,8 @@ export function CalendarPage() {
   );
 }
 
-function RitualBlock({ period, color, bgClass, items, habits, showWrap }: {
-  period: string; color: string; bgClass: string; items: AtomItem[]; habits: AtomItem[]; showWrap?: boolean;
+function RitualBlock({ period, color, bgClass, items, habits, showWrap, wrapItem }: {
+  period: string; color: string; bgClass: string; items: AtomItem[]; habits: AtomItem[]; showWrap?: boolean; wrapItem?: AtomItem | null;
 }) {
   const hours = period === 'aurora' ? '05h–12h' : period === 'zenite' ? '12h–18h' : '18h–05h';
 
@@ -167,7 +168,10 @@ function RitualBlock({ period, color, bgClass, items, habits, showWrap }: {
       {items.map((item) => <CalendarItem key={item.id} item={item} />)}
       {habits.map((item) => <CalendarItem key={item.id} item={item} />)}
       {showWrap && (
-        <div className="flex items-center gap-2 p-1.5 px-2.5 rounded-lg bg-accent-light/8 border border-accent-light/15 text-[13px] text-accent">
+        <div
+          onClick={() => wrapItem && useAppStore.getState().selectItem(wrapItem.id)}
+          className="flex items-center gap-2 p-1.5 px-2.5 rounded-lg bg-accent-light/8 border border-accent-light/15 text-[13px] text-accent cursor-pointer"
+        >
           <span>○</span> wrap
         </div>
       )}
@@ -176,12 +180,13 @@ function RitualBlock({ period, color, bgClass, items, habits, showWrap }: {
 }
 
 function CalendarItem({ item }: { item: AtomItem }) {
+  const selectItem = useAppStore((s) => s.selectItem);
   const moduleColor = item.module ? MODULE_COLORS[item.module] : 'var(--color-mod-bridge)';
   const geo = STAGE_GEOMETRIES[item.genesis_stage] ?? '·';
   const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
 
   return (
-    <div className="flex items-center gap-2 p-1.5 px-2.5 mb-[3px] rounded-lg bg-card border border-border text-[13px]">
+    <div onClick={() => selectItem(item.id)} className="flex items-center gap-2 p-1.5 px-2.5 mb-[3px] rounded-lg bg-card border border-border text-[13px] cursor-pointer hover:border-accent-light/30 transition-colors">
       <div className="w-[3px] h-[22px] rounded-sm shrink-0" style={{ background: moduleColor }} />
       <span className="flex-1 truncate">{item.title}</span>
       <span className="text-[10px] text-text-muted">{geo}</span>

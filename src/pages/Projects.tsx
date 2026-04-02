@@ -6,6 +6,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useItems } from '@/hooks/useItems';
+import { useAppStore } from '@/store/app-store';
 import type { AtomItem } from '@/types/item';
 import { MODULE_COLORS, STAGE_COLORS, STAGE_GEOMETRIES } from '@/components/atoms/tokens';
 import { getTypeColor } from '@/components/atoms/tokens';
@@ -118,7 +119,10 @@ function ProjectDetail({ project, children, onBack }: { project: AtomItem; child
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="px-5 pb-4">
       <button onClick={onBack} className="text-[13px] text-accent pt-4 pb-2">← projects</button>
-      <h1 className="text-2xl font-medium mb-1.5">{project.title}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-medium mb-1.5">{project.title}</h1>
+        <button onClick={() => useAppStore.getState().selectItem(project.id)} className="text-xs text-accent">editar</button>
+      </div>
       <div className="text-[13px] text-text-muted mb-4 flex items-center gap-2">
         <span className={`text-[10px] px-2 py-px rounded-lg font-medium ${statusBg}`}>{project.status}</span>
         mod-{project.module} · {geometry} stage {stage}
@@ -146,7 +150,7 @@ function ProjectDetail({ project, children, onBack }: { project: AtomItem; child
           const stageColor = STAGE_COLORS[item.genesis_stage] ?? 'var(--color-stage-1)';
           const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
           return (
-            <div key={item.id} className="bg-card border border-border rounded-lg p-2.5 px-3 mb-1.5 flex items-center gap-2.5 text-[13px]">
+            <div key={item.id} onClick={() => useAppStore.getState().selectItem(item.id)} className="bg-card border border-border rounded-lg p-2.5 px-3 mb-1.5 flex items-center gap-2.5 text-[13px] cursor-pointer hover:border-accent-light/30 transition-colors">
               <span style={{ color: stageColor }}>{geo}</span>
               <span className="flex-1 truncate">{item.title}</span>
               {item.type && (

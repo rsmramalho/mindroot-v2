@@ -10,6 +10,7 @@ import { useItemMutations } from '@/hooks/useItemMutations';
 import { useAppStore } from '@/store/app-store';
 import { MODULES } from '@/types/item';
 import type { AtomType, AtomModule, AtomStatus } from '@/types/item';
+import { toast } from '@/store/toast-store';
 import { ALL_TYPES } from '@/config/types';
 import { STAGE_COLORS, STAGE_GEOMETRIES, STAGE_NAMES, MODULE_COLORS } from '@/components/atoms/tokens';
 import { getTypeColor } from '@/components/atoms/tokens';
@@ -120,7 +121,14 @@ function EditableTitle({ item, onSave }: { item: { title: string }; onSave: (v: 
   const [draft, setDraft] = useState(item.title);
 
   const save = () => {
-    if (draft.trim() && draft !== item.title) onSave(draft.trim());
+    const trimmed = draft.trim();
+    if (!trimmed) {
+      setDraft(item.title);
+      setEditing(false);
+      toast.error('Titulo nao pode ser vazio');
+      return;
+    }
+    if (trimmed !== item.title) onSave(trimmed);
     setEditing(false);
   };
 

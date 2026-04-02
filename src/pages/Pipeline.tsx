@@ -223,6 +223,10 @@ function TriageView() {
 
   const handleClassify = async () => {
     if (!current) return;
+    if (!current.title.trim()) {
+      toast.error('Item sem titulo — edite antes de classificar');
+      return;
+    }
     try {
       const result = await aiClassify({ input: current.title });
       const band = getConfidenceBand(result);

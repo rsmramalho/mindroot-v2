@@ -12,6 +12,7 @@ import { getCreatedToday, getModifiedToday, computeAudit } from '@/engine/wrap';
 import { StageBadge } from '@/components/atoms/StageBadge';
 import { EMOTIONS } from '@/types/item';
 import type { Emotion, EnergyLevel } from '@/types/item';
+import { toast } from '@/store/toast-store';
 
 const STEPS = [
   { n: '01', name: 'soul', label: '' },
@@ -26,6 +27,7 @@ const STEPS = [
 export function WrapPage() {
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(false);
+  const [confirmCommit, setConfirmCommit] = useState(false);
   const { items } = useItems();
   const { startWrap, session, updateSession, commitWrap, loading } = useWrap();
   const navigate = useAppStore((s) => s.navigate);
@@ -57,6 +59,11 @@ export function WrapPage() {
   };
 
   const handleCommit = async () => {
+    const validNext = nextSteps.filter(Boolean);
+    if (validNext.length === 0) {
+      toast.error('Adicione pelo menos um proximo passo');
+      return;
+    }
     if (session) {
       updateSession({
         soul: {
@@ -64,7 +71,7 @@ export function WrapPage() {
           crepusculo: { emotion: (selectedEmotions[0] ?? 'neutro') as Emotion, energy },
         },
         decided: decisions,
-        next: nextSteps.filter(Boolean),
+        next: validNext,
       });
     }
     await commitWrap();
@@ -143,22 +150,35 @@ export function WrapPage() {
       </div>
 
       {/* Bottom */}
-      <div className="px-5 py-2.5 border-t border-border flex justify-between items-center">
-        <button
-          onClick={goBack}
-          className={`text-sm text-accent ${step === 0 ? 'invisible' : ''}`}
-        >
-          voltar
-        </button>
-        <button
-          onClick={goNext}
-          disabled={loading}
-          className={`rounded-xl px-7 py-3 text-sm font-medium text-white ${
-            step === STEPS.length - 1 ? 'bg-success-text' : 'bg-accent'
-          } disabled:opacity-50`}
-        >
-          {step === STEPS.length - 1 ? 'commitar ○' : 'proximo'}
-        </button>
+      <div className="px-5 py-2.5 border-t border-border">
+        {step === STEPS.length - 1 && confirmCommit ? (
+          <div className="bg-accent-bg border border-accent/20 rounded-xl p-4 text-center">
+            <p className="text-sm text-accent font-medium mb-2">commitar este wrap?</p>
+            <div className="flex gap-2">
+              <button onClick={() => setConfirmCommit(false)} className="flex-1 py-2.5 rounded-xl border border-border text-sm text-text-muted">
+                voltar
+              </button>
+              <button onClick={handleCommit} disabled={loading} className="flex-1 py-2.5 rounded-xl bg-accent text-white text-sm font-medium disabled:opacity-50">
+                {loading ? 'commitando...' : 'confirmar ○'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex justify-between items-center">
+            <button onClick={goBack} className={`text-sm text-accent ${step === 0 ? 'invisible' : ''}`}>
+              voltar
+            </button>
+            <button
+              onClick={step === STEPS.length - 1 ? () => setConfirmCommit(true) : goNext}
+              disabled={loading}
+              className={`rounded-xl px-7 py-3 text-sm font-medium text-white ${
+                step === STEPS.length - 1 ? 'bg-success-text' : 'bg-accent'
+              } disabled:opacity-50`}
+            >
+              {step === STEPS.length - 1 ? 'commitar ○' : 'proximo'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
