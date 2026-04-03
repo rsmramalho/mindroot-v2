@@ -345,7 +345,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 4. **Este documento é a referência.** Se não está aqui, não está planejado.
 5. **Spec antes de código.** Cada fase ganha spec antes de ir pro Claude Code.
 6. **Wireframe é lei.** Toda página segue o wireframe antes de inventar.
-7. **Espiral 2 não começa antes da Espiral 1 fechar.**
+7. **Espiral 2 segue o Genesis Build Protocol.** Cada fase declara protocol:. Claude Code executa.
 
 ---
 
