@@ -1,5 +1,5 @@
 // shell/BottomNav.tsx — Bottom navigation
-// 4 tabs: Home, Pipeline, Projects, Calendar
+// 5 tabs: Home, Pipeline, Raiz (center), Projects, Calendar
 // SVG icons 24px, labels 11px, touch area 48px, height 56px
 
 import { useAppStore } from '@/store/app-store';
@@ -35,6 +35,19 @@ const NAV_ITEMS: NavItem[] = [
           stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
           opacity={active ? 1 : 0.8}
         />
+      </svg>
+    ),
+  },
+  {
+    key: 'raiz',
+    label: 'raiz',
+    icon: (active: boolean) => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="8"
+          stroke="currentColor" strokeWidth="1.5"
+          fill={active ? 'currentColor' : 'none'} fillOpacity={active ? 0.15 : 0}
+        />
+        <circle cx="12" cy="12" r="2" fill="currentColor" />
       </svg>
     ),
   },

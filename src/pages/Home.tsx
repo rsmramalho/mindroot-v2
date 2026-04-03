@@ -14,6 +14,7 @@ import { getCurrentPeriod } from '@/types/ui';
 import { getCreatedToday, getModifiedToday } from '@/engine/wrap';
 import { getConfidenceBand } from '@/service/triage-service';
 import { motion } from 'framer-motion';
+import { useRaiz } from '@/hooks/useRaiz';
 import { SoulCard } from '@/components/home/SoulCard';
 import { WrapBanner } from '@/components/home/WrapBanner';
 import { AtomInput } from '@/components/home/AtomInput';
@@ -56,6 +57,7 @@ export function HomePage() {
   const intention = activeItems[0]?.title ?? null;
 
   const isCrepusculo = period.key === 'crepusculo';
+  const { healthPct, staleCount, emptyCount } = useRaiz();
 
   if (loading) {
     return (
@@ -115,6 +117,23 @@ export function HomePage() {
           modifiedCount={modifiedToday.length}
         />
       )}
+
+      {/* Raiz health */}
+      <button
+        onClick={() => navigate('raiz')}
+        className="w-full bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between text-left mt-3"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-lg">○</span>
+          <div>
+            <div className="text-sm font-medium">raiz · {healthPct}%</div>
+            <div className="text-xs text-text-muted">
+              {staleCount > 0 ? `${staleCount} dominios stale` : emptyCount > 0 ? `${emptyCount} dominios vazios` : '9 dominios ativos'}
+            </div>
+          </div>
+        </div>
+        <span className="text-xs text-text-muted">→</span>
+      </button>
 
       {/* Capture */}
       <div className="mt-3">

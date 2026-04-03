@@ -23,7 +23,7 @@ export const pipelineService = {
     });
   },
 
-  async captureWithModule(title: string, userId: string, module: AtomModule): Promise<AtomItem> {
+  async captureWithModule(title: string, userId: string, module: AtomModule, tags: string[] = []): Promise<AtomItem> {
     return itemService.create({
       title,
       user_id: userId,
@@ -32,7 +32,7 @@ export const pipelineService = {
       status: 'inbox',
       module,
       source: 'mindroot',
-      tags: [],
+      tags,
       body: {},
     });
   },

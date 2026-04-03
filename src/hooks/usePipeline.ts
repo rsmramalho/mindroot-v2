@@ -26,10 +26,10 @@ export function usePipeline() {
     }
   };
 
-  const captureWithModule = async (title: string, module: AtomModule): Promise<AtomItem | null> => {
+  const captureWithModule = async (title: string, module: AtomModule, tags: string[] = []): Promise<AtomItem | null> => {
     if (!user) return null;
     try {
-      const item = await pipelineService.captureWithModule(title, user.id, module);
+      const item = await pipelineService.captureWithModule(title, user.id, module, tags);
       invalidate();
       return item;
     } catch {

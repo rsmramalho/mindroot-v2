@@ -8,20 +8,19 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePipeline } from '@/hooks/usePipeline';
-import { useItems } from '@/hooks/useItems';
+import { useRaiz } from '@/hooks/useRaiz';
 import { useNav } from '@/hooks/useNav';
 import { useAppStore } from '@/store/app-store';
 import { supabase } from '@/service/supabase';
 import { RAIZ_DOMAINS, RAIZ_DOORS, type RaizDomain, type RaizDoorKey } from '@/config/raiz';
 import { MODULE_COLORS } from '@/components/atoms/tokens';
-import { differenceInDays, parseISO } from 'date-fns';
 
 const anim = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -12 } };
 
 type RaizMode = 'welcome' | 'panorama' | 'doors' | 'inventory';
 
 export function RaizPage() {
-  const { items } = useItems();
+  const { domains: domainHealthRaw, activeCount: healthyCount, healthPct, totalItems } = useRaiz();
   const { captureWithModule } = usePipeline();
   const { navigate } = useNav();
   const user = useAppStore((s) => s.user);
@@ -32,27 +31,13 @@ export function RaizPage() {
   const [doorKey, setDoorKey] = useState<RaizDoorKey | null>(null);
   const [domainInputs, setDomainInputs] = useState<Record<string, string[]>>({});
 
-  // Domain health — computed from real items
+  // Merge hook data with full domain config (prompt, examples)
   const domainHealth = useMemo(() => {
     return RAIZ_DOMAINS.map((domain) => {
-      const domainItems = items.filter(
-        (i) =>
-          i.status !== 'archived' &&
-          (i.tags?.includes(`#domain:${domain.key}`) || i.module === domain.module),
-      );
-      const count = domainItems.length;
-      const oldest = domainItems.reduce((max, i) => {
-        const days = differenceInDays(new Date(), parseISO(i.updated_at));
-        return days > max ? days : max;
-      }, 0);
-
-      let status: 'active' | 'stale' | 'empty' = 'active';
-      if (count === 0) status = 'empty';
-      else if (oldest > 30) status = 'stale';
-
-      return { ...domain, count, oldest, status };
+      const health = domainHealthRaw.find((d) => d.key === domain.key);
+      return { ...domain, count: health?.count ?? 0, oldest: health?.oldest ?? 0, status: health?.status ?? 'empty' as const };
     });
-  }, [items]);
+  }, [domainHealthRaw]);
 
   const sessionCount = Object.values(domainInputs).flat().length;
   const touchedDomains = Object.keys(domainInputs).filter((k) => (domainInputs[k]?.length ?? 0) > 0);
@@ -70,7 +55,7 @@ export function RaizPage() {
       const domain = RAIZ_DOMAINS.find((d) => d.key === domainKey);
       const module = domain?.module ?? 'bridge';
       for (const text of texts) {
-        await captureWithModule(text, module);
+        await captureWithModule(text, module, [`#domain:${domainKey}`, '#raiz']);
       }
     }
     setDomainInputs({});
@@ -130,8 +115,6 @@ export function RaizPage() {
   };
 
   const activeDomain = activeDomainKey ? RAIZ_DOMAINS.find((d) => d.key === activeDomainKey) : null;
-  const healthyCount = domainHealth.filter((d) => d.status === 'active').length;
-  const healthPct = Math.round((healthyCount / 9) * 100);
 
   return (
     <div className="flex flex-col min-h-0">
@@ -203,7 +186,7 @@ export function RaizPage() {
                 </div>
                 <div>
                   <div className="text-sm font-medium">{healthyCount}/9 gavetas ativas</div>
-                  <div className="text-xs text-text-muted mt-0.5">{items.filter((i) => i.status !== 'archived').length} items total</div>
+                  <div className="text-xs text-text-muted mt-0.5">{totalItems} items total</div>
                 </div>
               </div>
             )}
