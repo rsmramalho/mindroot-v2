@@ -1,91 +1,86 @@
-# MindRoot v2
+<p align="center">
+  <img src="https://mindroot.com.au/favicon.svg" width="48" height="48" alt="MindRoot"/>
+  <br/><br/>
+  <strong>MindRoot</strong>
+  <br/>
+  <sub>Your life, organized from the inside out.</sub>
+  <br/><br/>
+  <a href="https://mindroot.com.au">Live App</a> ·
+  <a href="#features">Features</a> ·
+  <a href="#stack">Stack</a> ·
+  <a href="#philosophy">Philosophy</a>
+</p>
 
-Your life, organized from the inside out.
+---
 
-MindRoot is the interface layer of **Atom HS** (Human Systems) — a personal operating system where everything in your digital life enters through one inbox and matures through a 7-stage geometry pipeline. Not a task manager. Not a note app. A system that grows with you.
+## What is MindRoot
 
-**Live:** [mindroot-v2.vercel.app](https://mindroot-v2.vercel.app)
+A personal operating system that organizes your entire digital life — not just tasks. Files, ideas, habits, reflections, documents, projects — everything enters one pipeline and emerges structured, connected, and findable.
 
-## How it works
+Built on the **Genesis protocol**: 7 stages of maturation from raw capture (`·`) to committed structure (`○`). Items advance when ready, regress when integrity breaks, and decompose into seeds when complete — feeding the next cycle.
 
-Every piece of information — a task, a reflection, a recipe, a project — starts as a **point** (raw capture) and can mature into a **circle** (fully connected and committed). The 7 stages follow sacred geometry:
-
-```
-  ·  Ponto       — Capture (raw text, no structure)
-  —  Linha       — Classified (type + module assigned)
-  △  Triangulo   — Structured (template applied)
-  □  Quadrado    — Validated (4 integrity gates passed)
-  ⬠  Pentagono   — Connected (linked to other items)
-  ⬡  Hexagono    — Activated (effects propagated)
-  ○  Circulo     — Committed (included in daily wrap)
-```
-
-Items mature at their own pace. The system never forces structure — it waits until you're ready.
+**MindRoot is the interface.** The engine lives in [`atom-engine-core`](https://github.com/rsmramalho/atom-engine-core).
 
 ## Features
 
-- **9 life domains (Raiz)** — identity, documents, health, finance, storage, memories, time, communication, projects. Map your entire digital life.
-- **Soul loop** — emotion check-ins at aurora (morning), task completion, and crepusculo (evening wrap). The system tracks how you feel, not just what you do.
-- **Auto-triage** — Claude Haiku classifies captured items with confidence bands (auto/suggest/manual).
-- **Daily wrap** — 7-step ritual that closes the day: soul, items, decisions, connections, seeds, audit, intention.
-- **Pipeline view** — 7-stage funnel showing every item's maturity level.
-- **Connectors** — Google Calendar sync (Gmail and Drive coming). External data flows into the same Genesis pipeline.
-- **Light + dark mode** — period-aware UI (aurora warmth, crepusculo calm).
-- **PWA** — installable, works offline for core operations.
+**Capture** — Quick capture from anywhere. Auto-triage classifies with AI (Claude Haiku). Three confidence bands: auto, suggest, manual.
+
+**Pipeline** — Visual progression through 7 Genesis stages. Items mature at their own pace. No forced structure.
+
+**Wrap** — End-of-session ritual. Everything created, modified, decided, connected — committed in one structured wrap. Soul layer tracks energy and emotion across the day.
+
+**Raiz** — Life inventory across 9 domains: identity, documents, health, finance, storage, memories, time, communication, projects. Not just productivity. Everything.
+
+**Projects** — Project cards with progress, connections, and milestones. Items belong to projects via typed connections.
+
+**Analytics** — Soul patterns (energy trends, emotion frequency, shift history). Connection graph stats.
+
+**Calendar** — Ritual bands (aurora/zenith/twilight). Module-colored event dots.
+
+**Export** — ATOM ENVELOPE (.txt), Obsidian (.md with YAML + wikilinks), JSON backup.
+
+**Dark mode** — System, light, or dark. Full CSS variable architecture.
 
 ## Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 19 + TypeScript 5.9 + Vite 8 |
-| Styling | Tailwind CSS 4 + Framer Motion |
-| Data | Supabase (Postgres + Auth + Edge Functions + Realtime) |
-| State | Zustand 5 + TanStack Query 5 |
-| AI | Claude Haiku (auto-triage via Supabase Edge Functions) |
-| Deploy | Vercel (auto-deploy) + PWA |
-
-## Architecture
-
-```
-src/
-  pages/         13 route pages (named exports, lazy-loaded)
-  components/    25 components (atoms, shell, home, shared)
-  hooks/         12 React hooks (never call Supabase directly)
-  service/       11 services (all Supabase access goes here)
-  engine/         6 pure logic modules (FSM, parsing, search, wrap, soul, recurrence)
-  store/          3 Zustand stores (app, wrap, toast)
-  types/          Schema v2 types (23 AtomTypes, 8 modules, 8 states)
-  config/         type-schemas.json + raiz domains
-```
-
-**Pattern:** pages -> hooks -> services -> Supabase. No exceptions.
+| Framework | React 19 + TypeScript 5.9 |
+| Build | Vite 8 |
+| Styling | Tailwind CSS 4 |
+| Animation | Framer Motion |
+| Data | Supabase (PostgreSQL + Auth + Edge Functions) |
+| State | Zustand + TanStack Query |
+| AI | Claude Haiku (auto-triage via edge function) |
+| Deploy | Vercel (auto-deploy from main) |
+| Testing | Vitest (41 tests) |
 
 ## Numbers
 
-| Metric | Value |
-|--------|-------|
-| Commits | 55 |
-| Source files | 83 |
-| Lines of code | ~5,700 |
-| Pages | 13 |
-| Services | 11 |
-| Hooks | 12 |
-| Edge functions | 5 |
-| Supabase tables | 4 (items, item_connections, atom_events, user_connectors) |
-| Genesis stages | 7 |
-| Life domains | 9 |
-| Atom types | 23 |
+```
+Commits     33          Pages        13
+Files       76          Components   23
+LOC         ~7,800      Services     10
+Bundle      ~71KB gzip  Tests        41
+```
 
-## Genesis Protocol
+## Philosophy
 
-MindRoot is built on **Genesis v5.0.1** — a universal schema that defines how information matures. The protocol lives in [atom-engine-core](https://github.com/rsmramalho/atom-engine-core) and includes:
+> *Build from the inside out. The engine organizes itself before organizing the world.*
 
-- **23 item types** (note, task, project, reflection, recipe, workout, spec...)
-- **8 life modules** (work, body, mind, family, purpose, bridge, finance, social)
-- **7 maturity stages** with a state machine (advance sequentially, regress on lost requirements)
-- **Type floors** — minimum stage per type (tasks need structure, projects need connections)
-- **4 RPCs** — morph (mutate type), decay (entropy), propagate (cascade), commit (finalize)
-- **3 audit views** — orphans, below-floor, stale inbox
+MindRoot doesn't want you to be more productive. It wants you to be more **present**. The systems handle the organization so your mind is free for what matters.
+
+Every item follows the same geometry — from raw point to committed circle. Nothing is forced. Nothing is lost. Entropy is recycling, not destruction.
+
+```
+·  capture
+—  classify
+△  structure
+□  validate
+⬠  connect
+⬡  propagate
+○  commit
+```
 
 ## Development
 
@@ -93,13 +88,39 @@ MindRoot is built on **Genesis v5.0.1** — a universal schema that defines how 
 git clone https://github.com/rsmramalho/mindroot-v2.git
 cd mindroot-v2
 npm install
-cp .env.example .env  # Add Supabase credentials
-npm run dev            # localhost:5173
-npm run build          # tsc -b && vite build
+npm run dev         # localhost:5173
+npm run build       # production build
+npm run test        # vitest
 ```
 
-## Philosophy
+Requires a Supabase project with the Atom HS schema (migrations in `supabase/migrations/`).
 
-The system serves the person, not the other way around. If the app doesn't make you want to open it in the morning, it's not ready.
+## Architecture
 
-*Emotion precedes action. Reflection closes the loop.*
+```
+src/
+├── components/     Atoms (Button, Card, Badge) + Shell (AppShell, BottomNav, TopBar)
+├── config/         raiz.ts (9 domains), type-schemas (23 types), tokens
+├── engines/        triage, state, connection, wrap, soul, search
+├── hooks/          useItems, useRaiz, usePipeline, useWrap, useConnectors...
+├── pages/          13 pages (Home, Pipeline, Raiz, Wrap, Projects, Calendar...)
+├── service/        item, pipeline, triage, wrap, soul, connector, supabase
+├── store/          Zustand (app-store, item-store, wrap-store)
+└── types/          AtomItem, AtomState, AtomType, AtomModule...
+```
+
+## Related
+
+| | |
+|-|-|
+| **Engine** | [`atom-engine-core`](https://github.com/rsmramalho/atom-engine-core) — Genesis protocol, schema, specs, agent |
+| **Live** | [mindroot.com.au](https://mindroot.com.au) |
+| **Author** | [Ricardo Ramalho](https://github.com/rsmramalho) |
+
+---
+
+<p align="center">
+  <sub>Part of the <strong>Atom HS</strong> ecosystem — Human Systems.</sub>
+  <br/>
+  <sub><code>·  —  △  □  ⬠  ⬡  ○</code></sub>
+</p>
