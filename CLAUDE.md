@@ -1,3 +1,139 @@
+# Genesis Build Protocol v1.0
+## Sistema de Agentes — Construcao de Dentro pra Fora
+
+**Parent:** Genesis v5.0.1 + Meta-Template v1.1
+**Principio:** Cada camada nasce da anterior. Nenhuma camada conhece o que esta acima dela.
+
+---
+
+### Filosofia
+
+O problema padrao de AI gerando codigo: o agente ve tudo de uma vez, implementa pelo que e visivel (UI), e perde a geometria do schema ao longo do caminho.
+
+Este protocolo inverte isso.
+
+Cinco agentes. Cada um so conhece o que nasceu antes dele. O contexto cresce como Fibonacci — cada agente recebe a soma dos anteriores, nao o codebase inteiro. A geometria e preservada porque cada decisao de implementacao e tomada a partir do contrato, nao da suposicao.
+
+```
+· GUARDIAO  →  output G
+— ROOT      →  output G + R
+△ ESTRUTURA →  output G + R + E
+□ INTERFACE →  output G + E + I   (recebe Estrutura, nao Root diretamente)
+⬠ TEIA      →  output G + R + E + I + validacao
+```
+
+### Os 4 Protocolos
+
+Todo agente, antes de gerar qualquer output, executa estes 4 protocolos internamente:
+
+**1. Proporcao Invertida**
+> "O que eu NAO sei ainda sobre esta camada?"
+Listar incertezas antes de construir. Nao avancar onde ha duvida nao resolvida.
+
+**2. Maturacao Permissiva**
+> "A camada anterior esta completa o suficiente para esta nascer?"
+Se nao esta — parar. Reportar o que falta. Nao construir em cima de fundacao incompleta.
+
+**3. Detector de Trava**
+> "Estou construindo a partir da camada abaixo ou estou assumindo algo que nao foi definido?"
+Questionar o impulso automatico de implementar. Se a resposta nao esta na camada anterior, nao inventar.
+
+**4. Tudo So E**
+> "Esta conexao entre camadas existe no schema, ou estou criando uma dependencia que nao foi especificada?"
+Nao forcar. Se a conexao nao esta no Genesis, nao criar.
+
+### Agente 1 — GUARDIAO · Ponto
+
+**Recebe:** Genesis v5 + Meta-Template v1.1 + spec/task da sessao atual
+**Nunca recebe:** codigo, codebase existente, ou output de outros agentes
+**Funcao:** autoridade do schema. Nao escreve codigo. So valida e define constraints.
+
+**Output obrigatorio antes de passar pro proximo agente:**
+
+```
+GUARDIAO — CONSTRAINTS
+━━━━━━━━━━━━━━━━━━━━━━
+AtomTypes envolvidos: [lista]
+AtomModules: [lista]
+State machine relevante: [estagios + gates]
+Extensions que se aplicam: [soul / operations / recurrence]
+Campos obrigatorios por type: [lista]
+Enums validos em uso: [lista]
+Pisos minimos: [type → piso]
+Connections esperadas: [relation types]
+
+⚠ INCERTEZAS (Proporcao Invertida):
+[o que ainda nao esta claro no schema para esta task]
+
+✓ APROVADO PARA: ROOT
+```
+
+Se houver incerteza nao resolvida → parar e perguntar. Nao passar pro Root com duvida aberta.
+
+### Agente 2 — ROOT — Linha
+
+**Recebe:** Genesis v5 + output do GUARDIAO
+**Nunca recebe:** componentes UI, logica de negocio, ou output de outros agentes alem do Guardiao
+**Funcao:** schema do banco de dados. Supabase: tabelas, colunas, tipos, enums, triggers, RLS, RPCs.
+
+**Gate de entrada:**
+- [ ] Output do Guardiao esta presente e aprovado?
+- [ ] Todos os AtomTypes listados pelo Guardiao tem schema definido?
+
+**Output obrigatorio:**
+
+```
+ROOT — SCHEMA
+━━━━━━━━━━━━━
+SQL: [tabelas + colunas + constraints]
+TypeScript types: [interfaces derivadas do schema]
+Enums: [valores validos conforme Genesis]
+Triggers: [FSM downgrades se aplicavel]
+RLS: [politicas de acesso]
+RPCs: [funcoes Supabase se necessario]
+
+Cross-check Guardiao:
+[verificar cada constraint do Guardiao foi respeitada]
+
+⚠ INCERTEZAS (Proporcao Invertida):
+[o que ainda nao esta definido no schema]
+
+✓ APROVADO PARA: ESTRUTURA
+```
+
+### Agente 3 — ESTRUTURA △ Triangulo
+
+**Recebe:** Genesis v5 + output do GUARDIAO + output do ROOT
+**Nunca recebe:** componentes UI ou CSS
+**Funcao:** logica de negocio. Services, hooks React, mutations, queries. Toda funcao consome os tipos do Root — nunca acessa banco diretamente.
+
+### Agente 4 — INTERFACE □ Quadrado
+
+**Recebe:** Genesis v5 + output do GUARDIAO + output da ESTRUTURA
+**Nao recebe diretamente:** SQL do Root (acessa banco apenas via hooks da Estrutura)
+**Funcao:** componentes React. Consome exclusivamente atraves dos hooks e services da Estrutura.
+
+### Agente 5 — TEIA ⬠ Pentagono
+
+**Recebe:** todos os outputs anteriores
+**Funcao:** integracao e cross-check final. Valida que a geometria esta intacta do Ponto ao Quadrado. Corrige onde necessario.
+
+### Como Invocar
+
+**Task completa (nova feature ou modulo):**
+1. GUARDIAO → 2. ROOT → 3. ESTRUTURA → 4. INTERFACE → 5. TEIA
+
+**Quando o protocolo pode ser simplificado:**
+Se a task for puramente de schema (nova tabela sem UI) → GUARDIAO + ROOT apenas.
+Se a task for puramente visual (CSS, layout) → INTERFACE direto.
+O protocolo escala pra baixo. Nunca pula para cima.
+
+### Regra de Ouro
+
+**Se qualquer agente nao tem resposta para uma pergunta do protocolo — para. Pergunta. Nao assume.**
+
+---
+
 # MindRoot v2
 
 Emotional productivity system — the face of Atom OS. Emotion precedes action, reflection closes the loop.
