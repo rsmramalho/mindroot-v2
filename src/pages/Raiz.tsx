@@ -9,6 +9,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePipeline } from '@/hooks/usePipeline';
 import { useRaiz } from '@/hooks/useRaiz';
+import { RoutineBuilder } from '@/features/raiz/components/RoutineBuilder';
 import { useNav } from '@/hooks/useNav';
 import { useAppStore } from '@/store/app-store';
 import { supabase } from '@/service/supabase';
@@ -22,6 +23,7 @@ type RaizMode = 'welcome' | 'panorama' | 'doors' | 'inventory';
 export function RaizPage() {
   const { domains: domainHealthRaw, activeCount: healthyCount, healthPct, totalItems } = useRaiz();
   const { captureWithModule } = usePipeline();
+  const [builderOpen, setBuilderOpen] = useState(false);
   const { navigate } = useNav();
   const user = useAppStore((s) => s.user);
 
@@ -244,6 +246,14 @@ export function RaizPage() {
               {healthyCount > 0 ? '○ sessao guiada — completar gavetas' : '○ sessao guiada — escolher por onde comecar'}
             </button>
 
+            {/* Routine builder button */}
+            <button
+              onClick={() => setBuilderOpen(true)}
+              className="w-full bg-accent-bg border border-accent/20 rounded-xl p-3.5 text-center text-sm text-accent hover:border-accent/40 transition-colors mb-3"
+            >
+              + construir minha rotina
+            </button>
+
             {/* Session summary (items already saved — this is feedback) */}
             {sessionCount > 0 && (
               <div className="bg-success-bg border border-success/20 rounded-xl p-4 mb-3">
@@ -320,6 +330,13 @@ export function RaizPage() {
         )}
 
       </AnimatePresence>
+
+      {/* Routine Builder overlay */}
+      {builderOpen && (
+        <div className="fixed inset-0 z-50 bg-bg">
+          <RoutineBuilder onClose={() => setBuilderOpen(false)} />
+        </div>
+      )}
     </div>
   );
 }
