@@ -32,7 +32,10 @@ export const connectorService = {
       .from('user_connectors')
       .select('provider, status, last_sync_at, metadata');
 
-    if (error) throw error;
+    if (error) {
+      console.warn('[connector] getConnectors error (table may not exist):', error.message);
+      throw error;
+    }
 
     return (data ?? []).map((row) => ({
       provider: row.provider,
@@ -65,16 +68,40 @@ export const connectorService = {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error('No active session');
 
-    const resp = await supabase.functions.invoke('connector-auth', {
-      body: {
-        provider_refresh_token: providerRefreshToken,
-        provider,
-        scopes: GOOGLE_SCOPES.split(' '),
-        metadata,
-      },
-    });
+    // Try edge function first
+    try {
+      const resp = await supabase.functions.invoke('connector-auth', {
+        body: {
+          provider_refresh_token: providerRefreshToken,
+          provider,
+          scopes: GOOGLE_SCOPES.split(' '),
+          metadata,
+        },
+      });
 
-    if (resp.error) throw new Error(resp.error.message);
+      if (resp.error) throw new Error(resp.error.message);
+      return;
+    } catch (edgeFnErr) {
+      console.warn('[connector] edge function failed, falling back to direct insert:', edgeFnErr);
+    }
+
+    // Fallback: insert directly (works if table exists and RLS allows it)
+    const { error } = await supabase
+      .from('user_connectors')
+      .upsert(
+        {
+          user_id: session.user.id,
+          provider,
+          status: 'connected',
+          provider_refresh_token: providerRefreshToken,
+          scopes: GOOGLE_SCOPES.split(' '),
+          metadata: metadata ?? {},
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'user_id,provider' },
+      );
+
+    if (error) throw new Error(`Direct insert failed: ${error.message}`);
   },
 
   async syncCalendar(): Promise<CalendarEvent[]> {

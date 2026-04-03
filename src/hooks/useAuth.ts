@@ -41,12 +41,19 @@ export function useAuth() {
       }
 
       // Capture Google OAuth tokens for connectors (non-blocking)
-      if (session?.provider_refresh_token && session?.provider_token) {
+      if (session?.provider_refresh_token) {
+        console.log('[connector] refresh_token detected, storing...');
         connectorService.storeTokens(
           session.provider_refresh_token,
           'google_calendar',
           { email: session.user?.email },
-        ).catch(() => { /* non-blocking — connector setup can retry later */ });
+        ).then(() => {
+          console.log('[connector] tokens stored successfully');
+        }).catch((err) => {
+          console.warn('[connector] failed to store tokens:', err);
+        });
+      } else if (session?.provider_token) {
+        console.log('[connector] provider_token present but NO refresh_token — Google may not have returned one. User needs to re-consent.');
       }
 
       // Clean OAuth callback URL after successful exchange
