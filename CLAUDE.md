@@ -191,6 +191,7 @@ supabase/
 6. **Before delivering**: always run `npx tsc -b && npm run build`. Zero errors.
 7. **Wireframe is law**: Before implementing any page, read the corresponding wireframe in `docs/wireframes/`.
 8. **Light-first**: Background `#FDFCF9`, DM Sans (300/400/500). Dark mode via media query.
+9. **Build Protocol obrigatorio.** Antes de implementar qualquer fase do roadmap, ler o campo `protocol:` da fase e rodar os agentes correspondentes. Registrar o output do GUARDIAO no commit message ou num comentario. Se o spec do Rick ja cobre os constraints — dizer "GUARDIAO: constraints cobertos pelo spec" e seguir. Nao pular silenciosamente.
 
 ## Documentacao
 
