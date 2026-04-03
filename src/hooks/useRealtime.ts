@@ -3,7 +3,7 @@
 
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/service/supabase';
+import { subscribeToItems, unsubscribe } from '@/service/realtime-service';
 import { useAppStore } from '@/store/app-store';
 
 export function useRealtime() {
@@ -13,19 +13,12 @@ export function useRealtime() {
   useEffect(() => {
     if (!user) return;
 
-    const channel = supabase
-      .channel('items-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'items', filter: `user_id=eq.${user.id}` },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ['items'] });
-        },
-      )
-      .subscribe();
+    const channel = subscribeToItems(user.id, () => {
+      queryClient.invalidateQueries({ queryKey: ['items'] });
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      unsubscribe(channel);
     };
   }, [user, queryClient]);
 }
