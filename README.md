@@ -1,73 +1,105 @@
-# React + TypeScript + Vite
+# MindRoot v2
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Your life, organized from the inside out.
 
-Currently, two official plugins are available:
+MindRoot is the interface layer of **Atom HS** (Human Systems) — a personal operating system where everything in your digital life enters through one inbox and matures through a 7-stage geometry pipeline. Not a task manager. Not a note app. A system that grows with you.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**Live:** [mindroot-v2.vercel.app](https://mindroot-v2.vercel.app)
 
-## React Compiler
+## How it works
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Every piece of information — a task, a reflection, a recipe, a project — starts as a **point** (raw capture) and can mature into a **circle** (fully connected and committed). The 7 stages follow sacred geometry:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+  ·  Ponto       — Capture (raw text, no structure)
+  —  Linha       — Classified (type + module assigned)
+  △  Triangulo   — Structured (template applied)
+  □  Quadrado    — Validated (4 integrity gates passed)
+  ⬠  Pentagono   — Connected (linked to other items)
+  ⬡  Hexagono    — Activated (effects propagated)
+  ○  Circulo     — Committed (included in daily wrap)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Items mature at their own pace. The system never forces structure — it waits until you're ready.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Features
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **9 life domains (Raiz)** — identity, documents, health, finance, storage, memories, time, communication, projects. Map your entire digital life.
+- **Soul loop** — emotion check-ins at aurora (morning), task completion, and crepusculo (evening wrap). The system tracks how you feel, not just what you do.
+- **Auto-triage** — Claude Haiku classifies captured items with confidence bands (auto/suggest/manual).
+- **Daily wrap** — 7-step ritual that closes the day: soul, items, decisions, connections, seeds, audit, intention.
+- **Pipeline view** — 7-stage funnel showing every item's maturity level.
+- **Connectors** — Google Calendar sync (Gmail and Drive coming). External data flows into the same Genesis pipeline.
+- **Light + dark mode** — period-aware UI (aurora warmth, crepusculo calm).
+- **PWA** — installable, works offline for core operations.
+
+## Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19 + TypeScript 5.9 + Vite 8 |
+| Styling | Tailwind CSS 4 + Framer Motion |
+| Data | Supabase (Postgres + Auth + Edge Functions + Realtime) |
+| State | Zustand 5 + TanStack Query 5 |
+| AI | Claude Haiku (auto-triage via Supabase Edge Functions) |
+| Deploy | Vercel (auto-deploy) + PWA |
+
+## Architecture
+
 ```
+src/
+  pages/         13 route pages (named exports, lazy-loaded)
+  components/    25 components (atoms, shell, home, shared)
+  hooks/         12 React hooks (never call Supabase directly)
+  service/       11 services (all Supabase access goes here)
+  engine/         6 pure logic modules (FSM, parsing, search, wrap, soul, recurrence)
+  store/          3 Zustand stores (app, wrap, toast)
+  types/          Schema v2 types (23 AtomTypes, 8 modules, 8 states)
+  config/         type-schemas.json + raiz domains
+```
+
+**Pattern:** pages -> hooks -> services -> Supabase. No exceptions.
+
+## Numbers
+
+| Metric | Value |
+|--------|-------|
+| Commits | 55 |
+| Source files | 83 |
+| Lines of code | ~5,700 |
+| Pages | 13 |
+| Services | 11 |
+| Hooks | 12 |
+| Edge functions | 5 |
+| Supabase tables | 4 (items, item_connections, atom_events, user_connectors) |
+| Genesis stages | 7 |
+| Life domains | 9 |
+| Atom types | 23 |
+
+## Genesis Protocol
+
+MindRoot is built on **Genesis v5.0.1** — a universal schema that defines how information matures. The protocol lives in [atom-engine-core](https://github.com/rsmramalho/atom-engine-core) and includes:
+
+- **23 item types** (note, task, project, reflection, recipe, workout, spec...)
+- **8 life modules** (work, body, mind, family, purpose, bridge, finance, social)
+- **7 maturity stages** with a state machine (advance sequentially, regress on lost requirements)
+- **Type floors** — minimum stage per type (tasks need structure, projects need connections)
+- **4 RPCs** — morph (mutate type), decay (entropy), propagate (cascade), commit (finalize)
+- **3 audit views** — orphans, below-floor, stale inbox
+
+## Development
+
+```bash
+git clone https://github.com/rsmramalho/mindroot-v2.git
+cd mindroot-v2
+npm install
+cp .env.example .env  # Add Supabase credentials
+npm run dev            # localhost:5173
+npm run build          # tsc -b && vite build
+```
+
+## Philosophy
+
+The system serves the person, not the other way around. If the app doesn't make you want to open it in the morning, it's not ready.
+
+*Emotion precedes action. Reflection closes the loop.*
