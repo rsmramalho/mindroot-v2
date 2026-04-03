@@ -1,6 +1,6 @@
 # Atom HS — Roadmap
 
-**Versão:** 5.0
+**Versão:** 6.0
 **Data:** 03 Abr 2026
 **Status:** active
 **Princípio:** Motor → Inteligência → Visualização → Reflexão. Presença sobre produtividade.
@@ -42,8 +42,8 @@ O Atom HS evolui em duas espirais PHI consecutivas:
 **Espiral 1 — Corpo (app)**
 O MindRoot nasce. De scaffold a produto usável. Captura, pipeline, wraps, triage, UI completa. Quando F7 fecha, o app funciona sozinho no dia a dia.
 
-**Espiral 2 — Mente (organismo)**
-O Atom HS ganha vida própria. IA local, feeds curados, email ingestion, captura por voz, Corp Shield. O sistema deixa de ser app e vira organismo que pensa, captura e organiza sem intervenção.
+**Espiral 2 — Vida (sistema operacional)**
+Se existe na vida digital do Rick, tem uma porta de entrada pro Atom HS. Emails, calendário, arquivos, fotos, contatos — tudo entra pelo inbox, tudo percorre o Genesis. A Espiral 1 deu corpo. A Espiral 2 conecta esse corpo à vida real. Raiz é a fundação, não uma feature. Conectores são a razão de existir, não um "nice to have."
 
 Cada espiral é um ciclo PHI completo (7 fases, Fibonacci 1-1-2-3-5-8-13). A segunda espiral nasce da completude da primeira — entropia vira seed. De dentro pra fora, duas vezes.
 
@@ -187,25 +187,86 @@ A seed da Espiral 2 nasce aqui.
 
 ---
 
-## Espiral 2 — Mente / organismo
+## Espiral 2 — Vida / sistema operacional
 
 **Status:** futuro
-**Princípio:** De ferramenta estática a organismo vivo. Core loop: usar → sentir → organizar → ver → conversar.
+**Princípio:** Se existe no digital, tem como entrar. Raiz é a fundação. Conectores são a razão de existir.
 
 ```
-         ·  (1)  F1 — Toque + alma
-        —   (1)  F2 — Raiz
-       △    (2)  F3 — Triage real
+         ·  (1)  F1 — Raiz
+        —   (1)  F2 — Conectores
+       △    (2)  F3 — Toque + alma
       □     (3)  F4 — Biblioteca + grafo
      ⬠      (5)  F5 — Companheiro
 ```
 
-### ⚪ Fase 1 · Toque + alma (effort: 1)
+### ⚪ Fase 1 · Raiz (effort: 1)
 **Status:** futuro
-**Protocol:** surface
-**Escopo:** Tornar o app usável no dia a dia E o soul loop real — não um, os dois.
+**Protocol:** foundation
+**Escopo:** Mapear a vida digital inteira. 9 domínios como estrutura permanente — não onboarding que desaparece.
+
+A primeira pergunta que o sistema faz não é "o que você quer fazer?". É "o que existe na sua vida?". Raiz mapeia os 9 domínios e cria o inventário base de onde tudo parte.
 
 Entregáveis:
+- [ ] Raiz como page fixa no nav (sempre acessível, não só onboarding)
+- [ ] Primeiro acesso: gate via user_metadata — abre direto no Raiz
+- [ ] 3 portas de entrada: micro (3 domínios), standard (6), deep (9)
+- [ ] Inventário por domínio: captura de items com tag `#domain:[key]`
+- [ ] Panorama 3×3: grid dos 9 domínios com status (ok / stale / empty / connected)
+- [ ] Cada domínio mostra: quantos items, último update, health score
+- [ ] Tom gentil: "depois, talvez" em todo canto — pular é tão fácil quanto preencher
+- [ ] Hook `useRaiz`: query items por domínio, calcula health (count, oldest, status)
+- [ ] Retornantes: Raiz mostra estado real dos domínios, não repete onboarding
+- [ ] Domínio `communication`: já mapeia os emails existentes (6 → 2 target)
+- [ ] Domínio `time`: já mapeia estado do calendário (timezone, blocos)
+- [ ] Domínio `storage`: já mapeia onde as coisas vivem (Drive, Photos, local)
+
+Os 9 domínios:
+| Domínio | Tag | O que mapeia |
+|---------|-----|-------------|
+| identity | `#domain:identity` | Documentos pessoais, passaporte, registros |
+| documents | `#domain:documents` | Contratos, certidões, papéis importantes |
+| health | `#domain:health` | Saúde física/mental, médicos, exames |
+| finance | `#domain:finance` | Contas, investimentos, dívidas |
+| storage | `#domain:storage` | Onde as coisas moram — Drive, Photos, local, cloud |
+| memories | `#domain:memories` | Fotos, vídeos, legado |
+| time | `#domain:time` | Calendário, compromissos, rotinas, timezone |
+| communication | `#domain:communication` | Emails, contatos, canais |
+| projects | `#domain:projects` | Trabalho, hobbies, criações |
+
+Notas: Wireframes existem (telas 10 e 11). Raiz É o onboarding. E depois fica como painel de saúde da vida. Cada domínio é uma lente — os items são os mesmos do Supabase, filtrados por `#domain:*`. Zero schema novo.
+
+### ⚪ Fase 2 — Conectores (effort: 1)
+**Status:** futuro
+**Protocol:** full
+**Escopo:** Portas de entrada reais. O que o Raiz mapeou agora tem caminho pra entrar no sistema.
+
+O Raiz diz "você tem 6 emails." Os conectores fazem esses emails virarem items. O Raiz diz "seu calendário tá em UTC." Os conectores corrigem e sincronizam. A promessa do "Human Systems" se materializa aqui.
+
+Entregáveis:
+- [ ] **Gmail → Atom HS**: emails marcados/starred viram items no inbox automaticamente
+- [ ] Gmail: consolidação assistida (6 → 2 emails) — o sistema propõe, Rick executa
+- [ ] Gmail: contatos relevantes viram tags `#who:*` com dados reais
+- [ ] **Google Calendar → Atom HS**: eventos viram items com contexto (type: ritual/task/log)
+- [ ] Calendar: timezone corrigido (UTC → Australia/Brisbane)
+- [ ] Calendar: blocos do ritual (aurora/zênite/crepúsculo) como eventos recorrentes reais
+- [ ] **Google Drive → Atom HS**: scan de arquivos existentes, classificação por domínio
+- [ ] Drive: Google Photos no `r.r@saystay.com` → plano de migração pro `r@ramalho.au`
+- [ ] Painel de conectores: status de cada integração (conectado / desconectado / erro)
+- [ ] Pipeline de ingestão: conector → inbox (estágio 1) → Genesis pipeline normal
+
+Princípio de ingestão: tudo que entra por conector vai pro inbox como qualquer outro item. O triage classifica. O pipeline matura. O Genesis não muda — o que muda é quantas coisas entram.
+
+Notas: Gmail MCP e Google Calendar MCP já estão conectados no Claude.ai. A integração MindRoot usa as mesmas APIs (Supabase Edge Functions como proxy). Drive usa Google Drive API. Cada conector é independente — se Gmail falha, Calendar continua. Escopo limitado a leitura + ingestão. Ações (enviar email, criar evento) são Espiral 3.
+
+### ⚪ Fase 3 △ Toque + alma (effort: 2)
+**Status:** futuro
+**Protocol:** surface + logic
+**Escopo:** Agora que dados fluem pra dentro, o app precisa ser usável de verdade no dia a dia. Toque (UI) + Alma (soul loop) + Triage real (IA).
+
+A Espiral 1 construiu a interface. A F3 torna ela funcional sob carga real — items vindos de conectores, inventário do Raiz, captura manual. O soul loop fecha o ciclo presença.
+
+Entregáveis — Toque:
 - [ ] Item Detail: edição inline (título, notes, tags) + chips clicáveis (type, module, status)
 - [ ] Item Detail: botão avançar estágio (classificar → estruturar → validar → conectar → commitar)
 - [ ] Item Detail: borda de módulo com cor
@@ -214,6 +275,8 @@ Entregáveis:
 - [ ] Projects: botão "+ projeto" na page, cards com progress
 - [ ] Home: seção "ativos" entre captura e inbox (status=active, stage≥3, max 3)
 - [ ] Home: audit health bar (verde/amarelo/vermelho baseado em inbox count + orphans)
+
+Entregáveis — Alma:
 - [ ] Soul loop aurora: app pergunta "como você tá chegando hoje?" no primeiro acesso do dia
 - [ ] Soul loop aurora: registra emotion_before + energy + intention no wrap store
 - [ ] Soul loop task: após milestone/entrega, pergunta "como foi?" — registra emotion_after
@@ -221,45 +284,19 @@ Entregáveis:
 - [ ] Wrap stepper: step 1 (soul) funcionando end-to-end com dados reais
 - [ ] Wrap display: seção SOUL renderizada com shift visível
 
-Notas: Soul loop segue regras do Marco Zero seção 5 — nunca forçar, linguagem livre, só em tasks peso > 1. Se Rick diz "bora trabalhar" sem emoção, ok. O sistema oferece, não insiste.
-
-### ⚪ Fase 2 — Raiz (effort: 1)
-**Status:** futuro
-**Protocol:** full
-**Escopo:** 9 domínios de vida como experiência unificada — porta de entrada e ferramenta permanente.
-
-Entregáveis:
-- [ ] Raiz como page no nav (sempre acessível, não só onboarding)
-- [ ] Primeiro acesso: gate via user_metadata — abre direto no Raiz
-- [ ] 3 portas de entrada: micro (3 domínios), standard (6), deep (9)
-- [ ] Inventário por domínio: captura de items com tag #domain:[key]
-- [ ] Panorama 3×3: grid dos 9 domínios com status (ok/stale/empty)
-- [ ] Tom gentil: "depois, talvez" em todo canto — pular é tão fácil quanto preencher
-- [ ] Dia 1: tudo vazio, gentil. Dia 100: domínios preenchidos, stale alerts, vida mapeada
-- [ ] Hook useRaiz: query items por domínio, calcula health (count, oldest, status)
-- [ ] Retornantes: Raiz mostra estado real dos domínios, não repete onboarding
-
-Notas: Wireframes existem em docs/wireframes/ (telas 10 e 11). A decisão é: experiência unificada, não "onboarding que convida pro Raiz". Raiz É o onboarding. E depois fica.
-
-### ⚪ Fase 3 △ Triage real (effort: 2)
-**Status:** futuro
-**Protocol:** logic
-**Escopo:** Substituir classificação hardcoded por AI real com confidence bands.
-
-Entregáveis:
-- [ ] Edge function Supabase com Claude Haiku para auto-triage
+Entregáveis — Triage real:
+- [ ] Edge function com Claude Haiku para auto-triage (substituir classificação hardcoded)
 - [ ] 3 faixas de confiança: auto (≥90/95%), sugere (60-89/94%), manual (<60%)
-- [ ] Threshold diferenciado: 95% para tipos acionáveis (task, project, spec, habit), 90% para passivos
-- [ ] UI triage: auto-classificados mostram ✓ + confidence, sugestões mostram confirm/change, manual mostra "aguardando"
-- [ ] Fallback: se edge function falha, item fica no inbox com flag — nunca classificação errada silenciosa
-- [ ] Triage roda automaticamente ao capturar item via AtomInput
+- [ ] Threshold diferenciado: 95% acionáveis (task, project, spec, habit), 90% passivos
+- [ ] Fallback: se edge function falha, item fica no inbox com flag
+- [ ] Triage roda automaticamente — tanto captura manual quanto items de conectores
 
-Notas: Genesis v5 Parte 3.1 define as regras. session_log (SQL) vs session-log (TS) — conversão automática na serialização. A UI do triage já existe — esta fase é backend.
+Notas: Soul loop segue Marco Zero seção 5 — nunca forçar, linguagem livre, só em tasks peso > 1. Triage segue Genesis v5 Parte 3.1. Esta fase é effort 2 porque combina UI + backend + IA — três camadas ao mesmo tempo. Mas o design de cada parte já existe.
 
 ### ⚪ Fase 4 □ Biblioteca + grafo (effort: 3)
 **Status:** futuro
 **Protocol:** full
-**Escopo:** Library page, connections UI, e graph visualization. Genesis estágio 5 (Pentágono) ganha corpo na interface.
+**Escopo:** Library page, connections UI, graph visualization. O Genesis estágio 5 (Pentágono) ganha corpo na interface. Com items fluindo dos conectores e classificados pelo triage, agora o sistema mostra as conexões.
 
 Entregáveis:
 - [ ] Library page: tabs (Todos, Reflexões, Recomendações, Conteúdo), filter chips por type
@@ -268,26 +305,28 @@ Entregáveis:
 - [ ] Item Detail: ao adicionar connection, item avança pro estágio 5 automaticamente
 - [ ] Prompt de conexão: no estágio 4, "isso se conecta com algo?" (Genesis Parte 2, portão 4)
 - [ ] Graph view: visualização de nós e edges (pode ser página separada ou modal)
-- [ ] Graph: nós coloridos por módulo, edges rotuladas por relation
-- [ ] Search: filtros por module, type, status, tags — chips clicáveis
+- [ ] Graph: nós coloridos por módulo, edges rotuladas por relation, tamanho por connections
+- [ ] Graph: filtro por domínio Raiz — ver grafo de um domínio isolado
+- [ ] Search: filtros avançados por module, type, status, domain, tags
 
-Notas: Wireframe Library existe (mindroot-wireframe-library-reflexoes.html). Graph pode usar D3 force layout ou similar. Connections usam tabela item_connections no Supabase (já deployed via migration 007).
+Notas: Wireframe Library existe (mindroot-wireframe-library-reflexoes.html). Graph usa D3 force layout. Connections usam tabela item_connections (deployed via migration 007). O grafo é o raio-x do Genesis — mostra a geometria real de tudo que entrou no sistema.
 
 ### ⚪ Fase 5 ⬠ Companheiro (effort: 5)
 **Status:** futuro
 **Protocol:** full
-**Escopo:** AI companion dentro do MindRoot. Captura por voz. Nudges contextuais. O app deixa de ser passivo.
+**Escopo:** AI companion dentro do MindRoot. O sistema deixa de ser passivo. Captura por voz. Nudges contextuais. O companion sabe o que existe (Raiz), o que entrou (conectores), o que foi classificado (triage), e o que está conectado (grafo).
 
 Entregáveis:
 - [ ] Companion page/panel: interface de conversa dentro do MindRoot
-- [ ] Companion contextual: sabe o estado do sistema (inbox count, stale items, soul patterns)
-- [ ] Nudges: sugere ações baseadas em padrões (ex: "3 dias sem wrap", "inbox crescendo", "soul shift negativo recorrente")
-- [ ] Captura por voz: Web Speech API → texto → item no inbox
+- [ ] Companion contextual: sabe o estado do sistema (inbox count, stale, soul patterns, domain health)
+- [ ] Nudges: sugere ações baseadas em padrões (ex: "3 dias sem wrap", "domínio finance vazio", "12 items no inbox")
+- [ ] Captura por voz: Web Speech API → texto → item no inbox → triage automático
 - [ ] Companion no wrap: propõe wrap baseado nos items criados/modificados do dia
-- [ ] Companion no aurora: puxa estado + último wrap, oferece contexto sem que Rick peça
+- [ ] Companion no aurora: puxa estado + último wrap + domain health, oferece contexto
 - [ ] Integração com triage: companion pode classificar items via conversa
+- [ ] Companion sugere connections: "esse item parece se conectar com [X]"
 
-Notas: Wireframe tela 10 (mindroot-wireframe-ai-companion.html). O companion é o Claude operando dentro do MindRoot — não é chatbot genérico. Tem o Genesis como contrato, o Marco Zero como contexto, e os dados do usuário como memória.
+Notas: Wireframe tela 10 (mindroot-wireframe-ai-companion.html). O companion é o Claude operando dentro do MindRoot — Genesis como contrato, Marco Zero como contexto, Raiz como mapa, dados do usuário como memória. Não é chatbot genérico. É o sistema pensando.
 
 ---
 
@@ -295,9 +334,9 @@ Notas: Wireframe tela 10 (mindroot-wireframe-ai-companion.html). O companion é 
 
 Nascem da completude da Espiral 2. Não detalhadas até lá.
 
-- **Escudo:** Corp Shield + email ingestion + Gmail integration. Email → item no inbox automaticamente.
-- **Resiliência:** PWA offline completo + Ollama local como fallback do Claude + sync engine.
-- **Propagação:** Estágio 6 do Genesis ganha mecânica real — cascata de eventos entre items conectados.
+- **Escudo:** Corp Shield avançado. Ações nos conectores (enviar email, criar evento, mover arquivo). O sistema passa de leitor pra agente.
+- **Resiliência:** PWA offline completo + Ollama local como fallback do Claude + sync engine. O sistema funciona sem internet.
+- **Propagação:** Estágio 6 do Genesis ganha mecânica real — cascata de eventos entre items conectados. Completar uma task atualiza o projeto. Projeto mudar de status notifica items dependentes.
 
 ---
 
@@ -361,7 +400,8 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 | 4.1 | 02 Abr 2026 | Duas espirais: Corpo (app, F1-F7) + Mente (organismo, planejada). Yugar Vision Doc decomposto — features de Engine/MindRoot mapeadas pra Espiral 2. F7 mantém escopo limpo. |
 | 4.2 | 03 Abr 2026 | F7 Completude DONE. Espiral 1 completa. Dark mode toggle, search, analytics soul/connections, export download, calendar ritual bands, offline lite, polish. 30 commits, 76 files, ~7.8K LOC. |
 | 5.0 | 03 Abr 2026 | Espiral 2 detalhada: 5 fases PHI (Toque+alma, Raiz, Triage real, Biblioteca+grafo, Companheiro). Seeds da Espiral 3 listadas. Protocol tag em cada fase. |
+| 6.0 | 03 Abr 2026 | Espiral 2 redesenhada: Raiz como F1 (fundação, não feature). Conectores como F2 (Gmail, Calendar, Drive — portas de entrada reais). Toque+Alma+Triage unificados em F3. "Se existe no digital, tem como entrar." Seeds da Espiral 3 atualizadas. |
 
 ---
 
-*Human Systems. Duas espirais. A primeira dá corpo. A segunda dá mente. De dentro pra fora, duas vezes.*
+*Human Systems. Duas espirais. A primeira dá corpo. A segunda conecta à vida. De dentro pra fora, duas vezes.*
