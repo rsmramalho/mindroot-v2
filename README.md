@@ -58,10 +58,10 @@ Built on the **Genesis protocol**: 7 stages of maturation from raw capture (`·`
 ## Numbers
 
 ```
-Commits     33          Pages        13
-Files       76          Components   23
-LOC         ~7,800      Services     10
-Bundle      ~71KB gzip  Tests        41
+Commits     57          Pages        13
+Files       86          Components   25
+LOC         ~10,000     Services     11
+Bundle      ~83KB gzip  Tests        41
 ```
 
 ## Philosophy
@@ -101,7 +101,7 @@ Requires a Supabase project with the Atom HS schema (migrations in `supabase/mig
 src/
 ├── components/     Atoms (Button, Card, Badge) + Shell (AppShell, BottomNav, TopBar)
 ├── config/         raiz.ts (9 domains), type-schemas (23 types), tokens
-├── engines/        triage, state, connection, wrap, soul, search
+├── engine/         triage, state, connection, wrap, soul, search
 ├── hooks/          useItems, useRaiz, usePipeline, useWrap, useConnectors...
 ├── pages/          13 pages (Home, Pipeline, Raiz, Wrap, Projects, Calendar...)
 ├── service/        item, pipeline, triage, wrap, soul, connector, supabase

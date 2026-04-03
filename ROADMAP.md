@@ -189,37 +189,38 @@ A seed da Espiral 2 nasce aqui.
 
 ## Espiral 2 — Vida / sistema operacional
 
-**Status:** futuro
+**Status:** em andamento (F1 done, F2 parcial)
 **Princípio:** Se existe no digital, tem como entrar. Raiz é a fundação. Conectores são a razão de existir.
 
 ```
-         ·  (1)  F1 — Raiz
-        —   (1)  F2 — Conectores
+     ✓   ·  (1)  F1 — Raiz
+     ◐  —   (1)  F2 — Conectores
        △    (2)  F3 — Toque + alma
       □     (3)  F4 — Biblioteca + grafo
      ⬠      (5)  F5 — Companheiro
 ```
 
-### ⚪ Fase 1 · Raiz (effort: 1)
-**Status:** futuro
+### ✅ Fase 1 · Raiz (effort: 1)
+**Status:** done
+**Commits:** b64511b (F1 Raiz) + a53be24 (mobile fixes)
 **Protocol:** foundation
 **Escopo:** Mapear a vida digital inteira. 9 domínios como estrutura permanente — não onboarding que desaparece.
 
 A primeira pergunta que o sistema faz não é "o que você quer fazer?". É "o que existe na sua vida?". Raiz mapeia os 9 domínios e cria o inventário base de onde tudo parte.
 
 Entregáveis:
-- [ ] Raiz como page fixa no nav (sempre acessível, não só onboarding)
-- [ ] Primeiro acesso: gate via user_metadata — abre direto no Raiz
-- [ ] 3 portas de entrada: micro (3 domínios), standard (6), deep (9)
-- [ ] Inventário por domínio: captura de items com tag `#domain:[key]`
-- [ ] Panorama 3×3: grid dos 9 domínios com status (ok / stale / empty / connected)
-- [ ] Cada domínio mostra: quantos items, último update, health score
-- [ ] Tom gentil: "depois, talvez" em todo canto — pular é tão fácil quanto preencher
-- [ ] Hook `useRaiz`: query items por domínio, calcula health (count, oldest, status)
-- [ ] Retornantes: Raiz mostra estado real dos domínios, não repete onboarding
-- [ ] Domínio `communication`: já mapeia os emails existentes (6 → 2 target)
-- [ ] Domínio `time`: já mapeia estado do calendário (timezone, blocos)
-- [ ] Domínio `storage`: já mapeia onde as coisas vivem (Drive, Photos, local)
+- [x] Raiz como page fixa no nav (sempre acessível, não só onboarding)
+- [x] Primeiro acesso: gate via user_metadata — abre direto no Raiz
+- [x] 3 portas de entrada: micro (3 domínios), standard (6), deep (9)
+- [x] Inventário por domínio: captura de items com tag `#domain:[key]`
+- [x] Panorama 3×3: grid dos 9 domínios com status (ok / stale / empty / connected)
+- [x] Cada domínio mostra: quantos items, último update, health score
+- [x] Tom gentil: "depois, talvez" em todo canto — pular é tão fácil quanto preencher
+- [x] Hook `useRaiz`: query items por domínio, calcula health (count, oldest, status)
+- [x] Retornantes: Raiz mostra estado real dos domínios, não repete onboarding
+- [x] Domínio `communication`: já mapeia os emails existentes (6 → 2 target)
+- [x] Domínio `time`: já mapeia estado do calendário (timezone, blocos)
+- [x] Domínio `storage`: já mapeia onde as coisas vivem (Drive, Photos, local)
 
 Os 9 domínios:
 | Domínio | Tag | O que mapeia |
@@ -236,8 +237,9 @@ Os 9 domínios:
 
 Notas: Wireframes existem (telas 10 e 11). Raiz É o onboarding. E depois fica como painel de saúde da vida. Cada domínio é uma lente — os items são os mesmos do Supabase, filtrados por `#domain:*`. Zero schema novo.
 
-### ⚪ Fase 2 — Conectores (effort: 1)
-**Status:** futuro
+### ◐ Fase 2 — Conectores (effort: 1)
+**Status:** parcial (OAuth + UI done, edge functions bloqueadas)
+**Commits:** cfc2eb2 (infra) + edc1f68 (fallback) + 978b24f (edge fix)
 **Protocol:** full
 **Escopo:** Portas de entrada reais. O que o Raiz mapeou agora tem caminho pra entrar no sistema.
 
@@ -247,13 +249,14 @@ Entregáveis:
 - [ ] **Gmail → Atom HS**: emails marcados/starred viram items no inbox automaticamente
 - [ ] Gmail: consolidação assistida (6 → 2 emails) — o sistema propõe, Rick executa
 - [ ] Gmail: contatos relevantes viram tags `#who:*` com dados reais
-- [ ] **Google Calendar → Atom HS**: eventos viram items com contexto (type: ritual/task/log)
+- [x] **Google Calendar → Atom HS**: OAuth conectado, refresh token salvo, UI de conectores
+- [ ] Calendar: sync de eventos (bloqueado — edge function non-2xx)
 - [ ] Calendar: timezone corrigido (UTC → Australia/Brisbane)
 - [ ] Calendar: blocos do ritual (aurora/zênite/crepúsculo) como eventos recorrentes reais
 - [ ] **Google Drive → Atom HS**: scan de arquivos existentes, classificação por domínio
 - [ ] Drive: Google Photos no `r.r@saystay.com` → plano de migração pro `r@ramalho.au`
-- [ ] Painel de conectores: status de cada integração (conectado / desconectado / erro)
-- [ ] Pipeline de ingestão: conector → inbox (estágio 1) → Genesis pipeline normal
+- [x] Painel de conectores: status de cada integração (conectado / desconectado / erro)
+- [x] Pipeline de ingestão: conector → inbox (estágio 1) → Genesis pipeline normal
 
 Princípio de ingestão: tudo que entra por conector vai pro inbox como qualquer outro item. O triage classifica. O pipeline matura. O Genesis não muda — o que muda é quantas coisas entram.
 
@@ -361,17 +364,19 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 
 | Métrica | Valor |
 |---------|-------|
-| Commits | 30 |
-| Files | 76 (.ts/.tsx) |
-| LOC | ~7,800 |
+| Commits | 57 |
+| Files | 86 (.ts/.tsx) |
+| LOC | ~10,000 |
 | Pages | 13 |
-| Components | 23 |
-| Services | 9 |
+| Components | 25 |
+| Services | 11 |
 | Engines | 6 |
 | Stores | 3 |
-| Hooks | 9 |
+| Hooks | 12 |
 | Tests | 41 (vitest) |
-| Bundle (gzip) | ~71KB main |
+| Bundle (gzip) | ~83KB main |
+| Edge functions | 5 |
+| Migrations | 8 |
 | TS errors | 0 |
 
 ---
@@ -401,6 +406,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 | 4.2 | 03 Abr 2026 | F7 Completude DONE. Espiral 1 completa. Dark mode toggle, search, analytics soul/connections, export download, calendar ritual bands, offline lite, polish. 30 commits, 76 files, ~7.8K LOC. |
 | 5.0 | 03 Abr 2026 | Espiral 2 detalhada: 5 fases PHI (Toque+alma, Raiz, Triage real, Biblioteca+grafo, Companheiro). Seeds da Espiral 3 listadas. Protocol tag em cada fase. |
 | 6.0 | 03 Abr 2026 | Espiral 2 redesenhada: Raiz como F1 (fundação, não feature). Conectores como F2 (Gmail, Calendar, Drive — portas de entrada reais). Toque+Alma+Triage unificados em F3. "Se existe no digital, tem como entrar." Seeds da Espiral 3 atualizadas. |
+| 6.1 | 04 Abr 2026 | Sync: F1 Raiz DONE (b64511b), F2 Conectores PARCIAL (OAuth+UI done, edge functions blocked). Metricas atualizadas: 57 commits, 86 files, ~10K LOC. |
 
 ---
 
