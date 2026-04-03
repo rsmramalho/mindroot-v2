@@ -16,7 +16,7 @@ const STATE_TO_STAGE: Record<AtomState, number> = {
   connected: 5,
   propagated: 6,
   committed: 7,
-  archived: 8,
+  archived: 7,
 };
 
 const STAGE_TO_STATE: Record<number, AtomState> = {
