@@ -24,7 +24,7 @@ export function useRaiz() {
       const domainItems = items.filter(
         (i) =>
           i.status !== 'archived' &&
-          (i.tags?.includes(`#domain:${domain.key}`) || i.module === domain.module),
+          i.tags?.includes(`#domain:${domain.key}`),
       );
       const count = domainItems.length;
       const oldest = domainItems.reduce((max, i) => {

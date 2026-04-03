@@ -42,27 +42,19 @@ export function RaizPage() {
   const sessionCount = Object.values(domainInputs).flat().length;
   const touchedDomains = Object.keys(domainInputs).filter((k) => (domainInputs[k]?.length ?? 0) > 0);
 
-  const handleCapture = (domainKey: string, text: string) => {
+  const handleCapture = async (domainKey: string, text: string) => {
     if (!text.trim()) return;
+    // Auto-save: persist to inbox immediately
+    const domain = RAIZ_DOMAINS.find((d) => d.key === domainKey);
+    const module = domain?.module ?? 'bridge';
+    await captureWithModule(text.trim(), module, [`#domain:${domainKey}`, '#raiz']);
+    // Track locally for session display
     setDomainInputs((prev) => ({
       ...prev,
       [domainKey]: [...(prev[domainKey] ?? []), text.trim()],
     }));
   };
 
-  const handleSaveAndReturn = async () => {
-    for (const [domainKey, texts] of Object.entries(domainInputs)) {
-      const domain = RAIZ_DOMAINS.find((d) => d.key === domainKey);
-      const module = domain?.module ?? 'bridge';
-      for (const text of texts) {
-        await captureWithModule(text, module, [`#domain:${domainKey}`, '#raiz']);
-      }
-    }
-    setDomainInputs({});
-    setActiveDomainKey(null);
-    setDoorKey(null);
-    setMode('panorama');
-  };
 
   const markWelcomed = async () => {
     try {
@@ -221,10 +213,10 @@ export function RaizPage() {
                     }`}
                   >
                     <div
-                      className="absolute top-0 left-0 right-0 h-[3px] rounded-t-xl"
+                      className="absolute top-0 left-0 bottom-0 w-[3px] rounded-l-xl"
                       style={{
                         background: MODULE_COLORS[domain.module],
-                        opacity: isEmpty && sessionItems === 0 ? 0.3 : 1,
+                        opacity: isEmpty && sessionItems === 0 ? 0.3 : 0.8,
                       }}
                     />
                     <div className="text-lg mb-0.5">{domain.emoji}</div>
@@ -249,22 +241,16 @@ export function RaizPage() {
               onClick={enterDoors}
               className="w-full bg-card border border-border rounded-xl p-3.5 text-center text-sm text-text-muted hover:border-accent-light/50 transition-colors mb-3"
             >
-              ○ sessao guiada — escolher por onde comecar
+              {healthyCount > 0 ? '○ sessao guiada — completar gavetas' : '○ sessao guiada — escolher por onde comecar'}
             </button>
 
-            {/* Session summary */}
+            {/* Session summary (items already saved — this is feedback) */}
             {sessionCount > 0 && (
-              <div className="bg-accent-bg border border-accent/20 rounded-xl p-4 mb-3">
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-accent">{sessionCount} items nesta sessao</span>
-                  <span className="text-accent">{touchedDomains.length} gavetas tocadas</span>
+              <div className="bg-success-bg border border-success/20 rounded-xl p-4 mb-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-success-text">{sessionCount} items salvos no inbox</span>
+                  <span className="text-success-text">{touchedDomains.length} gavetas</span>
                 </div>
-                <button
-                  onClick={handleSaveAndReturn}
-                  className="w-full bg-accent text-white rounded-lg py-2.5 text-sm font-medium"
-                >
-                  salvar tudo no inbox
-                </button>
               </div>
             )}
 
@@ -403,8 +389,11 @@ function DomainInventory({
       {/* Domain header */}
       <div className="flex items-center gap-3 mb-1">
         <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center text-lg"
-          style={{ background: `color-mix(in srgb, ${MODULE_COLORS[domain.module]} 15%, transparent)` }}
+          className="w-10 h-10 rounded-xl flex items-center justify-center text-lg border-l-[3px]"
+          style={{
+            background: `color-mix(in srgb, ${MODULE_COLORS[domain.module]} 20%, transparent)`,
+            borderLeftColor: MODULE_COLORS[domain.module],
+          }}
         >
           {domain.emoji}
         </div>
@@ -460,7 +449,7 @@ function DomainInventory({
                   color: MODULE_COLORS[domain.module],
                 }}
               >
-                {domain.module}
+                {domain.label}
               </span>
             </div>
           ))}

@@ -87,11 +87,11 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-bg border-t border-border z-20"
+      className="fixed bottom-0 left-0 right-0 w-full bg-bg border-t border-border z-20"
       role="navigation"
       aria-label="Navegacao principal"
     >
-      <div className="flex items-center justify-around max-w-lg mx-auto h-14 pb-[max(0rem,env(safe-area-inset-bottom))]">
+      <div className="flex items-center h-14 pb-[max(0rem,env(safe-area-inset-bottom))]">
         {NAV_ITEMS.map((item) => {
           const active = currentPage === item.key
             || (item.key === 'projects' && (currentPage === 'project-detail'))
@@ -102,14 +102,14 @@ export function BottomNav() {
             <button
               key={item.key}
               onClick={() => navigate(item.key)}
-              className={`relative flex flex-col items-center justify-center gap-0.5 min-h-[48px] min-w-[48px] px-3 transition-colors ${
+              className={`relative flex flex-col items-center justify-center gap-0.5 flex-1 min-h-[48px] transition-colors ${
                 active ? 'text-text-heading' : 'text-text-muted'
               }`}
               aria-current={active ? 'page' : undefined}
               aria-label={item.label}
             >
               {item.icon(active)}
-              <span className={`text-[11px] ${active ? 'font-medium' : 'font-normal'}`}>
+              <span className={`text-[10px] ${active ? 'font-medium' : 'font-normal'}`}>
                 {item.label}
               </span>
               {active && <div className="absolute bottom-1 w-1 h-1 rounded-full bg-accent" />}

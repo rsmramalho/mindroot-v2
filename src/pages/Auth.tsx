@@ -93,7 +93,7 @@ export function AuthPage({ onBack }: AuthPageProps) {
   // ─── Forgot password ─────────────────────────────────
   if (mode === 'forgot') {
     return (
-      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6">
+      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6 w-full">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
             <div className="text-3xl font-medium text-text-heading tracking-tight">MindRoot</div>
@@ -144,7 +144,7 @@ export function AuthPage({ onBack }: AuthPageProps) {
   // ─── Reset password (from email link) ─────────────────
   if (mode === 'reset') {
     return (
-      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6">
+      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6 w-full">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
             <div className="text-3xl font-medium text-text-heading tracking-tight">MindRoot</div>

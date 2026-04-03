@@ -455,7 +455,18 @@ function TagsSection({ tags, onAdd, onRemove }: { tags: string[]; onAdd: (tag: s
           <span key={t} className="text-[11px] px-2.5 py-1 rounded-lg bg-surface text-text-muted flex items-center gap-1">
             {t}
             {onRemove && (
-              <button onClick={() => onRemove(t)} className="text-text-muted/60 hover:text-error ml-0.5" aria-label={`Remover tag ${t}`}>×</button>
+              <button
+                onClick={() => {
+                  const isProtected = ['#domain:', '#raiz', '#mod_', '#ritual:', '#project:', '#seed'].some(p => t.startsWith(p) || t === p);
+                  if (isProtected) {
+                    if (window.confirm(`Remover tag "${t}"? Essa tag e usada pelo sistema.`)) onRemove(t);
+                  } else {
+                    onRemove(t);
+                  }
+                }}
+                className="text-text-muted/60 hover:text-error ml-0.5"
+                aria-label={`Remover tag ${t}`}
+              >×</button>
             )}
           </span>
         ))}

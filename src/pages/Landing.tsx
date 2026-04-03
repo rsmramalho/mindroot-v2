@@ -7,8 +7,8 @@ interface LandingPageProps {
 
 export function LandingPage({ onLogin }: LandingPageProps) {
   return (
-    <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6">
-      <div className="text-center max-w-sm">
+    <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6 w-full">
+      <div className="text-center w-full max-w-sm">
         {/* Raiz symbol */}
         <div className="mb-8">
           <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-accent-light to-accent flex items-center justify-center">

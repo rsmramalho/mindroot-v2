@@ -128,14 +128,12 @@ function FirstTimeRaizRedirect() {
   const user = useAppStore((s) => s.user);
   const routerNavigate = useNavigate();
   const location = useLocation();
-  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    if (!checked && user && !user.user_metadata?.raiz_welcomed && location.pathname === '/') {
+    if (user && !user.user_metadata?.raiz_welcomed && location.pathname === '/') {
       routerNavigate('/raiz', { replace: true });
     }
-    setChecked(true);
-  }, [user, checked, routerNavigate, location.pathname]);
+  }, [user, routerNavigate, location.pathname]);
 
   return null;
 }
