@@ -1,7 +1,7 @@
 # Atom HS — Roadmap
 
-**Versão:** 4.1
-**Data:** 02 Abr 2026
+**Versão:** 5.0
+**Data:** 03 Abr 2026
 **Status:** active
 **Princípio:** Motor → Inteligência → Visualização → Reflexão. Presença sobre produtividade.
 
@@ -187,22 +187,117 @@ A seed da Espiral 2 nasce aqui.
 
 ---
 
-## Espiral 2 — Mente (planejada, não iniciada)
+## Espiral 2 — Mente / organismo
 
-A segunda espiral transforma o Atom HS de app em organismo. Nasce da completude da Espiral 1.
+**Status:** futuro
+**Princípio:** De ferramenta estática a organismo vivo. Core loop: usar → sentir → organizar → ver → conversar.
 
-**Escopo macro (a ser detalhado em fases PHI quando Espiral 1 fechar):**
-- Abstração de IA (interface AtomAI: Claude + Ollama, fallback automático)
-- IA local (Mac Mini M4, Ollama, modelos open-source)
-- Email ingestion (Gmail → IA → classify → Supabase)
-- Library Feed (RSS, TMDB, curadoria sem algoritmo de engajamento)
-- Captura por voz (Whisper local)
-- Corp Shield (filosofia de escudo descartável documentada e operacional)
-- Soberania de atenção (feed finito, protegido, curado)
+```
+         ·  (1)  F1 — Toque + alma
+        —   (1)  F2 — Raiz
+       △    (2)  F3 — Triage real
+      □     (3)  F4 — Biblioteca + grafo
+     ⬠      (5)  F5 — Companheiro
+```
 
-**Origem:** decomposição do Yugar Vision Doc (system_spec_yugar-vision_v0-1.md no atom-engine-core). Features que são do Engine/MindRoot, não do espaço físico.
+### ⚪ Fase 1 · Toque + alma (effort: 1)
+**Status:** futuro
+**Protocol:** surface
+**Escopo:** Tornar o app usável no dia a dia E o soul loop real — não um, os dois.
 
-**Não detalhar agora.** As fases PHI da Espiral 2 nascem quando a Espiral 1 fechar — com inventário real, dependências reais, métricas reais.
+Entregáveis:
+- [ ] Item Detail: edição inline (título, notes, tags) + chips clicáveis (type, module, status)
+- [ ] Item Detail: botão avançar estágio (classificar → estruturar → validar → conectar → commitar)
+- [ ] Item Detail: borda de módulo com cor
+- [ ] Pipeline: tap num estágio expande lista de items com cards clicáveis
+- [ ] Bottom Nav: redesign — ícones maiores, área de toque 44px+, badge inbox
+- [ ] Projects: botão "+ projeto" na page, cards com progress
+- [ ] Home: seção "ativos" entre captura e inbox (status=active, stage≥3, max 3)
+- [ ] Home: audit health bar (verde/amarelo/vermelho baseado em inbox count + orphans)
+- [ ] Soul loop aurora: app pergunta "como você tá chegando hoje?" no primeiro acesso do dia
+- [ ] Soul loop aurora: registra emotion_before + energy + intention no wrap store
+- [ ] Soul loop task: após milestone/entrega, pergunta "como foi?" — registra emotion_after
+- [ ] Soul loop crepúsculo: wrap pergunta "como você tá saindo?" — registra shift aurora→crepúsculo
+- [ ] Wrap stepper: step 1 (soul) funcionando end-to-end com dados reais
+- [ ] Wrap display: seção SOUL renderizada com shift visível
+
+Notas: Soul loop segue regras do Marco Zero seção 5 — nunca forçar, linguagem livre, só em tasks peso > 1. Se Rick diz "bora trabalhar" sem emoção, ok. O sistema oferece, não insiste.
+
+### ⚪ Fase 2 — Raiz (effort: 1)
+**Status:** futuro
+**Protocol:** full
+**Escopo:** 9 domínios de vida como experiência unificada — porta de entrada e ferramenta permanente.
+
+Entregáveis:
+- [ ] Raiz como page no nav (sempre acessível, não só onboarding)
+- [ ] Primeiro acesso: gate via user_metadata — abre direto no Raiz
+- [ ] 3 portas de entrada: micro (3 domínios), standard (6), deep (9)
+- [ ] Inventário por domínio: captura de items com tag #domain:[key]
+- [ ] Panorama 3×3: grid dos 9 domínios com status (ok/stale/empty)
+- [ ] Tom gentil: "depois, talvez" em todo canto — pular é tão fácil quanto preencher
+- [ ] Dia 1: tudo vazio, gentil. Dia 100: domínios preenchidos, stale alerts, vida mapeada
+- [ ] Hook useRaiz: query items por domínio, calcula health (count, oldest, status)
+- [ ] Retornantes: Raiz mostra estado real dos domínios, não repete onboarding
+
+Notas: Wireframes existem em docs/wireframes/ (telas 10 e 11). A decisão é: experiência unificada, não "onboarding que convida pro Raiz". Raiz É o onboarding. E depois fica.
+
+### ⚪ Fase 3 △ Triage real (effort: 2)
+**Status:** futuro
+**Protocol:** logic
+**Escopo:** Substituir classificação hardcoded por AI real com confidence bands.
+
+Entregáveis:
+- [ ] Edge function Supabase com Claude Haiku para auto-triage
+- [ ] 3 faixas de confiança: auto (≥90/95%), sugere (60-89/94%), manual (<60%)
+- [ ] Threshold diferenciado: 95% para tipos acionáveis (task, project, spec, habit), 90% para passivos
+- [ ] UI triage: auto-classificados mostram ✓ + confidence, sugestões mostram confirm/change, manual mostra "aguardando"
+- [ ] Fallback: se edge function falha, item fica no inbox com flag — nunca classificação errada silenciosa
+- [ ] Triage roda automaticamente ao capturar item via AtomInput
+
+Notas: Genesis v5 Parte 3.1 define as regras. session_log (SQL) vs session-log (TS) — conversão automática na serialização. A UI do triage já existe — esta fase é backend.
+
+### ⚪ Fase 4 □ Biblioteca + grafo (effort: 3)
+**Status:** futuro
+**Protocol:** full
+**Escopo:** Library page, connections UI, e graph visualization. Genesis estágio 5 (Pentágono) ganha corpo na interface.
+
+Entregáveis:
+- [ ] Library page: tabs (Todos, Reflexões, Recomendações, Conteúdo), filter chips por type
+- [ ] Library cards: título + type chip + preview notes + data + módulo cor
+- [ ] Item Detail: seção connections — adicionar/remover connections tipadas (8 AtomRelations)
+- [ ] Item Detail: ao adicionar connection, item avança pro estágio 5 automaticamente
+- [ ] Prompt de conexão: no estágio 4, "isso se conecta com algo?" (Genesis Parte 2, portão 4)
+- [ ] Graph view: visualização de nós e edges (pode ser página separada ou modal)
+- [ ] Graph: nós coloridos por módulo, edges rotuladas por relation
+- [ ] Search: filtros por module, type, status, tags — chips clicáveis
+
+Notas: Wireframe Library existe (mindroot-wireframe-library-reflexoes.html). Graph pode usar D3 force layout ou similar. Connections usam tabela item_connections no Supabase (já deployed via migration 007).
+
+### ⚪ Fase 5 ⬠ Companheiro (effort: 5)
+**Status:** futuro
+**Protocol:** full
+**Escopo:** AI companion dentro do MindRoot. Captura por voz. Nudges contextuais. O app deixa de ser passivo.
+
+Entregáveis:
+- [ ] Companion page/panel: interface de conversa dentro do MindRoot
+- [ ] Companion contextual: sabe o estado do sistema (inbox count, stale items, soul patterns)
+- [ ] Nudges: sugere ações baseadas em padrões (ex: "3 dias sem wrap", "inbox crescendo", "soul shift negativo recorrente")
+- [ ] Captura por voz: Web Speech API → texto → item no inbox
+- [ ] Companion no wrap: propõe wrap baseado nos items criados/modificados do dia
+- [ ] Companion no aurora: puxa estado + último wrap, oferece contexto sem que Rick peça
+- [ ] Integração com triage: companion pode classificar items via conversa
+
+Notas: Wireframe tela 10 (mindroot-wireframe-ai-companion.html). O companion é o Claude operando dentro do MindRoot — não é chatbot genérico. Tem o Genesis como contrato, o Marco Zero como contexto, e os dados do usuário como memória.
+
+---
+
+## Seeds — Espiral 3
+
+Nascem da completude da Espiral 2. Não detalhadas até lá.
+
+- **Escudo:** Corp Shield + email ingestion + Gmail integration. Email → item no inbox automaticamente.
+- **Resiliência:** PWA offline completo + Ollama local como fallback do Claude + sync engine.
+- **Propagação:** Estágio 6 do Genesis ganha mecânica real — cascata de eventos entre items conectados.
 
 ---
 
@@ -265,6 +360,7 @@ A segunda espiral transforma o Atom HS de app em organismo. Nasce da completude 
 | 4.0 | 02 Abr 2026 | Atom OS → Atom HS (Human Systems). V1 no centro do Pentágono. V6 Lab adicionado. Formato PHI template. Cross-check com PENTAGON.md. |
 | 4.1 | 02 Abr 2026 | Duas espirais: Corpo (app, F1-F7) + Mente (organismo, planejada). Yugar Vision Doc decomposto — features de Engine/MindRoot mapeadas pra Espiral 2. F7 mantém escopo limpo. |
 | 4.2 | 03 Abr 2026 | F7 Completude DONE. Espiral 1 completa. Dark mode toggle, search, analytics soul/connections, export download, calendar ritual bands, offline lite, polish. 30 commits, 76 files, ~7.8K LOC. |
+| 5.0 | 03 Abr 2026 | Espiral 2 detalhada: 5 fases PHI (Toque+alma, Raiz, Triage real, Biblioteca+grafo, Companheiro). Seeds da Espiral 3 listadas. Protocol tag em cada fase. |
 
 ---
 
