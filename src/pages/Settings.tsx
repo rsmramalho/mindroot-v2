@@ -5,10 +5,13 @@ import { useAppStore } from '@/store/app-store';
 import { useNav } from '@/hooks/useNav';
 import { useItems } from '@/hooks/useItems';
 import { useAuth } from '@/hooks/useAuth';
+import { useConnectors } from '@/hooks/useConnectors';
 import { MODULES } from '@/types/item';
 import { RITUAL_PERIODS } from '@/types/ui';
 import { exportService } from '@/service/export-service';
 import { toast } from '@/store/toast-store';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export function SettingsPage() {
   const user = useAppStore((s) => s.user);
@@ -17,6 +20,7 @@ export function SettingsPage() {
   const setTheme = useAppStore((s) => s.setTheme);
   const { items } = useItems();
   const { signOut } = useAuth();
+  const { getStatus, connectGoogle, syncCalendar, disconnect, syncState } = useConnectors();
 
   const email = user?.email ?? '';
   const name = user?.user_metadata?.full_name ?? email.split('@')[0];
@@ -105,17 +109,30 @@ export function SettingsPage() {
         <ExportRow label="Obsidian vault" description="todos os items como .md" onClick={handleExportObsidian} />
       </div>
 
-      {/* Integrations placeholder */}
-      <SectionLabel>integracoes</SectionLabel>
-      <div className="bg-card border border-border rounded-xl p-4 mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-[13px]">Google Calendar</span>
-          <span className="text-[10px] px-2 py-px rounded-lg bg-surface text-text-muted">em breve</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-[13px]">Google Drive</span>
-          <span className="text-[10px] px-2 py-px rounded-lg bg-surface text-text-muted">em breve</span>
-        </div>
+      {/* Connectors */}
+      <SectionLabel>conectores</SectionLabel>
+      <div className="bg-card border border-border rounded-xl overflow-hidden mb-4">
+        <ConnectorRow
+          icon="📅"
+          name="Google Calendar"
+          status={getStatus('google_calendar')}
+          syncing={syncState === 'syncing'}
+          onConnect={connectGoogle}
+          onSync={syncCalendar}
+          onDisconnect={() => disconnect('google_calendar')}
+        />
+        <ConnectorRow
+          icon="✉️"
+          name="Gmail"
+          status={getStatus('google_gmail')}
+          onConnect={connectGoogle}
+          comingSoon
+        />
+        <ConnectorRow
+          icon="☁️"
+          name="Google Drive"
+          comingSoon
+        />
       </div>
 
       {/* About */}
@@ -151,5 +168,66 @@ function ExportRow({ label, description, onClick }: { label: string; description
       </div>
       <span className="text-xs text-accent">↓</span>
     </button>
+  );
+}
+
+function ConnectorRow({
+  icon, name, status, syncing, comingSoon,
+  onConnect, onSync, onDisconnect,
+}: {
+  icon: string;
+  name: string;
+  status?: { provider: string; status: string; lastSyncAt: string | null; metadata: Record<string, unknown> };
+  syncing?: boolean;
+  comingSoon?: boolean;
+  onConnect?: () => void;
+  onSync?: () => void;
+  onDisconnect?: () => void;
+}) {
+  const isConnected = status?.status === 'connected';
+  const lastSync = status?.lastSyncAt
+    ? formatDistanceToNow(parseISO(status.lastSyncAt), { addSuffix: true, locale: ptBR })
+    : null;
+
+  return (
+    <div className="flex items-center justify-between px-4 py-3 border-b border-surface last:border-0">
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        <span className="text-lg">{icon}</span>
+        <div className="min-w-0">
+          <div className="text-[13px] font-medium">{name}</div>
+          {comingSoon ? (
+            <div className="text-[11px] text-text-muted">em breve</div>
+          ) : isConnected ? (
+            <div className="text-[11px] text-success">
+              conectado{lastSync ? ` · sync ${lastSync}` : ''}
+            </div>
+          ) : (
+            <div className="text-[11px] text-text-muted">desconectado</div>
+          )}
+        </div>
+      </div>
+      {!comingSoon && (
+        <div className="flex items-center gap-2">
+          {isConnected && onSync && (
+            <button
+              onClick={onSync}
+              disabled={syncing}
+              className="text-[11px] px-2.5 py-1 rounded-lg bg-accent-bg text-accent disabled:opacity-50"
+            >
+              {syncing ? 'sincronizando...' : 'sincronizar'}
+            </button>
+          )}
+          {isConnected && onDisconnect ? (
+            <button onClick={onDisconnect} className="text-[11px] text-error">
+              ×
+            </button>
+          ) : !isConnected && onConnect ? (
+            <button onClick={onConnect} className="text-[11px] px-2.5 py-1 rounded-lg bg-accent text-white">
+              conectar
+            </button>
+          ) : null}
+        </div>
+      )}
+    </div>
   );
 }

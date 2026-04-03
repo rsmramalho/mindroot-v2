@@ -1,6 +1,7 @@
 // hooks/useAuth.ts — Auth state management
 import { useEffect, useState } from 'react';
 import { authService } from '@/service/auth-service';
+import { connectorService } from '@/service/connector-service';
 import { useAppStore } from '@/store/app-store';
 import type { ThemeMode } from '@/store/app-store';
 
@@ -37,6 +38,15 @@ export function useAuth() {
       if (session?.user?.user_metadata?.theme) {
         const saved = session.user.user_metadata.theme as ThemeMode;
         useAppStore.getState().setTheme(saved);
+      }
+
+      // Capture Google OAuth tokens for connectors (non-blocking)
+      if (session?.provider_refresh_token && session?.provider_token) {
+        connectorService.storeTokens(
+          session.provider_refresh_token,
+          'google_calendar',
+          { email: session.user?.email },
+        ).catch(() => { /* non-blocking — connector setup can retry later */ });
       }
 
       // Clean OAuth callback URL after successful exchange

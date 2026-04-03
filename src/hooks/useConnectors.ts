@@ -1,0 +1,86 @@
+// hooks/useConnectors.ts — Connector state and actions
+// Pattern: hooks → service → supabase
+
+import { useState, useEffect, useCallback } from 'react';
+import { connectorService, type ConnectorStatus } from '@/service/connector-service';
+import { useAppStore } from '@/store/app-store';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from '@/store/toast-store';
+
+type SyncState = 'idle' | 'syncing' | 'done' | 'error';
+
+export function useConnectors() {
+  const user = useAppStore((s) => s.user);
+  const queryClient = useQueryClient();
+  const [connectors, setConnectors] = useState<ConnectorStatus[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [syncState, setSyncState] = useState<SyncState>('idle');
+
+  const refresh = useCallback(async () => {
+    try {
+      const data = await connectorService.getConnectors();
+      setConnectors(data);
+    } catch {
+      // Table might not exist yet — treat as empty
+      setConnectors([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) refresh();
+  }, [user, refresh]);
+
+  const getStatus = (provider: string): ConnectorStatus | undefined =>
+    connectors.find((c) => c.provider === provider);
+
+  const connectGoogle = async () => {
+    try {
+      await connectorService.connectGoogle();
+    } catch {
+      toast.error('Erro ao conectar Google');
+    }
+  };
+
+  const syncCalendar = async () => {
+    if (!user) return;
+    setSyncState('syncing');
+    try {
+      const events = await connectorService.syncCalendar();
+      const created = await connectorService.ingestCalendarEvents(events, user.id);
+      queryClient.invalidateQueries({ queryKey: ['items'] });
+      await refresh();
+      setSyncState('done');
+      if (created > 0) {
+        toast.success(`${created} eventos importados pro inbox`);
+      } else {
+        toast.success('Calendar sincronizado — nenhum evento novo');
+      }
+    } catch (err: any) {
+      setSyncState('error');
+      toast.error(err.message ?? 'Erro ao sincronizar calendar');
+    }
+  };
+
+  const disconnect = async (provider: string) => {
+    try {
+      await connectorService.disconnect(provider);
+      await refresh();
+      toast.success('Conector desconectado');
+    } catch {
+      toast.error('Erro ao desconectar');
+    }
+  };
+
+  return {
+    connectors,
+    loading,
+    syncState,
+    getStatus,
+    connectGoogle,
+    syncCalendar,
+    disconnect,
+    refresh,
+  };
+}
