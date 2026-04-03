@@ -235,6 +235,8 @@ Os 9 domínios:
 | communication | `#domain:communication` | Emails, contatos, canais |
 | projects | `#domain:projects` | Trabalho, hobbies, criações |
 
+- [x] **Routine Builder** (e36c271): question flow por módulo (5 módulos, ~35 perguntas), mini-wrap com commit no Supabase, overlay integrado na página Raiz. Novo diretório `src/features/raiz/` (11 arquivos, 1044 LOC).
+
 Notas: Wireframes existem (telas 10 e 11). Raiz É o onboarding. E depois fica como painel de saúde da vida. Cada domínio é uma lente — os items são os mesmos do Supabase, filtrados por `#domain:*`. Zero schema novo.
 
 ### ◐ Fase 2 — Conectores (effort: 1)
@@ -340,6 +342,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 - **Escudo:** Corp Shield avançado. Ações nos conectores (enviar email, criar evento, mover arquivo). O sistema passa de leitor pra agente.
 - **Resiliência:** PWA offline completo + Ollama local como fallback do Claude + sync engine. O sistema funciona sem internet.
 - **Propagação:** Estágio 6 do Genesis ganha mecânica real — cascata de eventos entre items conectados. Completar uma task atualiza o projeto. Projeto mudar de status notifica items dependentes.
+- **Atom Agent:** Braço físico do Atom HS. Python CLI que escaneia filesystem, Gmail, Photos, Calendar, Drive. Move, renomeia, deduplica, indexa no Supabase. 6 spirais próprias (motor → sentinela → faxineiro → guardião → consolidador → superfície). Spec v1.0 em atom-engine-core. Repo planejado: `rsmramalho/atom-agent`.
 
 ---
 
@@ -364,9 +367,9 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 
 | Métrica | Valor |
 |---------|-------|
-| Commits | 57 |
-| Files | 86 (.ts/.tsx) |
-| LOC | ~10,000 |
+| Commits | 60 |
+| Files | 97 (.ts/.tsx) |
+| LOC | ~11,000 |
 | Pages | 13 |
 | Components | 25 |
 | Services | 11 |
@@ -407,6 +410,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 | 5.0 | 03 Abr 2026 | Espiral 2 detalhada: 5 fases PHI (Toque+alma, Raiz, Triage real, Biblioteca+grafo, Companheiro). Seeds da Espiral 3 listadas. Protocol tag em cada fase. |
 | 6.0 | 03 Abr 2026 | Espiral 2 redesenhada: Raiz como F1 (fundação, não feature). Conectores como F2 (Gmail, Calendar, Drive — portas de entrada reais). Toque+Alma+Triage unificados em F3. "Se existe no digital, tem como entrar." Seeds da Espiral 3 atualizadas. |
 | 6.1 | 04 Abr 2026 | Sync: F1 Raiz DONE (b64511b), F2 Conectores PARCIAL (OAuth+UI done, edge functions blocked). Metricas atualizadas: 57 commits, 86 files, ~10K LOC. |
+| 6.2 | 04 Abr 2026 | F1 Raiz: Routine Builder registrado como entregavel (e36c271, 11 files, 1044 LOC). Seeds: Atom Agent adicionado. Metricas: 60 commits, 97 files, ~11K LOC. |
 
 ---
 
