@@ -208,18 +208,25 @@ function AppContent() {
     applyTheme(saved ?? 'system');
   }, []);
 
-  // Cockpit preview — accessible without auth for testing
-  const pathname = window.location.pathname;
-  if (pathname === '/preview/cockpit' || pathname === '/') {
-    return <CockpitPreview />;
-  }
-
   return <AuthGatedContent />;
 }
 
 // ─── Root ─────────────────────────────────────────────
 
 export default function App() {
+  // Cockpit preview — accessible without auth for testing (check BEFORE router)
+  const pathname = window.location.pathname;
+  console.log('[v0] App mount, pathname:', pathname);
+  
+  if (pathname === '/preview/cockpit' || pathname === '/') {
+    console.log('[v0] Rendering CockpitPreview directly');
+    return (
+      <ErrorBoundary>
+        <CockpitPreview />
+      </ErrorBoundary>
+    );
+  }
+
   return (
     <ErrorBoundary>
       <BrowserRouter>
