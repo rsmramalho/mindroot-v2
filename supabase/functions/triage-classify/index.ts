@@ -1,4 +1,5 @@
-const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+// Edge function: triage-classify
+// Classifies items using Claude Haiku. Returns type, module, confidence, tags.
 
 const SYSTEM_PROMPT = `You are the Atom Engine auto-triage classifier. Given a Portuguese text input, classify it.
 
@@ -54,19 +55,23 @@ Deno.serve(async (req: Request) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  if (!ANTHROPIC_API_KEY) {
-    return new Response(
-      JSON.stringify({ error: 'ANTHROPIC_API_KEY not configured' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-  }
+  const headers = { ...corsHeaders, 'Content-Type': 'application/json' };
 
   try {
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+
+    if (!ANTHROPIC_API_KEY) {
+      return new Response(
+        JSON.stringify({ error: 'ANTHROPIC_API_KEY not configured in edge function secrets' }),
+        { status: 500, headers },
+      );
+    }
+
     const { input, context } = await req.json();
     if (!input || typeof input !== 'string') {
       return new Response(
         JSON.stringify({ error: 'Missing input field' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers },
       );
     }
 
@@ -97,8 +102,8 @@ Deno.serve(async (req: Request) => {
       const errorBody = await response.text();
       console.error('Anthropic API error:', response.status, errorBody);
       return new Response(
-        JSON.stringify({ error: `Anthropic API: ${response.status}` }),
-        { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: `Anthropic API error (${response.status})`, detail: errorBody }),
+        { status: 502, headers },
       );
     }
 
@@ -118,15 +123,13 @@ Deno.serve(async (req: Request) => {
 
     parsed.confidence = Math.max(0, Math.min(100, parsed.confidence || 0));
 
-    return new Response(JSON.stringify(parsed), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify(parsed), { headers });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error('Triage error:', message);
     return new Response(
       JSON.stringify({ error: message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers },
     );
   }
 });
