@@ -9,6 +9,7 @@ import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { AtomItem, AtomType } from '@/types/item';
 import { getTypeColor, MODULE_COLORS } from '@/components/atoms/tokens';
+import { RAIZ_DOMAINS } from '@/config/raiz';
 
 const LIBRARY_TYPES: AtomType[] = ['recipe', 'workout', 'article', 'podcast', 'recommendation', 'resource'];
 const FILTER_PILLS: { key: 'all' | 'library' | 'reflections'; label: string }[] = [
@@ -22,6 +23,7 @@ export function LibraryPage() {
   const { selectItem } = useNav();
   const [filter, setFilter] = useState<'all' | 'library' | 'reflections'>('all');
   const [search, setSearch] = useState('');
+  const [domainFilter, setDomainFilter] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     let result = items.filter((i) => i.status !== 'archived');
@@ -29,13 +31,17 @@ export function LibraryPage() {
     if (filter === 'library') result = result.filter((i) => i.type && LIBRARY_TYPES.includes(i.type));
     else if (filter === 'reflections') result = result.filter((i) => i.type === 'reflection' || i.type === 'checkpoint');
 
+    if (domainFilter) {
+      result = result.filter((i) => i.tags?.includes(`#domain:${domainFilter}`));
+    }
+
     if (search) {
       const q = search.toLowerCase();
       result = result.filter((i) => i.title.toLowerCase().includes(q) || i.notes?.toLowerCase().includes(q));
     }
 
     return result.sort((a, b) => b.created_at.localeCompare(a.created_at));
-  }, [items, filter, search]);
+  }, [items, filter, search, domainFilter]);
 
   return (
     <div className="px-5 pb-4">
@@ -69,6 +75,29 @@ export function LibraryPage() {
             }`}
           >
             {p.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Domain filter */}
+      <div className="flex gap-1.5 mb-3 overflow-x-auto">
+        <button
+          onClick={() => setDomainFilter(null)}
+          className={`px-2.5 py-1 rounded-lg text-[10px] whitespace-nowrap transition-all ${
+            !domainFilter ? 'bg-accent-bg text-accent font-medium' : 'bg-surface text-text-muted'
+          }`}
+        >
+          todos
+        </button>
+        {RAIZ_DOMAINS.map((d) => (
+          <button
+            key={d.key}
+            onClick={() => setDomainFilter(domainFilter === d.key ? null : d.key)}
+            className={`px-2.5 py-1 rounded-lg text-[10px] whitespace-nowrap transition-all ${
+              domainFilter === d.key ? 'bg-accent-bg text-accent font-medium' : 'bg-surface text-text-muted'
+            }`}
+          >
+            {d.emoji} {d.label}
           </button>
         ))}
       </div>

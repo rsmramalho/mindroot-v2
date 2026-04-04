@@ -65,15 +65,16 @@ const NAV_ITEMS: NavItem[] = [
     ),
   },
   {
-    key: 'calendar',
-    label: 'calendar',
-    icon: (active) => (
+    key: 'library',
+    label: 'library',
+    icon: (active: boolean) => (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <rect x="4" y="5" width="16" height="15" rx="2"
-          stroke="currentColor" strokeWidth="1.5"
-          fill={active ? 'currentColor' : 'none'} fillOpacity={active ? 0.15 : 0}
-        />
-        <path d="M8 3v3M16 3v3M4 10h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M4 5a1 1 0 011-1h2a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"
+          stroke="currentColor" strokeWidth={active ? '1.8' : '1.3'} fill="none" />
+        <path d="M9 4h2a1 1 0 011 1v14a1 1 0 01-1 1H9"
+          stroke="currentColor" strokeWidth={active ? '1.8' : '1.3'} fill="none" />
+        <path d="M13 5l5-1.5v14.3L13 19.5V5z"
+          stroke="currentColor" strokeWidth={active ? '1.8' : '1.3'} fill="none" />
       </svg>
     ),
   },
