@@ -1,7 +1,7 @@
-# Atom HS — Roadmap
+# Atom — Roadmap
 
-**Versão:** 6.0
-**Data:** 03 Abr 2026
+**Versão:** 6.3
+**Data:** 04 Abr 2026
 **Status:** active
 **Princípio:** Motor → Inteligência → Visualização → Reflexão. Presença sobre produtividade.
 
@@ -9,7 +9,7 @@
 
 ## Visão geral
 
-Atom HS (Human Systems) é o sistema operacional pessoal do Rick. Engine (cérebro) + MindRoot (corpo) = um produto. O Engine define as regras — Genesis v5, state machine, 7 estágios, FSM, auto-triage, wraps. O MindRoot implementa a experiência — captura, pipeline, visualização, rituais.
+Atom (Human Systems) é o sistema operacional pessoal do Rick. Engine (cérebro) + MindRoot (corpo) = um produto. O Engine define as regras — Genesis v5, state machine, 7 estágios, FSM, auto-triage, wraps. O MindRoot implementa a experiência — captura, pipeline, visualização, rituais.
 
 "Human Systems" porque o sistema organiza a vida de um humano, não de uma máquina. OS é emprestado da computação. HS é genuíno.
 
@@ -22,28 +22,29 @@ Specs & design: github.com/rsmramalho/atom-engine-core
 
 ## Pentágono
 
-| Vértice | Projeto | Status | Descrição |
-|---------|---------|--------|-----------|
-| **V1** (centro) | **Atom HS** | **active** | **Hub. Sistema humano pessoal. Foco atual.** |
-| V2 | Constellation OS | paused | Infraestrutura operacional. Aguarda Atom HS. |
-| V3 | Atlas Frames | active | Negócio físico. Monday.com. Operação independente. |
-| V4 | Muda | concept | Comunidade. Nasce do Atom HS quando maduro. |
-| V5 | Yugar Commons | concept | Mt Samson. Visão de longo prazo. |
-| V6 | Atlas/Yugar Lab | concept | Playground. Experimentação, novos produtos, serviços. |
+| Posicao | Projeto | Apelido | Status |
+|---------|---------|---------|--------|
+| Centro | Atom Engine | — | active |
+| **V1** | **MindRoot** | **O Espelho** | **active** |
+| V2 | Constellation | O Telescopio | paused |
+| V3 | Lab | O Laboratorio | concept |
+| V4 | Yugar Commons | A Raiz | concept |
+| V5 | Muda | A Arvore | concept |
+| ⬡ | Atlas Frames | A Bigorna (hexagono) | active |
 
-**← Este roadmap cobre V1 (centro).**
+**← Este roadmap cobre V1 (MindRoot).**
 
 ---
 
 ## As duas espirais
 
-O Atom HS evolui em duas espirais PHI consecutivas:
+O Atom evolui em duas espirais PHI consecutivas:
 
 **Espiral 1 — Corpo (app)**
 O MindRoot nasce. De scaffold a produto usável. Captura, pipeline, wraps, triage, UI completa. Quando F7 fecha, o app funciona sozinho no dia a dia.
 
 **Espiral 2 — Vida (sistema operacional)**
-Se existe na vida digital do Rick, tem uma porta de entrada pro Atom HS. Emails, calendário, arquivos, fotos, contatos — tudo entra pelo inbox, tudo percorre o Genesis. A Espiral 1 deu corpo. A Espiral 2 conecta esse corpo à vida real. Raiz é a fundação, não uma feature. Conectores são a razão de existir, não um "nice to have."
+Se existe na vida digital do Rick, tem uma porta de entrada pro Atom. Emails, calendário, arquivos, fotos, contatos — tudo entra pelo inbox, tudo percorre o Genesis. A Espiral 1 deu corpo. A Espiral 2 conecta esse corpo à vida real. Raiz é a fundação, não uma feature. Conectores são a razão de existir, não um "nice to have."
 
 Cada espiral é um ciclo PHI completo (7 fases, Fibonacci 1-1-2-3-5-8-13). A segunda espiral nasce da completude da primeira — entropia vira seed. De dentro pra fora, duas vezes.
 
@@ -248,14 +249,14 @@ Notas: Wireframes existem (telas 10 e 11). Raiz É o onboarding. E depois fica c
 O Raiz diz "você tem 6 emails." Os conectores fazem esses emails virarem items. O Raiz diz "seu calendário tá em UTC." Os conectores corrigem e sincronizam. A promessa do "Human Systems" se materializa aqui.
 
 Entregáveis:
-- [ ] **Gmail → Atom HS**: emails marcados/starred viram items no inbox automaticamente
+- [ ] **Gmail → Atom**: emails marcados/starred viram items no inbox automaticamente
 - [ ] Gmail: consolidação assistida (6 → 2 emails) — o sistema propõe, Rick executa
 - [ ] Gmail: contatos relevantes viram tags `#who:*` com dados reais
-- [x] **Google Calendar → Atom HS**: OAuth conectado, refresh token salvo, UI de conectores
+- [x] **Google Calendar → Atom**: OAuth conectado, refresh token salvo, UI de conectores
 - [ ] Calendar: sync de eventos (bloqueado — edge function non-2xx)
 - [ ] Calendar: timezone corrigido (UTC → Australia/Brisbane)
 - [ ] Calendar: blocos do ritual (aurora/zênite/crepúsculo) como eventos recorrentes reais
-- [ ] **Google Drive → Atom HS**: scan de arquivos existentes, classificação por domínio
+- [ ] **Google Drive → Atom**: scan de arquivos existentes, classificação por domínio
 - [ ] Drive: Google Photos no `r.r@saystay.com` → plano de migração pro `r@ramalho.au`
 - [x] Painel de conectores: status de cada integração (conectado / desconectado / erro)
 - [x] Pipeline de ingestão: conector → inbox (estágio 1) → Genesis pipeline normal
@@ -342,7 +343,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 - **Escudo:** Corp Shield avançado. Ações nos conectores (enviar email, criar evento, mover arquivo). O sistema passa de leitor pra agente.
 - **Resiliência:** PWA offline completo + Ollama local como fallback do Claude + sync engine. O sistema funciona sem internet.
 - **Propagação:** Estágio 6 do Genesis ganha mecânica real — cascata de eventos entre items conectados. Completar uma task atualiza o projeto. Projeto mudar de status notifica items dependentes.
-- **Atom Agent:** Braço físico do Atom HS. Python CLI que escaneia filesystem, Gmail, Photos, Calendar, Drive. Move, renomeia, deduplica, indexa no Supabase. 6 spirais próprias (motor → sentinela → faxineiro → guardião → consolidador → superfície). Spec v1.0 em atom-engine-core. Repo planejado: `rsmramalho/atom-agent`.
+- **Atom Agent:** Braço físico do Atom. Python CLI que escaneia filesystem, Gmail, Photos, Calendar, Drive. Move, renomeia, deduplica, indexa no Supabase. 6 spirais próprias (motor → sentinela → faxineiro → guardião → consolidador → superfície). Spec v1.0 em atom-engine-core. Repo planejado: `rsmramalho/atom-agent`.
 
 ---
 
@@ -359,7 +360,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 | V5 Yugar Commons | Dados, reflexões, padrões de longo prazo |
 | V6 Atlas/Yugar Lab | Sistema pra organizar experimentos |
 
-**Atom HS não depende de ninguém. Todos dependem dele.**
+**Atom não depende de ninguém. Todos dependem dele.**
 
 ---
 
@@ -404,14 +405,15 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 | 2.0 | 01 Abr 2026 | Roadmap unificado Atom OS. Reordenado: motor → inteligência → visualização → reflexão. |
 | 3.0 | 02 Abr 2026 | Fases PHI (espiral Fibonacci). Rebuild do zero (mindroot-v2). Fases 1-5 DONE. Deploy live. |
 | 3.1 | 02 Abr 2026 | F6 Inteligência DONE. Métricas atualizadas. Dark mode debt documentado. |
-| 4.0 | 02 Abr 2026 | Atom OS → Atom HS (Human Systems). V1 no centro do Pentágono. V6 Lab adicionado. Formato PHI template. Cross-check com PENTAGON.md. |
+| 4.0 | 02 Abr 2026 | Atom OS → Atom (Human Systems). V1 no centro do Pentágono. V6 Lab adicionado. Formato PHI template. Cross-check com PENTAGON.md. |
 | 4.1 | 02 Abr 2026 | Duas espirais: Corpo (app, F1-F7) + Mente (organismo, planejada). Yugar Vision Doc decomposto — features de Engine/MindRoot mapeadas pra Espiral 2. F7 mantém escopo limpo. |
 | 4.2 | 03 Abr 2026 | F7 Completude DONE. Espiral 1 completa. Dark mode toggle, search, analytics soul/connections, export download, calendar ritual bands, offline lite, polish. 30 commits, 76 files, ~7.8K LOC. |
 | 5.0 | 03 Abr 2026 | Espiral 2 detalhada: 5 fases PHI (Toque+alma, Raiz, Triage real, Biblioteca+grafo, Companheiro). Seeds da Espiral 3 listadas. Protocol tag em cada fase. |
 | 6.0 | 03 Abr 2026 | Espiral 2 redesenhada: Raiz como F1 (fundação, não feature). Conectores como F2 (Gmail, Calendar, Drive — portas de entrada reais). Toque+Alma+Triage unificados em F3. "Se existe no digital, tem como entrar." Seeds da Espiral 3 atualizadas. |
 | 6.1 | 04 Abr 2026 | Sync: F1 Raiz DONE (b64511b), F2 Conectores PARCIAL (OAuth+UI done, edge functions blocked). Metricas atualizadas: 57 commits, 86 files, ~10K LOC. |
 | 6.2 | 04 Abr 2026 | F1 Raiz: Routine Builder registrado como entregavel (e36c271, 11 files, 1044 LOC). Seeds: Atom Agent adicionado. Metricas: 60 commits, 97 files, ~11K LOC. |
+| 6.3 | 04 Abr 2026 | Naming: Atom HS→Atom. Pentagono: V3=Lab, V4=Yugar, V5=Muda. Atlas→hexagono. Identity spec v1.0 (atom-engine-core). |
 
 ---
 
-*Human Systems. Duas espirais. A primeira dá corpo. A segunda conecta à vida. De dentro pra fora, duas vezes.*
+*Atom. Duas espirais. A primeira da corpo. A segunda conecta a vida. De dentro pra fora, duas vezes.*
