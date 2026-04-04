@@ -9,6 +9,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePipeline } from '@/hooks/usePipeline';
 import { useRaiz } from '@/hooks/useRaiz';
+import { useItems } from '@/hooks/useItems';
 import { RoutineBuilder } from '@/features/raiz/components/RoutineBuilder';
 import { useNav } from '@/hooks/useNav';
 import { useAppStore } from '@/store/app-store';
@@ -22,6 +23,7 @@ type RaizMode = 'welcome' | 'panorama' | 'doors' | 'inventory';
 
 export function RaizPage() {
   const { domains: domainHealthRaw, activeCount: healthyCount, healthPct, totalItems } = useRaiz();
+  const { items: allItems } = useItems();
   const { captureWithModule } = usePipeline();
   const [builderOpen, setBuilderOpen] = useState(false);
   const { navigate } = useNav();
@@ -200,16 +202,16 @@ export function RaizPage() {
             {/* 3x3 Domain Grid */}
             <div className="grid grid-cols-3 gap-2 mb-4 mt-2">
               {domainHealth.map((domain) => {
-                const isEmpty = domain.status === 'empty';
                 const sessionItems = domainInputs[domain.key]?.length ?? 0;
-                const totalCount = domain.count + sessionItems;
+                const displayCount = Math.max(domain.count, sessionItems);
+                const isEmpty = domain.status === 'empty' && sessionItems === 0;
 
                 return (
                   <button
                     key={domain.key}
                     onClick={() => enterDomain(domain.key)}
                     className={`relative rounded-xl border p-3 text-left transition-all ${
-                      isEmpty && sessionItems === 0
+                      isEmpty
                         ? 'bg-surface/50 border-border/30 opacity-50 hover:opacity-75'
                         : 'bg-card border-border hover:border-accent-light/50'
                     }`}
@@ -218,14 +220,14 @@ export function RaizPage() {
                       className="absolute top-0 left-0 bottom-0 w-[3px] rounded-l-xl"
                       style={{
                         background: MODULE_COLORS[domain.module],
-                        opacity: isEmpty && sessionItems === 0 ? 0.3 : 0.8,
+                        opacity: isEmpty ? 0.3 : 0.8,
                       }}
                     />
                     <div className="text-lg mb-0.5">{domain.emoji}</div>
                     <div className="text-[11px] font-medium truncate">{domain.label}</div>
-                    {totalCount > 0 ? (
+                    {displayCount > 0 ? (
                       <>
-                        <div className="text-xs font-medium mt-1">{totalCount}</div>
+                        <div className="text-xs font-medium mt-1">{displayCount}</div>
                         {domain.status === 'stale' && (
                           <div className="text-[9px] text-warning">{domain.oldest}d</div>
                         )}
@@ -320,6 +322,11 @@ export function RaizPage() {
             key={activeDomainKey}
             domain={activeDomain}
             inputs={domainInputs[activeDomain.key] ?? []}
+            persistedItems={
+              allItems
+                .filter(i => i.tags?.includes(`#domain:${activeDomain.key}`) && i.status !== 'archived')
+                .map(i => i.title)
+            }
             onAdd={(text) => handleCapture(activeDomain.key, text)}
             onBack={prevDomain}
             onNext={nextDomain}
@@ -354,6 +361,7 @@ interface DoorProgress {
 function DomainInventory({
   domain,
   inputs,
+  persistedItems,
   onAdd,
   onBack,
   onNext,
@@ -363,6 +371,7 @@ function DomainInventory({
 }: {
   domain: RaizDomain;
   inputs: string[];
+  persistedItems: string[];
   onAdd: (text: string) => void;
   onBack: () => void;
   onNext: () => void;
@@ -452,10 +461,14 @@ function DomainInventory({
         </button>
       </div>
 
-      {/* Captured items */}
-      {inputs.length > 0 && (
+      {/* Captured items (persisted from Supabase + session inputs, deduplicated) */}
+      {(() => {
+        const sessionSet = new Set(inputs);
+        const persistedOnly = persistedItems.filter(p => !sessionSet.has(p));
+        const allDisplayItems = [...persistedOnly, ...inputs];
+        return allDisplayItems.length > 0 ? (
         <div className="space-y-1 mb-4 flex-1 overflow-y-auto">
-          {inputs.map((item, i) => (
+          {allDisplayItems.map((item, i) => (
             <div key={i} className="flex items-center gap-2 text-[13px] py-2 px-3 bg-card border border-border rounded-lg">
               <span style={{ color: 'var(--color-stage-1)' }}>·</span>
               <span className="flex-1 truncate">{item}</span>
@@ -471,7 +484,8 @@ function DomainInventory({
             </div>
           ))}
         </div>
-      )}
+        ) : null;
+      })()}
 
       {/* Navigation */}
       <div className="mt-auto flex justify-between items-center pt-4">

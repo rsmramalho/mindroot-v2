@@ -374,7 +374,7 @@ function TriageView() {
           className="w-11 h-11 rounded-full bg-surface border border-border flex items-center justify-center text-text-muted text-lg"
           aria-label="Pular"
         >
-          ←
+          →
         </button>
         {triageResult ? (
           <button

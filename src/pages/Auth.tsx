@@ -176,7 +176,7 @@ export function AuthPage({ onBack }: AuthPageProps) {
 
   // ─── Login / Signup ───────────────────────────────────
   return (
-    <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6">
+    <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6 w-full">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-10">

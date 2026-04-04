@@ -8,7 +8,7 @@ interface LandingPageProps {
 export function LandingPage({ onLogin }: LandingPageProps) {
   return (
     <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6 w-full">
-      <div className="text-center w-full max-w-sm">
+      <div className="text-center w-full max-w-xs sm:max-w-sm">
         {/* Raiz symbol */}
         <div className="mb-8">
           <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-accent-light to-accent flex items-center justify-center">
@@ -21,13 +21,11 @@ export function LandingPage({ onLogin }: LandingPageProps) {
           sistema operacional pessoal
         </p>
         <p className="text-sm text-text-muted font-light leading-relaxed mb-10">
-          emocao precede acao, reflexao fecha o ciclo.
-          <br />
-          capture, organize, conecte — do ponto ao circulo.
+          emocao precede acao, reflexao fecha o ciclo. capture, organize, conecte — do ponto ao circulo.
         </p>
 
         {/* Geometry sequence */}
-        <div className="flex items-center justify-center gap-3 text-text-muted text-lg mb-10">
+        <div className="flex items-center justify-center gap-1.5 sm:gap-3 text-text-muted text-lg mb-10 flex-wrap">
           <span>·</span>
           <span className="text-xs">→</span>
           <span>—</span>

@@ -18,6 +18,7 @@ export function usePipeline() {
     try {
       const item = await pipelineService.capture(title, user.id);
       invalidate();
+      setTimeout(() => invalidate(), 800);
       toast.success('Item capturado');
       return item;
     } catch {
