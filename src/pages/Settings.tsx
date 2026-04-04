@@ -20,7 +20,7 @@ export function SettingsPage() {
   const setTheme = useAppStore((s) => s.setTheme);
   const { items } = useItems();
   const { signOut } = useAuth();
-  const { getStatus, connectGoogle, syncCalendar, disconnect, syncState } = useConnectors();
+  const { getStatus, connectGoogle, syncCalendar, syncGmail, disconnect, syncState } = useConnectors();
 
   const email = user?.email ?? '';
   const name = user?.user_metadata?.full_name ?? email.split('@')[0];
@@ -115,18 +115,20 @@ export function SettingsPage() {
         <ConnectorRow
           icon="📅"
           name="Google Calendar"
-          status={getStatus('google_calendar')}
+          status={getStatus('google')}
           syncing={syncState === 'syncing'}
           onConnect={connectGoogle}
           onSync={syncCalendar}
-          onDisconnect={() => disconnect('google_calendar')}
+          onDisconnect={() => disconnect('google')}
         />
         <ConnectorRow
-          icon="✉️"
+          icon="📧"
           name="Gmail"
-          status={getStatus('google_gmail')}
+          status={getStatus('google')}
+          syncing={syncState === 'syncing'}
           onConnect={connectGoogle}
-          comingSoon
+          onSync={syncGmail}
+          onDisconnect={() => disconnect('google')}
         />
         <ConnectorRow
           icon="☁️"

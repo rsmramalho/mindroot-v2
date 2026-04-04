@@ -1,85 +1,66 @@
-// Edge function: connector-auth
-// Stores Google OAuth tokens in user_connectors table.
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, content-type, x-client-info, apikey',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, content-type, x-client-info, apikey",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
+function json(body: Record<string, unknown>, status = 200): Response {
+  return new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
+}
+function err(msg: string, code: string, status: number, detail?: string): Response {
+  const p: Record<string, string> = { error: msg, code }; if (detail) p.detail = detail;
+  console.error(`[connector-auth] ${code}: ${msg}`, detail ?? ""); return json(p, status);
+}
+function log(step: string, data?: Record<string, unknown>): void {
+  console.log(`[connector-auth] ${step}`, data ? JSON.stringify(data) : "");
+}
 
-  const headers = { ...corsHeaders, 'Content-Type': 'application/json' };
+Deno.serve(async (req: Request): Promise<Response> => {
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
+  if (req.method !== "POST") return err("Method not allowed", "AUTH_001", 405);
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    log("start");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl) return err("Server misconfigured", "AUTH_010", 500, "SUPABASE_URL not set");
+    if (!serviceRoleKey) return err("Server misconfigured", "AUTH_011", 500, "SUPABASE_SERVICE_ROLE_KEY not set");
 
-    if (!supabaseUrl || !serviceRoleKey) {
-      return new Response(
-        JSON.stringify({ error: 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY' }),
-        { status: 500, headers },
-      );
-    }
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer "))
+      return err("Missing Authorization header", "AUTH_020", 401);
 
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), { status: 401, headers });
-    }
-
+    const jwt = authHeader.replace("Bearer ", "");
     const supabase = createClient(supabaseUrl, serviceRoleKey);
+    const { data: userData, error: authError } = await supabase.auth.getUser(jwt);
+    if (authError || !userData?.user)
+      return err("Invalid token", "AUTH_021", 401, authError?.message ?? "null user");
 
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid token', detail: authError?.message }),
-        { status: 401, headers },
-      );
-    }
+    const userId = userData.user.id;
+    log("user-ok", { userId });
 
-    const body = await req.json();
+    let body: Record<string, unknown>;
+    try { const raw = await req.text(); body = JSON.parse(raw || "{}"); }
+    catch (e) { return err("Invalid JSON", "AUTH_031", 400, String(e)); }
+
     const { provider_refresh_token, provider, scopes, metadata } = body;
+    if (!provider || typeof provider !== "string") return err("Missing provider", "AUTH_032", 400);
+    if (!provider_refresh_token || typeof provider_refresh_token !== "string") return err("Missing refresh_token", "AUTH_033", 400);
 
-    if (!provider || !provider_refresh_token) {
-      return new Response(
-        JSON.stringify({ error: 'Missing provider or refresh_token', received: Object.keys(body) }),
-        { status: 400, headers },
-      );
-    }
+    const { error: upsertError } = await supabase.from("user_connectors").upsert({
+      user_id: userId, provider: String(provider), status: "connected",
+      provider_refresh_token: String(provider_refresh_token),
+      scopes: Array.isArray(scopes) ? scopes : [],
+      metadata: (metadata && typeof metadata === "object") ? metadata : {},
+      updated_at: new Date().toISOString(),
+    }, { onConflict: "user_id,provider" });
 
-    const { error: upsertError } = await supabase
-      .from('user_connectors')
-      .upsert(
-        {
-          user_id: user.id,
-          provider,
-          status: 'connected',
-          provider_refresh_token,
-          scopes: scopes ?? [],
-          metadata: metadata ?? {},
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: 'user_id,provider' },
-      );
-
-    if (upsertError) {
-      return new Response(
-        JSON.stringify({ error: 'Upsert failed', detail: upsertError.message }),
-        { status: 500, headers },
-      );
-    }
-
-    return new Response(JSON.stringify({ status: 'connected', provider }), { headers });
-  } catch (err) {
-    return new Response(
-      JSON.stringify({ error: 'Unhandled', detail: String(err) }),
-      { status: 500, headers },
-    );
+    if (upsertError) return err("Upsert failed", "AUTH_041", 500, upsertError.message);
+    log("done", { provider, userId });
+    return json({ status: "connected", provider: String(provider), user_id: userId });
+  } catch (u) {
+    return err("Unhandled", "AUTH_999", 500, u instanceof Error ? `${u.name}: ${u.message}` : String(u));
   }
 });

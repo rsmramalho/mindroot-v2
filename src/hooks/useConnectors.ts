@@ -21,7 +21,6 @@ export function useConnectors() {
       const data = await connectorService.getConnectors();
       setConnectors(data);
     } catch {
-      // Table might not exist yet — treat as empty
       setConnectors([]);
     } finally {
       setLoading(false);
@@ -52,14 +51,26 @@ export function useConnectors() {
       queryClient.invalidateQueries({ queryKey: ['items'] });
       await refresh();
       setSyncState('done');
-      if (created > 0) {
-        toast.success(`${created} eventos importados pro inbox`);
-      } else {
-        toast.success('Calendar sincronizado — nenhum evento novo');
-      }
+      toast.success(created > 0 ? `${created} eventos importados pro inbox` : 'Calendar sincronizado');
     } catch (err: any) {
       setSyncState('error');
       toast.error(err.message ?? 'Erro ao sincronizar calendar');
+    }
+  };
+
+  const syncGmail = async () => {
+    if (!user) return;
+    setSyncState('syncing');
+    try {
+      const messages = await connectorService.syncGmail();
+      const created = await connectorService.ingestGmailMessages(messages, user.id);
+      queryClient.invalidateQueries({ queryKey: ['items'] });
+      await refresh();
+      setSyncState('done');
+      toast.success(created > 0 ? `${created} emails importados pro inbox` : 'Gmail sincronizado');
+    } catch (err: any) {
+      setSyncState('error');
+      toast.error(err.message ?? 'Erro ao sincronizar Gmail');
     }
   };
 
@@ -74,13 +85,7 @@ export function useConnectors() {
   };
 
   return {
-    connectors,
-    loading,
-    syncState,
-    getStatus,
-    connectGoogle,
-    syncCalendar,
-    disconnect,
-    refresh,
+    connectors, loading, syncState,
+    getStatus, connectGoogle, syncCalendar, syncGmail, disconnect, refresh,
   };
 }

@@ -45,7 +45,7 @@ export function useAuth() {
         console.log('[connector] refresh_token detected, storing...');
         connectorService.storeTokens(
           session.provider_refresh_token,
-          'google_calendar',
+          'google',
           { email: session.user?.email },
         ).then(() => {
           console.log('[connector] tokens stored successfully');

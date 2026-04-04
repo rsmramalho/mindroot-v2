@@ -27,11 +27,19 @@ export function CalendarPage() {
   const itemsByDate = useMemo(() => {
     const map: Record<string, AtomItem[]> = {};
     items.forEach((item) => {
+      // Due date from operations
       const due = item.body?.operations?.due_date;
       if (due) {
         const key = due.slice(0, 10);
         if (!map[key]) map[key] = [];
         map[key].push(item);
+      }
+      // Google Calendar events (body.start)
+      const start = (item.body as Record<string, unknown>)?.start;
+      if (start && typeof start === 'string' && item.tags?.includes('#source:google-calendar')) {
+        const key = start.slice(0, 10);
+        if (!map[key]) map[key] = [];
+        if (!map[key].includes(item)) map[key].push(item);
       }
     });
     return map;

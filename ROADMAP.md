@@ -241,9 +241,8 @@ Os 9 domínios:
 Notas: Wireframes existem (telas 10 e 11). Raiz É o onboarding. E depois fica como painel de saúde da vida. Cada domínio é uma lente — os items são os mesmos do Supabase, filtrados por `#domain:*`. Zero schema novo.
 
 ### ◐ Fase 2 — Conectores (effort: 1)
-**Status:** parcial (OAuth + UI done, edge functions bloqueadas)
-**Commits:** cfc2eb2 (infra) + edc1f68 (fallback) + 978b24f (edge fix)
-**Protocol:** full
+**Status:** em progresso (edge functions bulletproof + Gmail + provider unificado)
+**Protocol:** full (GUARDIAO → ROOT → ESTRUTURA → INTERFACE → TEIA)
 **Escopo:** Portas de entrada reais. O que o Raiz mapeou agora tem caminho pra entrar no sistema.
 
 O Raiz diz "você tem 6 emails." Os conectores fazem esses emails virarem items. O Raiz diz "seu calendário tá em UTC." Os conectores corrigem e sincronizam. A promessa do "Human Systems" se materializa aqui.
@@ -414,6 +413,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 | 6.2 | 04 Abr 2026 | F1 Raiz: Routine Builder registrado como entregavel (e36c271, 11 files, 1044 LOC). Seeds: Atom Agent adicionado. Metricas: 60 commits, 97 files, ~11K LOC. |
 | 6.3 | 04 Abr 2026 | Naming: Atom HS→Atom. Pentagono: V3=Lab, V4=Yugar, V5=Muda. Atlas→hexagono. Identity spec v1.0 (atom-engine-core). |
 | 6.4 | 05 Abr 2026 | F3 Toque+Alma + F4 Biblioteca: Soul loop aurora (AuroraCheckin + soul-store), Library no BottomNav (calendar removido), domain filter Raiz, Graph view (D3 force layout, /graph), Home polish (search→capture, ver todos link), ItemDetail advance labels. 14 pages, 109 files, ~6.7K LOC, 90 tests. |
+| 6.5 | 05 Abr 2026 | F2 Conectores: edge functions bulletproof (error codes), Gmail sync, provider unificado 'google', Calendar mostra eventos importados. Protocol: full. |
 
 ---
 

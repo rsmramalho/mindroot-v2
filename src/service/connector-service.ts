@@ -21,6 +21,16 @@ export interface CalendarEvent {
   recurring: boolean;
 }
 
+export interface GmailMessage {
+  id: string;
+  thread_id: string;
+  subject: string;
+  from: string;
+  date: string;
+  snippet: string;
+  labels: string[];
+}
+
 const GOOGLE_SCOPES = [
   'https://www.googleapis.com/auth/calendar.readonly',
   'https://www.googleapis.com/auth/gmail.readonly',
@@ -33,7 +43,7 @@ export const connectorService = {
       .select('provider, status, last_sync_at, metadata');
 
     if (error) {
-      console.warn('[connector] getConnectors error (table may not exist):', error.message);
+      console.warn('[connector] getConnectors error:', error.message);
       throw error;
     }
 
@@ -65,7 +75,6 @@ export const connectorService = {
     provider: string,
     metadata: Record<string, unknown> = {},
   ): Promise<void> {
-
     // Try edge function first
     try {
       const resp = await supabase.functions.invoke('connector-auth', {
@@ -76,14 +85,13 @@ export const connectorService = {
           metadata,
         },
       });
-
       if (resp.error) throw new Error(resp.error.message);
       return;
     } catch (edgeFnErr) {
       console.warn('[connector] edge function failed, falling back to direct insert:', edgeFnErr);
     }
 
-    // Fallback: insert directly (works if table exists and RLS allows it)
+    // Fallback: insert directly
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error('No active session for fallback insert');
     const { error } = await supabase
@@ -100,7 +108,6 @@ export const connectorService = {
         },
         { onConflict: 'user_id,provider' },
       );
-
     if (error) throw new Error(`Direct insert failed: ${error.message}`);
   },
 
@@ -110,55 +117,61 @@ export const connectorService = {
     const resp = await supabase.functions.invoke('calendar-sync', {
       body: { user_id: session.user.id },
     });
-
     if (resp.error) throw new Error(resp.error.message);
-
     const body = resp.data as { events: CalendarEvent[]; timezone: string; synced_at: string };
     return body.events;
   },
 
-  async ingestCalendarEvents(events: CalendarEvent[], userId: string): Promise<number> {
-    // Get existing items with google_id to avoid duplicates
-    const { data: existingItems } = await supabase
-      .from('items')
-      .select('body')
-      .eq('user_id', userId)
-      .not('body', 'is', null);
+  async syncGmail(): Promise<GmailMessage[]> {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error('Not authenticated');
+    const resp = await supabase.functions.invoke('gmail-sync', {
+      body: { user_id: session.user.id },
+    });
+    if (resp.error) throw new Error(resp.error.message);
+    return (resp.data as { messages: GmailMessage[] }).messages;
+  },
 
+  async ingestCalendarEvents(events: CalendarEvent[], userId: string): Promise<number> {
+    const { data: existingItems } = await supabase
+      .from('items').select('body').eq('user_id', userId).not('body', 'is', null);
     const existingGoogleIds = new Set(
-      (existingItems ?? [])
-        .map((i) => (i.body as Record<string, unknown>)?.google_id)
-        .filter(Boolean),
+      (existingItems ?? []).map((i) => (i.body as Record<string, unknown>)?.google_id).filter(Boolean),
     );
 
     let created = 0;
     for (const event of events) {
       if (existingGoogleIds.has(event.google_id)) continue;
-
-      // Determine type based on event characteristics
       const type = event.recurring ? 'ritual' : 'task';
-
       await itemService.create({
-        title: event.title,
-        user_id: userId,
-        type,
-        module: 'bridge',
-        tags: ['#domain:tempo', '#calendar', '#source:google-calendar'],
-        status: 'inbox',
-        state: 'inbox',
-        genesis_stage: 1,
-        source: 'atom-engine',
-        body: {
-          google_id: event.google_id,
-          start: event.start,
-          end: event.end,
-          calendar: event.calendar,
-          recurring: event.recurring,
-        },
+        title: event.title, user_id: userId, type, module: 'bridge',
+        tags: ['#domain:time', '#source:google-calendar', '#connector'],
+        status: 'inbox', state: 'inbox', genesis_stage: 1, source: 'atom-engine',
+        body: { google_id: event.google_id, start: event.start, end: event.end, calendar: event.calendar, recurring: event.recurring },
       });
       created++;
     }
+    return created;
+  },
 
+  async ingestGmailMessages(messages: GmailMessage[], userId: string): Promise<number> {
+    const { data: existingItems } = await supabase
+      .from('items').select('body').eq('user_id', userId).not('body', 'is', null);
+    const existingIds = new Set(
+      (existingItems ?? []).map((i) => (i.body as any)?.gmail_id).filter(Boolean),
+    );
+
+    let created = 0;
+    for (const msg of messages) {
+      if (existingIds.has(msg.id)) continue;
+      await itemService.create({
+        title: msg.subject || '(sem assunto)', user_id: userId, type: 'note', module: 'bridge',
+        tags: ['#domain:communication', '#source:gmail', '#connector'],
+        status: 'inbox', state: 'inbox', genesis_stage: 1, source: 'atom-engine',
+        body: { gmail_id: msg.id, from: msg.from, date: msg.date, snippet: msg.snippet, labels: msg.labels },
+      });
+      created++;
+    }
     return created;
   },
 
@@ -167,7 +180,6 @@ export const connectorService = {
       .from('user_connectors')
       .update({ status: 'disconnected', provider_refresh_token: null, updated_at: new Date().toISOString() })
       .eq('provider', provider);
-
     if (error) throw error;
   },
 };
