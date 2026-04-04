@@ -23,15 +23,24 @@ export function generateItems(answers: BuilderAnswer[], module: AtomModule): Bui
 
     // Generate items based on question context
     if (question.inputType === 'freetext' && value.trim()) {
-      items.push({
-        tempId: tempId(),
-        title: value.trim(),
-        type: inferType(question.id, value),
-        module,
-        tags: [`#domain:${inferDomain(module)}`, '#raiz', '#routine-builder'],
-        ritualSlot: inferSlot(question.id, answers),
-        notes: question.text,
-      });
+      // Check if next answer is a frequency — if so, skip this freetext.
+      // The frequency handler will use this text as the habit title.
+      const idx = answers.indexOf(answer);
+      const nextAnswer = idx < answers.length - 1 ? answers[idx + 1] : null;
+      const nextQuestion = nextAnswer ? BUILDER_QUESTION_MAP[nextAnswer.questionId] : null;
+      const isContextForFrequency = nextQuestion?.inputType === 'frequency';
+
+      if (!isContextForFrequency) {
+        items.push({
+          tempId: tempId(),
+          title: value.trim(),
+          type: inferType(question.id, value),
+          module,
+          tags: [`#domain:${inferDomain(module)}`, '#raiz', '#routine-builder'],
+          ritualSlot: inferSlot(question.id, answers),
+          notes: question.text,
+        });
+      }
     }
 
     if (question.inputType === 'frequency') {
