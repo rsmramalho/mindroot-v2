@@ -1,6 +1,6 @@
 # Atom — Roadmap
 
-**Versão:** 6.5
+**Versão:** 6.7
 **Data:** 05 Abr 2026
 **Status:** active
 **Princípio:** Motor → Inteligência → Visualização → Reflexão. Presença sobre produtividade.
@@ -258,7 +258,7 @@ Entregaveis — Conectores API:
 - [x] Painel de conectores: status de cada integracao (conectado / desconectado / erro)
 - [x] Pipeline de ingestao: conector → inbox (estagio 1) → Genesis pipeline normal
 - [x] connector-service.ts + useConnectors hook
-- [ ] Edge functions bulletproof: connector-auth (AUTH_xxx), calendar-sync (CAL_xxx), gmail-sync (GMAIL_xxx)
+- [x] Edge functions bulletproof: connector-auth (AUTH_xxx), calendar-sync (CAL_xxx), gmail-sync (GMAIL_xxx) — commit e26891a
 
 Entregaveis — Agent Local (Atom Agent):
 - [ ] **Atom Agent v0.1**: Python CLI — scan, classify, rename, move, index no Supabase
@@ -379,19 +379,19 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 
 | Métrica | Valor |
 |---------|-------|
-| Commits | 77 |
+| Commits | 80 |
 | Files | 109 (.ts/.tsx) |
-| LOC | ~12,100 |
+| LOC | ~12,200 |
 | Pages | 14 |
 | Components | 26 |
 | Services | 11 |
 | Engines | 6 |
 | Stores | 4 (app, wrap, toast, soul) |
 | Hooks | 13 |
-| Tests | 90+ (vitest) |
+| Tests | 14 test files (vitest) |
 | Bundle (gzip) | ~83KB main |
-| Edge functions | 5 (+ gmail-sync pendente) |
-| Migrations | 8 (+ 009 pendente) |
+| Edge functions | 6 (incl. gmail-sync) |
+| Migrations | 9 (incl. 009 provider unify) |
 | TS errors | 0 |
 
 ---
@@ -426,6 +426,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 | 6.3 | 04 Abr 2026 | Naming: Atom HS→Atom. Pentagono: V3=Lab, V4=Yugar, V5=Muda. Atlas→hexagono. Identity spec v1.0 (atom-engine-core). |
 | 6.4 | 05 Abr 2026 | F3 Toque+Alma + F4 Biblioteca: Soul loop aurora (AuroraCheckin + soul-store), Library no BottomNav (calendar removido), domain filter Raiz, Graph view (D3 force layout, /graph), Home polish (search→capture, ver todos link), ItemDetail advance labels. 14 pages, 109 files, ~6.7K LOC, 90 tests. |
 | 6.5 | 05 Abr 2026 | Roadmap sync: F3 15/19 (toque 8/8, alma 3/6, triage 4/5), F4 7/9 (library+graph+connections done). F2 expandido: Atom Agent v0.1 movido de Seeds pra F2, protocol:full marcado. Metricas: 77 commits, 109 files, ~12.1K LOC. |
+| 6.7 | 05 Abr 2026 | Cross-repo sync: F2 edge functions checkbox marcado (e26891a), metricas reais (80 commits, 6 edge fns, 9 migrations). Atom Agent repo criado (2 commits, 17 files). PENTAGON v3.1 alinhado. Versao corrigida (6.5→6.7, pulando 6.6 que foi sobrescrita). |
 
 ---
 
