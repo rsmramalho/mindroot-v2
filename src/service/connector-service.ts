@@ -65,8 +65,6 @@ export const connectorService = {
     provider: string,
     metadata: Record<string, unknown> = {},
   ): Promise<void> {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) throw new Error('No active session');
 
     // Try edge function first
     try {
@@ -86,6 +84,8 @@ export const connectorService = {
     }
 
     // Fallback: insert directly (works if table exists and RLS allows it)
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error('No active session for fallback insert');
     const { error } = await supabase
       .from('user_connectors')
       .upsert(
@@ -105,11 +105,9 @@ export const connectorService = {
   },
 
   async syncCalendar(): Promise<CalendarEvent[]> {
-    const { data: { session } } = await supabase.auth.getSession();
+    // supabase.functions.invoke sends Authorization header automatically
     const resp = await supabase.functions.invoke('calendar-sync', {
-      headers: {
-        Authorization: `Bearer ${session?.access_token}`,
-      },
+      body: {},
     });
 
     if (resp.error) throw new Error(resp.error.message);
