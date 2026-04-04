@@ -1,7 +1,7 @@
 # Atom — Roadmap
 
-**Versão:** 6.3
-**Data:** 04 Abr 2026
+**Versão:** 6.4
+**Data:** 05 Abr 2026
 **Status:** active
 **Princípio:** Motor → Inteligência → Visualização → Reflexão. Presença sobre produtividade.
 
@@ -413,6 +413,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 | 6.1 | 04 Abr 2026 | Sync: F1 Raiz DONE (b64511b), F2 Conectores PARCIAL (OAuth+UI done, edge functions blocked). Metricas atualizadas: 57 commits, 86 files, ~10K LOC. |
 | 6.2 | 04 Abr 2026 | F1 Raiz: Routine Builder registrado como entregavel (e36c271, 11 files, 1044 LOC). Seeds: Atom Agent adicionado. Metricas: 60 commits, 97 files, ~11K LOC. |
 | 6.3 | 04 Abr 2026 | Naming: Atom HS→Atom. Pentagono: V3=Lab, V4=Yugar, V5=Muda. Atlas→hexagono. Identity spec v1.0 (atom-engine-core). |
+| 6.4 | 05 Abr 2026 | F3 Toque+Alma + F4 Biblioteca: Soul loop aurora (AuroraCheckin + soul-store), Library no BottomNav (calendar removido), domain filter Raiz, Graph view (D3 force layout, /graph), Home polish (search→capture, ver todos link), ItemDetail advance labels. 14 pages, 109 files, ~6.7K LOC, 90 tests. |
 
 ---
 
