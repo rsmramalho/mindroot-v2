@@ -199,7 +199,7 @@ function AppContent() {
   }
 
   // Cockpit preview — accessible without auth for testing
-  if (window.location.pathname === '/preview/cockpit') {
+  if (window.location.pathname === '/preview/cockpit' || window.location.pathname === '/') {
     return <CockpitPreview />;
   }
 
