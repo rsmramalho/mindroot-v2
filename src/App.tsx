@@ -18,6 +18,7 @@ import type { AppPage } from '@/types/ui';
 // Static pages (pre-auth)
 import { LandingPage } from '@/pages/Landing';
 import { AuthPage } from '@/pages/Auth';
+import { CockpitPage as CockpitPreview } from '@/pages/Cockpit';
 
 // Lazy-loaded pages (post-auth)
 const HomePage = lazy(() => import('@/pages/Home').then((m) => ({ default: m.HomePage })));
@@ -32,6 +33,7 @@ const SettingsPage = lazy(() => import('@/pages/Settings').then((m) => ({ defaul
 const RaizPage = lazy(() => import('@/pages/Raiz').then((m) => ({ default: m.RaizPage })));
 const SearchPage = lazy(() => import('@/pages/Search').then((m) => ({ default: m.SearchPage })));
 const ItemDetailPage = lazy(() => import('@/pages/ItemDetail').then((m) => ({ default: m.ItemDetailPage })));
+const CockpitPage = lazy(() => import('@/pages/Cockpit').then((m) => ({ default: m.CockpitPage })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -67,6 +69,7 @@ const PATH_TO_PAGE: Record<string, AppPage> = {
   '/search': 'search',
   '/settings': 'settings',
   '/graph': 'graph',
+  '/cockpit': 'home',
 };
 
 function RouteSync() {
@@ -115,6 +118,7 @@ function AnimatedRoutes() {
             <Route path="/search" element={<SearchPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/item/:id" element={<ItemDetailPage />} />
+            <Route path="/cockpit" element={<CockpitPage />} />
             <Route path="/auth/callback" element={<HomePage />} />
             <Route path="/auth/reset" element={<AuthPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -192,6 +196,11 @@ function AppContent() {
   // Password reset callback — render AuthPage regardless of auth state
   if (window.location.pathname === '/auth/reset') {
     return <AuthPage />;
+  }
+
+  // Cockpit preview — accessible without auth for testing
+  if (window.location.pathname === '/preview/cockpit') {
+    return <CockpitPreview />;
   }
 
   if (!user) {
