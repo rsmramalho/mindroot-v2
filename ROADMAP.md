@@ -1,6 +1,6 @@
 # Atom — Roadmap
 
-**Versão:** 6.4
+**Versão:** 6.5
 **Data:** 05 Abr 2026
 **Status:** active
 **Princípio:** Motor → Inteligência → Visualização → Reflexão. Presença sobre produtividade.
@@ -190,15 +190,15 @@ A seed da Espiral 2 nasce aqui.
 
 ## Espiral 2 — Vida / sistema operacional
 
-**Status:** em andamento (F1 done, F2 parcial)
+**Status:** em andamento (F1 done, F2 parcial, F3 15/19, F4 7/9)
 **Princípio:** Se existe no digital, tem como entrar. Raiz é a fundação. Conectores são a razão de existir.
 
 ```
      ✓   ·  (1)  F1 — Raiz
-     ◐  —   (1)  F2 — Conectores
-       △    (2)  F3 — Toque + alma
-      □     (3)  F4 — Biblioteca + grafo
-     ⬠      (5)  F5 — Companheiro
+     ◐  —   (1)  F2 — Conectores (API + Agent Local)
+     ◐  △   (2)  F3 — Toque + alma
+     ◐  □   (3)  F4 — Biblioteca + grafo
+        ⬠   (5)  F5 — Companheiro
 ```
 
 ### ✅ Fase 1 · Raiz (effort: 1)
@@ -241,82 +241,90 @@ Os 9 domínios:
 Notas: Wireframes existem (telas 10 e 11). Raiz É o onboarding. E depois fica como painel de saúde da vida. Cada domínio é uma lente — os items são os mesmos do Supabase, filtrados por `#domain:*`. Zero schema novo.
 
 ### ◐ Fase 2 — Conectores (effort: 1)
-**Status:** em progresso (edge functions bulletproof + Gmail + provider unificado)
+**Status:** em progresso (edge functions + Gmail + Atom Agent)
+**Commits:** cfc2eb2 (infra) + edc1f68 (fallback) + 978b24f (edge fix) + e26891a (F2 fix)
 **Protocol:** full (GUARDIAO → ROOT → ESTRUTURA → INTERFACE → TEIA)
-**Escopo:** Portas de entrada reais. O que o Raiz mapeou agora tem caminho pra entrar no sistema.
+**Escopo:** Portas de entrada reais — API + filesystem. O que o Raiz mapeou agora tem caminho pra entrar no sistema. Tres bocas, uma esteira.
 
-O Raiz diz "você tem 6 emails." Os conectores fazem esses emails virarem items. O Raiz diz "seu calendário tá em UTC." Os conectores corrigem e sincronizam. A promessa do "Human Systems" se materializa aqui.
+O Raiz diz "voce tem 6 emails." Os conectores fazem esses emails virarem items. O Raiz diz "seu calendario ta em UTC." Os conectores corrigem e sincronizam. O agent local organiza Downloads todo dia. A promessa do "Human Systems" se materializa aqui.
 
-Entregáveis:
-- [ ] **Gmail → Atom**: emails marcados/starred viram items no inbox automaticamente
-- [ ] Gmail: consolidação assistida (6 → 2 emails) — o sistema propõe, Rick executa
+Entregaveis — Conectores API:
+- [ ] **Gmail → Atom**: emails starred viram items no inbox automaticamente
 - [ ] Gmail: contatos relevantes viram tags `#who:*` com dados reais
 - [x] **Google Calendar → Atom**: OAuth conectado, refresh token salvo, UI de conectores
-- [ ] Calendar: sync de eventos (bloqueado — edge function non-2xx)
+- [ ] Calendar: sync de eventos end-to-end (edge function fix pendente)
 - [ ] Calendar: timezone corrigido (UTC → Australia/Brisbane)
-- [ ] Calendar: blocos do ritual (aurora/zênite/crepúsculo) como eventos recorrentes reais
-- [ ] **Google Drive → Atom**: scan de arquivos existentes, classificação por domínio
-- [ ] Drive: Google Photos no `r.r@saystay.com` → plano de migração pro `r@ramalho.au`
-- [x] Painel de conectores: status de cada integração (conectado / desconectado / erro)
-- [x] Pipeline de ingestão: conector → inbox (estágio 1) → Genesis pipeline normal
+- [ ] Calendar: blocos do ritual (aurora/zenite/crepusculo) como eventos recorrentes reais
+- [x] Painel de conectores: status de cada integracao (conectado / desconectado / erro)
+- [x] Pipeline de ingestao: conector → inbox (estagio 1) → Genesis pipeline normal
+- [x] connector-service.ts + useConnectors hook
+- [ ] Edge functions bulletproof: connector-auth (AUTH_xxx), calendar-sync (CAL_xxx), gmail-sync (GMAIL_xxx)
 
-Princípio de ingestão: tudo que entra por conector vai pro inbox como qualquer outro item. O triage classifica. O pipeline matura. O Genesis não muda — o que muda é quantas coisas entram.
+Entregaveis — Agent Local (Atom Agent):
+- [ ] **Atom Agent v0.1**: Python CLI — scan, classify, rename, move, index no Supabase
+- [ ] body.location extension (service, path, hash, mime, size) — zero migracao
+- [ ] Scanner: SHA-256 hash, dedup, metadata
+- [ ] Classifier: regras por nome + extensao + confidence bands
+- [ ] Namer: naming convention Genesis §8.4 aplicada a filenames
+- [ ] CLI: `atom-agent scan <path>` com aprovacao humana antes de mover
+- [ ] AtomDrive: estrutura local espelhando modulos Genesis
+- [ ] Agent: `atom-agent watch <path>` — daemon mode (v0.2)
+- [ ] Agent: Haiku fallback pra classificacao ambigua (v0.2)
 
-Notas: Gmail MCP e Google Calendar MCP já estão conectados no Claude.ai. A integração MindRoot usa as mesmas APIs (Supabase Edge Functions como proxy). Drive usa Google Drive API. Cada conector é independente — se Gmail falha, Calendar continua. Escopo limitado a leitura + ingestão. Ações (enviar email, criar evento) são Espiral 3.
+Principio de ingestao: tudo que entra por conector (API ou agent) vai pro inbox como qualquer outro item. O triage classifica. O pipeline matura. O Genesis nao muda — o que muda e quantas coisas entram.
+
+Notas: Gmail MCP e Google Calendar MCP ja estao conectados no Claude.ai. A integracao MindRoot usa as mesmas APIs (Supabase Edge Functions como proxy). Cada conector e independente — se Gmail falha, Calendar continua. Atom Agent e repo separado (`rsmramalho/atom-agent`), Python CLI, fala direto com Supabase via service key. Escopo F2 limitado a leitura + ingestao. Acoes (enviar email, criar evento) sao Espiral 3.
 
 ### ◐ Fase 3 △ Toque + alma (effort: 2)
-**Status:** parcial (soul loop aurora done, UI polish done, triage real pendente)
-**Commits:** 589c72e (soul loop) + c6ac59a (UI polish)
+**Status:** parcial (15/19 — toque 8/8, alma 3/6, triage 4/5)
+**Commits:** 589c72e (soul loop) + c6ac59a (UI polish) + 51345e1 (library nav) + 970ed01 (triage edge fn)
 **Protocol:** surface + logic
 **Escopo:** Agora que dados fluem pra dentro, o app precisa ser usável de verdade no dia a dia. Toque (UI) + Alma (soul loop) + Triage real (IA).
 
 A Espiral 1 construiu a interface. A F3 torna ela funcional sob carga real — items vindos de conectores, inventário do Raiz, captura manual. O soul loop fecha o ciclo presença.
 
-Entregáveis — Toque:
-- [x] Item Detail: edição inline (título, notes, tags) + chips clicáveis (type, module, status)
-- [x] Item Detail: botão avançar estágio (classificar → estruturar → validar → conectar → commitar)
-- [x] Item Detail: borda de módulo com cor
-- [x] Pipeline: tap num estágio expande lista de items com cards clicáveis
-- [x] Bottom Nav: redesign — ícones maiores, área de toque 44px+, badge inbox
-- [ ] Projects: botão "+ projeto" na page, cards com progress
-- [x] Home: seção "ativos" entre captura e inbox (status=active, stage≥3, max 3)
-- [x] Home: audit health bar (verde/amarelo/vermelho baseado em inbox count + orphans)
+Entregaveis — Toque:
+- [x] Item Detail: edicao inline (titulo, notes) + botao avancar estagio com labels
+- [x] Item Detail: borda de modulo com cor
+- [x] Pipeline: tap num estagio expande lista de items com cards clicaveis
+- [x] Bottom Nav: redesign — SVG icons, area de toque 48px, badge inbox
+- [x] Projects: botao "+ criar projeto" na page, cards com progress
+- [x] Home: secao "items ativos" entre captura e inbox
+- [x] Home: HealthBar (verde/amarelo/vermelho — inbox count + stale + orphans)
 
-Entregáveis — Alma:
-- [x] Soul loop aurora: app pergunta "como você tá chegando hoje?" no primeiro acesso do dia (AuroraCheckin)
-- [x] Soul loop aurora: registra emotion_before + energy + intention no soul-store
-- [ ] Soul loop task: após milestone/entrega, pergunta "como foi?" — registra emotion_after
-- [ ] Soul loop crepúsculo: wrap pergunta "como você tá saindo?" — registra shift aurora→crepúsculo
-- [ ] Wrap stepper: step 1 (soul) funcionando end-to-end com dados reais
-- [ ] Wrap display: seção SOUL renderizada com shift visível
+Entregaveis — Alma:
+- [x] Soul loop aurora: AuroraCheckin no primeiro acesso do dia (emotion + energy + intention)
+- [x] Soul loop aurora: registra no soul-store (Zustand)
+- [ ] Soul loop task: apos milestone/entrega, pergunta "como foi?" — registra emotion_after
+- [x] Soul loop crepusculo: wrap SoulStep (step 1) com emotions + energy
+- [ ] Wrap: aurora data (soul-store) nao flui pro wrap body → shift fica null
+- [ ] Wrap display: secao SOUL renderizada com shift visivel (aurora → crepusculo)
 
-Entregáveis — Triage real:
-- [x] Edge function com Claude Haiku para auto-triage (triage-classify deployed)
-- [x] 3 faixas de confiança: auto (≥90/95%), sugere (60-89/94%), manual (<60%)
-- [x] Threshold diferenciado: 95% acionáveis (task, project, spec, habit), 90% passivos
-- [x] Fallback: se edge function falha, item fica no inbox com flag
-- [x] Triage roda automaticamente — tanto captura manual quanto items de conectores
+Entregaveis — Triage real:
+- [x] Edge function triage-classify com Claude Haiku (deployed, 135 LOC)
+- [x] 3 faixas de confianca: auto (>=90/95%), sugere (60-89/94%), manual (<60%)
+- [x] Threshold diferenciado + fallback (item fica no inbox se edge fn falha)
+- [x] Triage roda automaticamente (via usePipeline)
+- [ ] ItemDetail: chips clicaveis (type, module, status editaveis inline)
 
 Notas: Soul loop segue Marco Zero seção 5 — nunca forçar, linguagem livre, só em tasks peso > 1. Triage segue Genesis v5 Parte 3.1. Esta fase é effort 2 porque combina UI + backend + IA — três camadas ao mesmo tempo. Mas o design de cada parte já existe.
 
 ### ◐ Fase 4 □ Biblioteca + grafo (effort: 3)
-**Status:** parcial (Library no nav + domain filter + Graph view done, connections UI pendente)
-**Commits:** 51345e1 (Library nav) + db6d214 (Graph D3)
+**Status:** parcial (7/9 — library + graph D3 + connections CRUD done)
+**Commits:** 51345e1 (library nav) + db6d214 (graph D3)
 **Protocol:** full
 **Escopo:** Library page, connections UI, graph visualization. O Genesis estágio 5 (Pentágono) ganha corpo na interface. Com items fluindo dos conectores e classificados pelo triage, agora o sistema mostra as conexões.
 
-Entregáveis:
-- [x] Library page: tabs (Todos, Reflexões, Recomendações, Conteúdo), filter chips por type
-- [x] Library cards: título + type chip + preview notes + data + módulo cor
-- [x] Library no BottomNav (substituiu Calendar)
-- [x] Library: filtro por domínio Raiz (9 domains)
-- [x] Item Detail: seção connections — adicionar/remover connections tipadas (8 AtomRelations)
-- [x] Item Detail: ao adicionar connection, item avança pro estágio 5 automaticamente
-- [ ] Prompt de conexão: no estágio 4, "isso se conecta com algo?" (Genesis Parte 2, portão 4)
-- [x] Graph view: D3 force layout (/graph), nós por módulo, edges por relation
-- [x] Graph: filtro por módulo
-- [ ] Graph: filtro por domínio Raiz
-- [x] Search: filtros por module, type, status, domain, tags
+Entregaveis:
+- [x] Library page: tabs (Todos, Reflexoes) + domain filter Raiz + search
+- [x] Library cards: titulo + type chip + preview notes + data + modulo cor
+- [x] Item Detail: ConnectionsSection — adicionar/remover connections tipadas (8 AtomRelations)
+- [x] Item Detail: ao adicionar connection, item avanca pro estagio 5 automaticamente (FSM)
+- [ ] Prompt de conexao: no estagio 4, "isso se conecta com algo?" (Genesis Parte 2, portao 4)
+- [x] Graph view: D3 force layout (/graph) — nos + edges interativos
+- [x] Graph: nos coloridos por modulo, edges rotuladas por relation
+- [ ] Graph: filtro por dominio Raiz (so tem module filter atualmente)
+- [x] Search: filtros avancados por module, type, status, domain, tags
 
 Notas: Wireframe Library existe (mindroot-wireframe-library-reflexoes.html). Graph usa D3 force layout. Connections usam tabela item_connections (deployed via migration 007). O grafo é o raio-x do Genesis — mostra a geometria real de tudo que entrou no sistema.
 
@@ -346,7 +354,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 - **Escudo:** Corp Shield avançado. Ações nos conectores (enviar email, criar evento, mover arquivo). O sistema passa de leitor pra agente.
 - **Resiliência:** PWA offline completo + Ollama local como fallback do Claude + sync engine. O sistema funciona sem internet.
 - **Propagação:** Estágio 6 do Genesis ganha mecânica real — cascata de eventos entre items conectados. Completar uma task atualiza o projeto. Projeto mudar de status notifica items dependentes.
-- **Atom Agent:** Braço físico do Atom. Python CLI que escaneia filesystem, Gmail, Photos, Calendar, Drive. Move, renomeia, deduplica, indexa no Supabase. 6 spirais próprias (motor → sentinela → faxineiro → guardião → consolidador → superfície). Spec v1.0 em atom-engine-core. Repo planejado: `rsmramalho/atom-agent`.
+- **Atom Agent v2+:** Evolucao do agent local (entregue em F2 como v0.1). Watch mode, Haiku classification, Google Drive scan, Photos migration, daemon diario. Repo: `rsmramalho/atom-agent`.
 
 ---
 
@@ -371,19 +379,19 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 
 | Métrica | Valor |
 |---------|-------|
-| Commits | 60 |
-| Files | 97 (.ts/.tsx) |
-| LOC | ~11,000 |
-| Pages | 13 |
-| Components | 25 |
+| Commits | 77 |
+| Files | 109 (.ts/.tsx) |
+| LOC | ~12,100 |
+| Pages | 14 |
+| Components | 26 |
 | Services | 11 |
 | Engines | 6 |
-| Stores | 3 |
-| Hooks | 12 |
-| Tests | 41 (vitest) |
+| Stores | 4 (app, wrap, toast, soul) |
+| Hooks | 13 |
+| Tests | 90+ (vitest) |
 | Bundle (gzip) | ~83KB main |
-| Edge functions | 5 |
-| Migrations | 8 |
+| Edge functions | 5 (+ gmail-sync pendente) |
+| Migrations | 8 (+ 009 pendente) |
 | TS errors | 0 |
 
 ---
@@ -417,8 +425,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 | 6.2 | 04 Abr 2026 | F1 Raiz: Routine Builder registrado como entregavel (e36c271, 11 files, 1044 LOC). Seeds: Atom Agent adicionado. Metricas: 60 commits, 97 files, ~11K LOC. |
 | 6.3 | 04 Abr 2026 | Naming: Atom HS→Atom. Pentagono: V3=Lab, V4=Yugar, V5=Muda. Atlas→hexagono. Identity spec v1.0 (atom-engine-core). |
 | 6.4 | 05 Abr 2026 | F3 Toque+Alma + F4 Biblioteca: Soul loop aurora (AuroraCheckin + soul-store), Library no BottomNav (calendar removido), domain filter Raiz, Graph view (D3 force layout, /graph), Home polish (search→capture, ver todos link), ItemDetail advance labels. 14 pages, 109 files, ~6.7K LOC, 90 tests. |
-| 6.5 | 05 Abr 2026 | F2 Conectores: edge functions bulletproof (error codes), Gmail sync, provider unificado 'google', Calendar mostra eventos importados. Protocol: full. |
-| 6.6 | 05 Abr 2026 | Sync: F3 parcial (soul aurora + UI polish + triage = 14/19 checkboxes). F4 parcial (Library nav + Graph D3 = 9/11 checkboxes). Status atualizado de futuro pra parcial. |
+| 6.5 | 05 Abr 2026 | Roadmap sync: F3 15/19 (toque 8/8, alma 3/6, triage 4/5), F4 7/9 (library+graph+connections done). F2 expandido: Atom Agent v0.1 movido de Seeds pra F2, protocol:full marcado. Metricas: 77 commits, 109 files, ~12.1K LOC. |
 
 ---
 
