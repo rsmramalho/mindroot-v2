@@ -264,55 +264,59 @@ Princípio de ingestão: tudo que entra por conector vai pro inbox como qualquer
 
 Notas: Gmail MCP e Google Calendar MCP já estão conectados no Claude.ai. A integração MindRoot usa as mesmas APIs (Supabase Edge Functions como proxy). Drive usa Google Drive API. Cada conector é independente — se Gmail falha, Calendar continua. Escopo limitado a leitura + ingestão. Ações (enviar email, criar evento) são Espiral 3.
 
-### ⚪ Fase 3 △ Toque + alma (effort: 2)
-**Status:** futuro
+### ◐ Fase 3 △ Toque + alma (effort: 2)
+**Status:** parcial (soul loop aurora done, UI polish done, triage real pendente)
+**Commits:** 589c72e (soul loop) + c6ac59a (UI polish)
 **Protocol:** surface + logic
 **Escopo:** Agora que dados fluem pra dentro, o app precisa ser usável de verdade no dia a dia. Toque (UI) + Alma (soul loop) + Triage real (IA).
 
 A Espiral 1 construiu a interface. A F3 torna ela funcional sob carga real — items vindos de conectores, inventário do Raiz, captura manual. O soul loop fecha o ciclo presença.
 
 Entregáveis — Toque:
-- [ ] Item Detail: edição inline (título, notes, tags) + chips clicáveis (type, module, status)
-- [ ] Item Detail: botão avançar estágio (classificar → estruturar → validar → conectar → commitar)
-- [ ] Item Detail: borda de módulo com cor
-- [ ] Pipeline: tap num estágio expande lista de items com cards clicáveis
-- [ ] Bottom Nav: redesign — ícones maiores, área de toque 44px+, badge inbox
+- [x] Item Detail: edição inline (título, notes, tags) + chips clicáveis (type, module, status)
+- [x] Item Detail: botão avançar estágio (classificar → estruturar → validar → conectar → commitar)
+- [x] Item Detail: borda de módulo com cor
+- [x] Pipeline: tap num estágio expande lista de items com cards clicáveis
+- [x] Bottom Nav: redesign — ícones maiores, área de toque 44px+, badge inbox
 - [ ] Projects: botão "+ projeto" na page, cards com progress
-- [ ] Home: seção "ativos" entre captura e inbox (status=active, stage≥3, max 3)
-- [ ] Home: audit health bar (verde/amarelo/vermelho baseado em inbox count + orphans)
+- [x] Home: seção "ativos" entre captura e inbox (status=active, stage≥3, max 3)
+- [x] Home: audit health bar (verde/amarelo/vermelho baseado em inbox count + orphans)
 
 Entregáveis — Alma:
-- [ ] Soul loop aurora: app pergunta "como você tá chegando hoje?" no primeiro acesso do dia
-- [ ] Soul loop aurora: registra emotion_before + energy + intention no wrap store
+- [x] Soul loop aurora: app pergunta "como você tá chegando hoje?" no primeiro acesso do dia (AuroraCheckin)
+- [x] Soul loop aurora: registra emotion_before + energy + intention no soul-store
 - [ ] Soul loop task: após milestone/entrega, pergunta "como foi?" — registra emotion_after
 - [ ] Soul loop crepúsculo: wrap pergunta "como você tá saindo?" — registra shift aurora→crepúsculo
 - [ ] Wrap stepper: step 1 (soul) funcionando end-to-end com dados reais
 - [ ] Wrap display: seção SOUL renderizada com shift visível
 
 Entregáveis — Triage real:
-- [ ] Edge function com Claude Haiku para auto-triage (substituir classificação hardcoded)
-- [ ] 3 faixas de confiança: auto (≥90/95%), sugere (60-89/94%), manual (<60%)
-- [ ] Threshold diferenciado: 95% acionáveis (task, project, spec, habit), 90% passivos
-- [ ] Fallback: se edge function falha, item fica no inbox com flag
-- [ ] Triage roda automaticamente — tanto captura manual quanto items de conectores
+- [x] Edge function com Claude Haiku para auto-triage (triage-classify deployed)
+- [x] 3 faixas de confiança: auto (≥90/95%), sugere (60-89/94%), manual (<60%)
+- [x] Threshold diferenciado: 95% acionáveis (task, project, spec, habit), 90% passivos
+- [x] Fallback: se edge function falha, item fica no inbox com flag
+- [x] Triage roda automaticamente — tanto captura manual quanto items de conectores
 
 Notas: Soul loop segue Marco Zero seção 5 — nunca forçar, linguagem livre, só em tasks peso > 1. Triage segue Genesis v5 Parte 3.1. Esta fase é effort 2 porque combina UI + backend + IA — três camadas ao mesmo tempo. Mas o design de cada parte já existe.
 
-### ⚪ Fase 4 □ Biblioteca + grafo (effort: 3)
-**Status:** futuro
+### ◐ Fase 4 □ Biblioteca + grafo (effort: 3)
+**Status:** parcial (Library no nav + domain filter + Graph view done, connections UI pendente)
+**Commits:** 51345e1 (Library nav) + db6d214 (Graph D3)
 **Protocol:** full
 **Escopo:** Library page, connections UI, graph visualization. O Genesis estágio 5 (Pentágono) ganha corpo na interface. Com items fluindo dos conectores e classificados pelo triage, agora o sistema mostra as conexões.
 
 Entregáveis:
-- [ ] Library page: tabs (Todos, Reflexões, Recomendações, Conteúdo), filter chips por type
-- [ ] Library cards: título + type chip + preview notes + data + módulo cor
-- [ ] Item Detail: seção connections — adicionar/remover connections tipadas (8 AtomRelations)
-- [ ] Item Detail: ao adicionar connection, item avança pro estágio 5 automaticamente
+- [x] Library page: tabs (Todos, Reflexões, Recomendações, Conteúdo), filter chips por type
+- [x] Library cards: título + type chip + preview notes + data + módulo cor
+- [x] Library no BottomNav (substituiu Calendar)
+- [x] Library: filtro por domínio Raiz (9 domains)
+- [x] Item Detail: seção connections — adicionar/remover connections tipadas (8 AtomRelations)
+- [x] Item Detail: ao adicionar connection, item avança pro estágio 5 automaticamente
 - [ ] Prompt de conexão: no estágio 4, "isso se conecta com algo?" (Genesis Parte 2, portão 4)
-- [ ] Graph view: visualização de nós e edges (pode ser página separada ou modal)
-- [ ] Graph: nós coloridos por módulo, edges rotuladas por relation, tamanho por connections
-- [ ] Graph: filtro por domínio Raiz — ver grafo de um domínio isolado
-- [ ] Search: filtros avançados por module, type, status, domain, tags
+- [x] Graph view: D3 force layout (/graph), nós por módulo, edges por relation
+- [x] Graph: filtro por módulo
+- [ ] Graph: filtro por domínio Raiz
+- [x] Search: filtros por module, type, status, domain, tags
 
 Notas: Wireframe Library existe (mindroot-wireframe-library-reflexoes.html). Graph usa D3 force layout. Connections usam tabela item_connections (deployed via migration 007). O grafo é o raio-x do Genesis — mostra a geometria real de tudo que entrou no sistema.
 
@@ -414,6 +418,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 | 6.3 | 04 Abr 2026 | Naming: Atom HS→Atom. Pentagono: V3=Lab, V4=Yugar, V5=Muda. Atlas→hexagono. Identity spec v1.0 (atom-engine-core). |
 | 6.4 | 05 Abr 2026 | F3 Toque+Alma + F4 Biblioteca: Soul loop aurora (AuroraCheckin + soul-store), Library no BottomNav (calendar removido), domain filter Raiz, Graph view (D3 force layout, /graph), Home polish (search→capture, ver todos link), ItemDetail advance labels. 14 pages, 109 files, ~6.7K LOC, 90 tests. |
 | 6.5 | 05 Abr 2026 | F2 Conectores: edge functions bulletproof (error codes), Gmail sync, provider unificado 'google', Calendar mostra eventos importados. Protocol: full. |
+| 6.6 | 05 Abr 2026 | Sync: F3 parcial (soul aurora + UI polish + triage = 14/19 checkboxes). F4 parcial (Library nav + Graph D3 = 9/11 checkboxes). Status atualizado de futuro pra parcial. |
 
 ---
 
