@@ -165,12 +165,7 @@ function AuthenticatedApp() {
 
 // ─── Auth Gate ────────────────────────────────────────
 
-function AppContent() {
-  // Apply saved theme on mount
-  useLayoutEffect(() => {
-    const saved = localStorage.getItem('mindroot-theme') as ThemeMode | null;
-    applyTheme(saved ?? 'system');
-  }, []);
+function AuthGatedContent() {
   const { user, loading } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
 
@@ -198,17 +193,28 @@ function AppContent() {
     return <AuthPage />;
   }
 
-  // Cockpit preview — accessible without auth for testing
-  if (window.location.pathname === '/preview/cockpit' || window.location.pathname === '/') {
-    return <CockpitPreview />;
-  }
-
   if (!user) {
     if (showAuth) return <AuthPage onBack={() => setShowAuth(false)} />;
     return <LandingPage onLogin={() => setShowAuth(true)} />;
   }
 
   return <AuthenticatedApp />;
+}
+
+function AppContent() {
+  // Apply saved theme on mount
+  useLayoutEffect(() => {
+    const saved = localStorage.getItem('mindroot-theme') as ThemeMode | null;
+    applyTheme(saved ?? 'system');
+  }, []);
+
+  // Cockpit preview — accessible without auth for testing
+  const pathname = window.location.pathname;
+  if (pathname === '/preview/cockpit' || pathname === '/') {
+    return <CockpitPreview />;
+  }
+
+  return <AuthGatedContent />;
 }
 
 // ─── Root ─────────────────────────────────────────────
