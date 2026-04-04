@@ -18,6 +18,7 @@ const PAGE_ROUTES: Record<AppPage, string> = {
   search: '/search',
   settings: '/settings',
   'item-detail': '/item',
+  graph: '/graph',
 };
 
 export function useNav() {

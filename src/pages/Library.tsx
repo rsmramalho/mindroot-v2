@@ -20,7 +20,7 @@ const FILTER_PILLS: { key: 'all' | 'library' | 'reflections'; label: string }[] 
 
 export function LibraryPage() {
   const { items } = useItems();
-  const { selectItem } = useNav();
+  const { selectItem, navigate } = useNav();
   const [filter, setFilter] = useState<'all' | 'library' | 'reflections'>('all');
   const [search, setSearch] = useState('');
   const [domainFilter, setDomainFilter] = useState<string | null>(null);
@@ -45,8 +45,11 @@ export function LibraryPage() {
 
   return (
     <div className="px-5 pb-4">
-      <div className="pt-4 pb-3">
+      <div className="pt-4 pb-3 flex items-center justify-between">
         <h1 className="text-2xl font-medium tracking-tight">biblioteca</h1>
+        <button onClick={() => navigate('graph' as any)} className="text-xs text-accent">
+          ver grafo →
+        </button>
       </div>
 
       {/* Search */}

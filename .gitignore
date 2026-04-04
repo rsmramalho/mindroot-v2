@@ -30,3 +30,4 @@ dist-ssr
 lighthouse-report.*
 lighthouse-after.*
 .lighthouseci
+.claude/settings.local.json

@@ -27,6 +27,7 @@ const ProjectsPage = lazy(() => import('@/pages/Projects').then((m) => ({ defaul
 const CalendarPage = lazy(() => import('@/pages/Calendar').then((m) => ({ default: m.CalendarPage })));
 const AnalyticsPage = lazy(() => import('@/pages/Analytics').then((m) => ({ default: m.AnalyticsPage })));
 const LibraryPage = lazy(() => import('@/pages/Library').then((m) => ({ default: m.LibraryPage })));
+const GraphPage = lazy(() => import('@/pages/Graph').then((m) => ({ default: m.GraphPage })));
 const SettingsPage = lazy(() => import('@/pages/Settings').then((m) => ({ default: m.SettingsPage })));
 const RaizPage = lazy(() => import('@/pages/Raiz').then((m) => ({ default: m.RaizPage })));
 const SearchPage = lazy(() => import('@/pages/Search').then((m) => ({ default: m.SearchPage })));
@@ -65,6 +66,7 @@ const PATH_TO_PAGE: Record<string, AppPage> = {
   '/library': 'library',
   '/search': 'search',
   '/settings': 'settings',
+  '/graph': 'graph',
 };
 
 function RouteSync() {
@@ -109,6 +111,7 @@ function AnimatedRoutes() {
             <Route path="/raiz" element={<RaizPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/library" element={<LibraryPage />} />
+            <Route path="/graph" element={<GraphPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/item/:id" element={<ItemDetailPage />} />
