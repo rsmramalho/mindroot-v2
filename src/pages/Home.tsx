@@ -15,6 +15,8 @@ import { getCreatedToday, getModifiedToday } from '@/engine/wrap';
 import { getConfidenceBand } from '@/service/triage-service';
 import { motion } from 'framer-motion';
 import { useRaiz } from '@/hooks/useRaiz';
+import { useSoulStore } from '@/store/soul-store';
+import { AuroraCheckin } from '@/components/home/AuroraCheckin';
 import { SoulCard } from '@/components/home/SoulCard';
 import { WrapBanner } from '@/components/home/WrapBanner';
 import { AtomInput } from '@/components/home/AtomInput';
@@ -58,6 +60,7 @@ export function HomePage() {
 
   const isCrepusculo = period.key === 'crepusculo';
   const { healthPct, staleCount, emptyCount } = useRaiz();
+  const { emotion: soulEmotion, energy: soulEnergy, intention: soulIntention } = useSoulStore();
 
   if (loading) {
     return (
@@ -73,6 +76,9 @@ export function HomePage() {
 
   return (
     <div className="px-5 pb-4">
+      {/* Aurora check-in overlay */}
+      <AuroraCheckin />
+
       {/* Greeting */}
       <div className="pt-4 pb-2">
         <div className="text-[22px] font-medium tracking-tight text-text-heading flex items-center gap-2">
@@ -95,9 +101,9 @@ export function HomePage() {
         <SectionLabel>soul</SectionLabel>
         <SoulCard
           period={period.key}
-          intention={intention}
-          emotions={currentEmotion ?? 'neutro'}
-          energy={null}
+          intention={soulIntention ?? intention}
+          emotions={soulEmotion ?? currentEmotion ?? 'neutro'}
+          energy={soulEnergy}
         />
       </div>
 
