@@ -1,7 +1,7 @@
 // Edge function: connector-auth
 // Stores Google OAuth tokens in user_connectors table.
 
-import { createClient } from 'jsr:@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

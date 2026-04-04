@@ -2,7 +2,7 @@
 // Fetches Google Calendar events using stored refresh_token.
 // Renews access_token server-side, returns events to frontend.
 
-import { createClient } from 'jsr:@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
