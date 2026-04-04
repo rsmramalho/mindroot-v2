@@ -140,11 +140,12 @@ function FirstTimeRaizRedirect() {
 
 function AuthenticatedApp() {
   useRealtime();
+  const routerNavigate = useNavigate();
 
   return (
     <>
       <ToastContainer />
-      <AppShell onOpenSettings={() => useAppStore.getState().navigate('settings')}>
+      <AppShell onOpenSettings={() => routerNavigate('/settings')}>
         <OfflineBanner />
         <RouteSync />
         <FirstTimeRaizRedirect />
