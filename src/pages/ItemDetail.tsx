@@ -30,10 +30,11 @@ const STATUS_OPTIONS: { key: AtomStatus; label: string }[] = [
 ];
 
 const ADVANCE_LABELS: Record<number, string> = {
-  2: 'estruturar',
-  3: 'validar',
-  4: 'conectar',
-  5: 'commitar',
+  2: 'estruturar → stage 3',
+  3: 'validar → stage 4',
+  4: 'conectar → stage 5',
+  5: 'propagar → stage 6',
+  6: 'commitar → stage 7',
 };
 
 export function ItemDetailPage() {

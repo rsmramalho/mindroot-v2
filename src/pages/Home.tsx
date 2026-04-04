@@ -90,15 +90,6 @@ export function HomePage() {
         </div>
       </div>
 
-      {/* Search */}
-      <button
-        onClick={() => navigate('search')}
-        className="w-full flex items-center gap-2 px-4 py-2.5 bg-surface rounded-xl text-text-muted text-sm mb-3 mt-2"
-      >
-        <span className="text-xs">⌕</span>
-        <span>buscar items...</span>
-      </button>
-
       {/* Soul */}
       <div>
         <SectionLabel>soul</SectionLabel>
@@ -172,6 +163,11 @@ export function HomePage() {
               </motion.div>
             ))}
           </div>
+          {activeItems.length > 5 && (
+            <button onClick={() => navigate('pipeline')} className="text-xs text-accent mt-1.5">
+              ver todos ({activeItems.length}) →
+            </button>
+          )}
         </div>
       ) : items.length === 0 ? (
         <EmptyState
