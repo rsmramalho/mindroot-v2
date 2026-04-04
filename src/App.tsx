@@ -7,7 +7,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { useRealtime } from '@/hooks/useRealtime';
-import { useAppStore } from '@/store/app-store';
+import { useAppStore, applyTheme } from '@/store/app-store';
+import type { ThemeMode } from '@/store/app-store';
 import { AppShell } from '@/components/shell/AppShell';
 import { OfflineBanner } from '@/components/shared/OfflineBanner';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
@@ -160,11 +161,8 @@ function AuthenticatedApp() {
 function AppContent() {
   // Apply saved theme on mount
   useLayoutEffect(() => {
-    const saved = localStorage.getItem('mindroot-theme') as 'light' | 'dark' | null;
-    if (saved) {
-      document.documentElement.classList.add(saved);
-      document.documentElement.style.colorScheme = saved;
-    }
+    const saved = localStorage.getItem('mindroot-theme') as ThemeMode | null;
+    applyTheme(saved ?? 'system');
   }, []);
   const { user, loading } = useAuth();
   const [showAuth, setShowAuth] = useState(false);

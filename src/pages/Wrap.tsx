@@ -32,6 +32,7 @@ export function WrapPage() {
   const [confirmCommit, setConfirmCommit] = useState(false);
   const { items } = useItems();
   const { startWrap, session, updateSession, commitWrap, loading } = useWrap();
+  const { capture } = usePipeline();
   const { navigate } = useNav();
 
   // Local state for soul step
@@ -49,6 +50,11 @@ export function WrapPage() {
   useEffect(() => { startWrap(); }, []);
 
   const goNext = () => {
+    // Auto-flush pending decision input
+    if (step === 2 && newDecision.trim()) {
+      setDecisions([...decisions, newDecision.trim()]);
+      setNewDecision('');
+    }
     if (step < STEPS.length - 1) {
       setStep((s) => s + 1);
     } else {
@@ -77,6 +83,14 @@ export function WrapPage() {
       });
     }
     await commitWrap();
+
+    // Create inbox items from next steps
+    for (const step of validNext) {
+      try {
+        await capture(step);
+      } catch { /* non-blocking */ }
+    }
+
     setDone(true);
   };
 
@@ -283,13 +297,20 @@ function DecidedStep({ decisions, setDecisions, newDecision, setNewDecision }: {
           <span className="text-[13px]">"{d}"</span>
         </div>
       ))}
-      <input
-        className="w-full border border-border rounded-lg px-3 py-2 text-[13px] bg-card text-text outline-none focus:border-accent-light mt-2"
-        placeholder="+ adicionar decisao..."
-        value={newDecision}
-        onChange={(e) => setNewDecision(e.target.value)}
-        onKeyDown={(e) => e.key === 'Enter' && addDecision()}
-      />
+      <div className="flex gap-2 mt-2">
+        <input
+          className="flex-1 border border-border rounded-lg px-3 py-2 text-[13px] bg-card text-text outline-none focus:border-accent-light"
+          placeholder="+ adicionar decisao..."
+          value={newDecision}
+          onChange={(e) => setNewDecision(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && addDecision()}
+        />
+        {newDecision.trim() && (
+          <button onClick={addDecision} className="px-3 py-2 bg-accent text-white rounded-lg text-sm shrink-0">
+            +
+          </button>
+        )}
+      </div>
     </div>
   );
 }

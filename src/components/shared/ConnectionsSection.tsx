@@ -8,15 +8,15 @@ import type { ItemConnection, AtomRelation, AtomItem } from '@/types/item';
 import { getTypeColor } from '@/components/atoms/tokens';
 import { toast } from '@/store/toast-store';
 
-const RELATION_OPTIONS: { key: AtomRelation; label: string }[] = [
-  { key: 'belongs_to', label: 'pertence a' },
-  { key: 'references', label: 'referencia' },
-  { key: 'feeds', label: 'alimenta' },
-  { key: 'blocks', label: 'bloqueia' },
-  { key: 'derives', label: 'deriva de' },
-  { key: 'mirrors', label: 'espelha' },
-  { key: 'extracted_from', label: 'extraido de' },
-  { key: 'morphed_from', label: 'transformado de' },
+const RELATION_OPTIONS: { key: AtomRelation; label: string; inverse: string }[] = [
+  { key: 'belongs_to', label: 'pertence a', inverse: 'contem' },
+  { key: 'references', label: 'referencia', inverse: 'referenciado por' },
+  { key: 'feeds', label: 'alimenta', inverse: 'alimentado por' },
+  { key: 'blocks', label: 'bloqueia', inverse: 'bloqueado por' },
+  { key: 'derives', label: 'deriva de', inverse: 'originou' },
+  { key: 'mirrors', label: 'espelha', inverse: 'espelhado por' },
+  { key: 'extracted_from', label: 'extraido de', inverse: 'originou extracao' },
+  { key: 'morphed_from', label: 'transformado de', inverse: 'originou transformacao' },
 ];
 
 interface ConnectionsSectionProps {
@@ -52,6 +52,7 @@ export function ConnectionsSection({ itemId }: ConnectionsSectionProps) {
         otherTitle: other?.title ?? 'item desconhecido',
         otherType: other?.type ?? null,
         direction: isSource ? '→' : '←',
+        isSource,
       };
     });
   }, [connections, items, itemId]);
@@ -90,7 +91,8 @@ export function ConnectionsSection({ itemId }: ConnectionsSectionProps) {
       ) : resolved.length > 0 ? (
         <div className="space-y-1 mb-3">
           {resolved.map((c) => {
-            const label = RELATION_OPTIONS.find((r) => r.key === c.relation)?.label ?? c.relation;
+            const rel = RELATION_OPTIONS.find((r) => r.key === c.relation);
+            const label = c.isSource ? (rel?.label ?? c.relation) : (rel?.inverse ?? c.relation);
             const typeColor = c.otherType ? getTypeColor(c.otherType as import('@/types/item').AtomType) : 'var(--color-mod-bridge)';
             return (
               <div key={c.id} className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2 text-[12px]">

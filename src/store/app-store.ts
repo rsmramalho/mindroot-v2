@@ -8,7 +8,7 @@ import type { User } from '@supabase/supabase-js';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 
-function applyTheme(theme: ThemeMode) {
+export function applyTheme(theme: ThemeMode) {
   const root = document.documentElement;
   root.classList.remove('light', 'dark');
   if (theme === 'system') {
