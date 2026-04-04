@@ -105,7 +105,12 @@ export const connectorService = {
   },
 
   async syncCalendar(): Promise<CalendarEvent[]> {
-    const resp = await supabase.functions.invoke('calendar-sync');
+    const { data: { session } } = await supabase.auth.getSession();
+    const resp = await supabase.functions.invoke('calendar-sync', {
+      headers: {
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+    });
 
     if (resp.error) throw new Error(resp.error.message);
 
