@@ -108,27 +108,20 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), { status: 401, headers });
+    // Gateway already validated JWT — user_id comes from trusted frontend
+    const body = await req.json().catch(() => ({}));
+    const userId = body.user_id;
+    if (!userId) {
+      return new Response(JSON.stringify({ error: 'Missing user_id in body' }), { status: 401, headers });
     }
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid token', detail: authError?.message }),
-        { status: 401, headers },
-      );
-    }
 
     // Get stored refresh token
     const { data: connector, error: connError } = await supabase
       .from('user_connectors')
       .select('provider_refresh_token, sync_cursor')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('provider', 'google_calendar')
       .single();
 
@@ -154,7 +147,7 @@ Deno.serve(async (req: Request) => {
     await supabase
       .from('user_connectors')
       .update({ last_sync_at: new Date().toISOString(), updated_at: new Date().toISOString() })
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('provider', 'google_calendar');
 
     return new Response(
