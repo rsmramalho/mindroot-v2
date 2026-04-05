@@ -8,7 +8,12 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "lighthouse": "lhci autorun --collect.url=https://mindroot-v2.vercel.app --collect.numberOfRuns=3"
+    "lighthouse": "lhci autorun --collect.url=https://mindroot-v2.vercel.app --collect.numberOfRuns=3",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:visual": "playwright test e2e/visual-pages.spec.ts e2e/visual-flows.spec.ts",
+    "test:visual:update": "playwright test --update-snapshots",
+    "test:visual:report": "playwright show-report e2e/report"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1",
@@ -26,6 +31,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/vite": "^4.2.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",

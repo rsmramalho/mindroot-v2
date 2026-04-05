@@ -27,6 +27,11 @@ supabase/.env.supabase
 
 .vercel
 
+# Playwright
+e2e/results/
+e2e/report/
+test-results/
+
 # Lighthouse reports
 lighthouse-report.*
 lighthouse-after.*

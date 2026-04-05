@@ -140,7 +140,7 @@ Emotional productivity system — the face of Atom OS. Emotion precedes action, 
 
 ## Version
 
-v2.0.0-alpha.8 — PHI spiral. All 11 pages built from wireframes. Full auth flow.
+v2.0.0-alpha.12 — PHI spiral. 14 pages, 11 services, connectors, triage, graph, visual tests.
 
 ## Stack
 
@@ -149,9 +149,14 @@ React 19 · TypeScript 5.9 · Vite 8 · Tailwind 4 · Supabase · TanStack Query
 ## Commands
 
 ```bash
-npm run dev      # Dev server (port 5173)
-npm run build    # tsc -b && vite build
-npx tsc -b       # Type check only
+npm run dev            # Dev server (port 5173)
+npm run build          # tsc -b && vite build
+npx tsc -b             # Type check only
+npx vitest run         # Unit tests (90 tests, 14 suites)
+npm run test:visual    # Playwright visual regression (21 tests, 30 screenshots)
+npm run test:visual:update   # Update screenshot baselines
+npm run test:visual:report   # Open HTML report in browser
+npm run test:e2e:ui    # Playwright interactive UI
 ```
 
 ## Architecture
@@ -176,9 +181,10 @@ docs/
   marco-zero/      # Marco Zero v2.0 (reference)
   sql/             # Schema migration reference
   templates/       # Historical templates
+  e2e/             # Playwright visual tests + screenshots
 supabase/
-  migrations/      # 001-006
-  functions/       # parse-input, send-push, triage-classify
+  migrations/      # 001-009
+  functions/       # connector-auth, calendar-sync, gmail-sync, triage-classify, parse-input, send-push
 ```
 
 ## Critical Rules
@@ -226,21 +232,21 @@ Tudo vive neste repo:
 - `AtomStatus`: inbox | draft | active | paused | waiting | someday | completed | archived
 - Extensions (body JSONB): SoulExtension, OperationsExtension, RecurrenceExtension
 
-## Services (7)
+## Services (11)
 
-supabase, item-service (itemService + connectionService + eventService), auth-service, fsm-service, pipeline-service, wrap-service, audit-service
+supabase, item-service (itemService + connectionService + eventService), auth-service, fsm-service, pipeline-service, wrap-service, audit-service, connector-service, export-service, realtime-service, triage-service
 
 ## Engines (6)
 
 fsm (state machine), wrap (daily close), parsing (token parser), recurrence (RRULE), soul (check-in), search (fulltext + filters)
 
-## Stores (3)
+## Stores (4)
 
-app-store (nav, filters, user), wrap-store (wrap session), toast-store (notifications)
+app-store (nav, filters, user), soul-store (check-in state), wrap-store (wrap session), toast-store (notifications)
 
-## Hooks (7)
+## Hooks (13)
 
-useAuth, useItems, useItemMutations, usePipeline, useWrap, useRealtime, useProject
+useAuth, useItems, useItemMutations, usePipeline, useWrap, useRealtime, useProject, useAudit, useConnections, useConnectors, useNav, useRaiz, useTriage
 
 ## Supabase
 
@@ -250,7 +256,7 @@ Project: avvwjkzkzklloyfugzer
 - RPCs: morph_item, decay_item, propagate_effect, commit_item
 - RLS: user isolation
 - Audit views: v_orphan_items, v_below_floor, v_inbox_stale
-- Edge functions: parse-input, send-push, triage-classify
+- Edge functions: connector-auth, calendar-sync, gmail-sync, triage-classify, parse-input, send-push
 
 ## Environment Variables
 
@@ -259,13 +265,12 @@ VITE_SUPABASE_URL=...
 VITE_SUPABASE_ANON_KEY=...
 ```
 
-## Pages (12)
+## Pages (14)
 
 | Page | File | Wireframe |
 |------|------|-----------|
 | Landing | pages/Landing.tsx | — |
 | Auth | pages/Auth.tsx | — |
-| Onboarding | pages/Onboarding.tsx | mindroot-wireframe-raiz-onboarding.html |
 | Home | pages/Home.tsx | mindroot-wireframe-home.html |
 | Pipeline/Triage | pages/Pipeline.tsx | mindroot-wireframe-triage-pipeline-v2.html |
 | Wrap | pages/Wrap.tsx | mindroot-wireframe-wrap.html |
@@ -275,14 +280,26 @@ VITE_SUPABASE_ANON_KEY=...
 | Library | pages/Library.tsx | mindroot-wireframe-library-reflexoes.html |
 | Settings | pages/Settings.tsx | mindroot-wireframe-settings.html |
 | Raiz | pages/Raiz.tsx | mindroot-wireframe-raiz-dashboard.html |
+| Graph | pages/Graph.tsx | — |
+| Search | pages/Search.tsx | — |
+| ItemDetail | pages/ItemDetail.tsx | — |
 
-## Components
+## Components (26)
 
 - atoms/ (8): tokens, GeometryIcon, TypeChip, StageBadge, ModuleBar, ConfidenceBar, FAB, index
 - shell/ (3): AppShell, TopBar, BottomNav
-- home/ (5): SoulCard, WrapBanner, AtomInput, InboxPreview, AuditBar
-- shared/ (4): ItemCard, Skeleton, EmptyState, ErrorBanner
-- companion/ (1): CompanionSheet
+- home/ (5): SoulCard, WrapBanner, AtomInput, InboxPreview, AuroraCheckin
+- shared/ (8): ConnectionsSection, EmptyState, ErrorBanner, ErrorBoundary, ItemCard, OfflineBanner, Skeleton, ToastContainer
+- analytics/ (2): ConnectionsPanel, SoulPanel
+- audit/ (2): AuditPanel, HealthBar
+
+## Tests
+
+- Unit: 90 tests, 14 suites (vitest) — `npx vitest run`
+- Visual: 21 tests, 30 screenshots (playwright) — `npm run test:visual`
+- Visual report: `npm run test:visual:report` (opens HTML)
+- Baselines: `e2e/screenshots/` (committed to git)
+- Pattern: mock Supabase auth in `e2e/fixtures/auth.ts`
 
 ## Edge Functions
 
