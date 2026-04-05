@@ -34,10 +34,10 @@ export function CalendarPage() {
         if (!map[key]) map[key] = [];
         map[key].push(item);
       }
-      // Google Calendar events (body.start)
+      // Google Calendar events (body.start) — convert UTC to local timezone
       const start = (item.body as Record<string, unknown>)?.start;
       if (start && typeof start === 'string' && item.tags?.includes('#source:google-calendar')) {
-        const key = start.slice(0, 10);
+        const key = format(parseISO(start), 'yyyy-MM-dd');
         if (!map[key]) map[key] = [];
         if (!map[key].includes(item)) map[key].push(item);
       }

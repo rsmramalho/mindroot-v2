@@ -142,9 +142,15 @@ export const connectorService = {
     let created = 0;
     for (const msg of messages) {
       if (existingIds.has(msg.id)) continue;
+
+      // Extract #who:* tag from sender (e.g. "John Doe <john@x.com>" → "#who:john-doe")
+      const tags = ['#domain:communication', '#source:gmail', '#connector'];
+      const whoTag = extractWhoTag(msg.from);
+      if (whoTag) tags.push(whoTag);
+
       await itemService.create({
         title: msg.subject || '(sem assunto)', user_id: userId, type: 'note', module: 'bridge',
-        tags: ['#domain:communication', '#source:gmail', '#connector'],
+        tags,
         status: 'inbox', state: 'inbox', genesis_stage: 1, source: 'atom-engine',
         body: { gmail_id: msg.id, from: msg.from, date: msg.date, snippet: msg.snippet, labels: msg.labels },
       });
@@ -161,3 +167,25 @@ export const connectorService = {
     if (error) throw error;
   },
 };
+
+// Extract sender name as #who:slug tag
+// "John Doe <john@x.com>" → "#who:john-doe"
+// "<john@x.com>" → "#who:john" (from email prefix)
+function extractWhoTag(from: string): string | null {
+  // Try name part: "Name <email>"
+  const nameMatch = from.match(/^([^<]+)</);
+  if (nameMatch) {
+    const name = nameMatch[1].trim().replace(/["']/g, '');
+    if (name) {
+      const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      if (slug) return `#who:${slug}`;
+    }
+  }
+  // Fallback: email prefix
+  const emailMatch = from.match(/<?\s*([^@]+)@/);
+  if (emailMatch) {
+    const prefix = emailMatch[1].trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (prefix) return `#who:${prefix}`;
+  }
+  return null;
+}
