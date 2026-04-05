@@ -26,6 +26,16 @@ export function GraphPage() {
   const { selectItem } = useNav();
   const svgRef = useRef<SVGSVGElement>(null);
   const [moduleFilter, setModuleFilter] = useState<AtomModule | null>(null);
+  const [domainFilter, setDomainFilter] = useState<string | null>(null);
+
+  // Extract unique #domain:* tags
+  const domains = useMemo(() => {
+    const set = new Set<string>();
+    items.forEach((i) => i.tags?.forEach((t) => {
+      if (t.startsWith('#domain:')) set.add(t.replace('#domain:', ''));
+    }));
+    return Array.from(set).sort();
+  }, [items]);
 
   // Build graph data
   const { nodes, links } = useMemo(() => {
@@ -42,6 +52,9 @@ export function GraphPage() {
     let filteredItems = items.filter((i) => connectedIds.has(i.id) && i.status !== 'archived');
     if (moduleFilter) {
       filteredItems = filteredItems.filter((i) => i.module === moduleFilter);
+    }
+    if (domainFilter) {
+      filteredItems = filteredItems.filter((i) => i.tags?.includes(`#domain:${domainFilter}`));
     }
 
     const nodes: GraphNode[] = filteredItems.map((i) => ({
@@ -62,7 +75,7 @@ export function GraphPage() {
       }));
 
     return { nodes, links };
-  }, [items, connections, moduleFilter]);
+  }, [items, connections, moduleFilter, domainFilter]);
 
   // D3 force simulation
   useEffect(() => {
@@ -179,6 +192,32 @@ export function GraphPage() {
           </button>
         ))}
       </div>
+
+      {/* Domain filter */}
+      {domains.length > 0 && (
+        <div className="flex gap-1.5 px-5 mb-2 overflow-x-auto">
+          <span className="text-[10px] text-text-muted self-center mr-1">dominio</span>
+          <button
+            onClick={() => setDomainFilter(null)}
+            className={`px-2.5 py-1 rounded-lg text-[10px] whitespace-nowrap ${
+              !domainFilter ? 'bg-accent-bg text-accent font-medium' : 'bg-surface text-text-muted'
+            }`}
+          >
+            todos
+          </button>
+          {domains.map((d) => (
+            <button
+              key={d}
+              onClick={() => setDomainFilter(domainFilter === d ? null : d)}
+              className={`px-2.5 py-1 rounded-lg text-[10px] whitespace-nowrap ${
+                domainFilter === d ? 'bg-accent-bg text-accent font-medium' : 'bg-surface text-text-muted'
+              }`}
+            >
+              {d}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Graph canvas */}
       {nodes.length === 0 ? (

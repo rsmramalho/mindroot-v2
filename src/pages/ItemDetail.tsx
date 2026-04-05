@@ -1,7 +1,7 @@
 // pages/ItemDetail.tsx — Item detail view with inline editing
 // Stage progress bar, classify/advance actions, module color border, connections
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { format, parseISO } from 'date-fns';
@@ -13,7 +13,7 @@ import { useTriage } from '@/hooks/useTriage';
 import { useNav } from '@/hooks/useNav';
 import { useAppStore } from '@/store/app-store';
 import { MODULES, EMOTIONS } from '@/types/item';
-import type { AtomType, AtomModule, AtomStatus, Emotion } from '@/types/item';
+import type { AtomType, AtomModule, AtomStatus, AtomRelation, AtomItem, Emotion } from '@/types/item';
 import { shouldTriggerCheckIn } from '@/engine/soul';
 import { toast } from '@/store/toast-store';
 import { ALL_TYPES } from '@/config/types';
@@ -21,6 +21,7 @@ import { STAGE_COLORS, STAGE_GEOMETRIES, MODULE_COLORS } from '@/components/atom
 import { ConnectionsSection } from '@/components/shared/ConnectionsSection';
 import { getTypeColor } from '@/components/atoms/tokens';
 import { getConfidenceBand } from '@/service/triage-service';
+import { useConnections } from '@/hooks/useConnections';
 
 const STATUS_OPTIONS: { key: AtomStatus; label: string }[] = [
   { key: 'active', label: 'ativo' },
@@ -44,9 +45,12 @@ export function ItemDetailPage() {
   const { updateMutation, deleteMutation } = useItemMutations();
   const { classify: pipelineClassify, structure, validate, commit: pipelineCommit } = usePipeline();
   const { classify: aiClassify, isClassifying, result: triageResult, reset: resetTriage } = useTriage();
+  const { morph, connect: pipelineConnect } = usePipeline();
+  const { connections } = useConnections();
   const storeId = useAppStore((s) => s.selectedItemId);
   const { navigate, goBack } = useNav();
   const [checkInPrompt, setCheckInPrompt] = useState<string | null>(null);
+  const [showConnectionPrompt, setShowConnectionPrompt] = useState(true);
 
   const itemId = urlId ?? storeId;
   const item = items.find((i) => i.id === itemId);
@@ -150,7 +154,13 @@ export function ItemDetailPage() {
 
       {/* Chips row */}
       <div className="flex flex-wrap gap-1.5 mb-4">
-        <TypeSelector value={item.type} onChange={(type) => update({ type })} />
+        <TypeSelector value={item.type} onChange={(type) => {
+          if (item.genesis_stage >= 3) {
+            morph(item.id, type);
+          } else {
+            update({ type });
+          }
+        }} />
         <ModuleSelector value={item.module} onChange={(module) => update({ module })} />
         <StatusSelector value={item.status} onChange={(status) => update({ status })} />
       </div>
@@ -227,13 +237,27 @@ export function ItemDetailPage() {
         </div>
       )}
 
-      {canAdvanceNow && advanceLabel && (
+      {canAdvanceNow && advanceLabel && item.genesis_stage !== 4 && (
         <button
           onClick={handleAdvance}
           className="w-full mb-4 py-3 text-center text-sm font-medium bg-accent text-white rounded-xl"
         >
           {advanceLabel} → stage {nextStage}
         </button>
+      )}
+
+      {/* Connection prompt — Genesis gate 4 */}
+      {item.genesis_stage === 4 && showConnectionPrompt && (
+        <ConnectionPrompt
+          item={item}
+          allItems={items}
+          connections={connections}
+          onConnect={async (targetId, relation) => {
+            await pipelineConnect(item.id, targetId, relation);
+            setShowConnectionPrompt(false);
+          }}
+          onSkip={() => setShowConnectionPrompt(false)}
+        />
       )}
 
       <Divider />
@@ -558,6 +582,117 @@ function DeleteButton({ itemId, onDelete, deleteMutation }: { itemId: string; on
     >
       excluir
     </button>
+  );
+}
+
+// ─── Connection Prompt (Genesis gate 4) ─────────────
+
+function ConnectionPrompt({ item, allItems, connections, onConnect, onSkip }: {
+  item: AtomItem;
+  allItems: AtomItem[];
+  connections: { source_id: string; target_id: string }[];
+  onConnect: (targetId: string, relation: AtomRelation) => Promise<void>;
+  onSkip: () => void;
+}) {
+  const [search, setSearch] = useState('');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [relation, setRelation] = useState<AtomRelation>('references');
+
+  const connectedIds = new Set([
+    ...connections.filter((c) => c.source_id === item.id).map((c) => c.target_id),
+    ...connections.filter((c) => c.target_id === item.id).map((c) => c.source_id),
+  ]);
+
+  // Suggest items from same module or matching tags, excluding self and already connected
+  const suggested = useMemo(() => {
+    const candidates = allItems.filter((i) =>
+      i.id !== item.id &&
+      !connectedIds.has(i.id) &&
+      i.status !== 'archived' &&
+      (i.module === item.module || i.tags?.some((t) => item.tags?.includes(t)))
+    );
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      return candidates.filter((i) => i.title.toLowerCase().includes(q)).slice(0, 6);
+    }
+    return candidates.slice(0, 6);
+  }, [allItems, item, connectedIds, search]);
+
+  const RELATIONS: { key: AtomRelation; label: string }[] = [
+    { key: 'belongs_to', label: 'pertence a' },
+    { key: 'references', label: 'referencia' },
+    { key: 'feeds', label: 'alimenta' },
+    { key: 'blocks', label: 'bloqueia' },
+    { key: 'derives', label: 'deriva de' },
+    { key: 'mirrors', label: 'espelha' },
+  ];
+
+  const target = selectedId ? allItems.find((i) => i.id === selectedId) : null;
+
+  return (
+    <div className="mb-4 bg-accent-bg border border-accent/20 rounded-[14px] p-4">
+      <div className="text-[11px] font-medium tracking-wider uppercase text-accent mb-1">portao 4 · conexao</div>
+      <p className="text-[13px] text-text mb-3">isso se conecta com algo?</p>
+
+      {!selectedId ? (
+        <>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="buscar item..."
+            className="w-full text-[12px] bg-card border border-border rounded-lg px-3 py-2 outline-none focus:border-accent-light mb-2"
+          />
+          {suggested.length > 0 ? (
+            <div className="space-y-1">
+              {suggested.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setSelectedId(s.id)}
+                  className="w-full text-left px-3 py-2 text-[12px] bg-card border border-border rounded-lg hover:border-accent-light transition-colors truncate flex items-center gap-2"
+                >
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ background: s.module ? MODULE_COLORS[s.module] : 'var(--color-border)' }} />
+                  <span className="truncate">{s.title}</span>
+                  {s.type && <span className="text-[9px] text-text-muted ml-auto shrink-0">{s.type}</span>}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-text-muted py-2 text-center">nenhum item encontrado</p>
+          )}
+          <button onClick={onSkip} className="text-[11px] text-text-muted mt-2">
+            nao por agora
+          </button>
+        </>
+      ) : (
+        <>
+          <div className="text-[12px] text-text-muted mb-2">→ <span className="font-medium text-text">{target?.title}</span></div>
+          <div className="flex flex-wrap gap-1 mb-3">
+            {RELATIONS.map((r) => (
+              <button
+                key={r.key}
+                onClick={() => setRelation(r.key)}
+                className={`text-[10px] px-2.5 py-1 rounded-lg border ${
+                  relation === r.key ? 'border-accent bg-accent-bg text-accent' : 'border-border text-text-muted'
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => setSelectedId(null)} className="flex-1 py-2 text-center text-xs border border-border rounded-lg text-text-muted">
+              voltar
+            </button>
+            <button
+              onClick={() => onConnect(selectedId!, relation)}
+              className="flex-1 py-2 text-center text-xs bg-accent text-white rounded-lg font-medium"
+            >
+              conectar → stage 5
+            </button>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
 
