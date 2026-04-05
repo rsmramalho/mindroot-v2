@@ -157,7 +157,7 @@ export function HomePage() {
       {activeItems.length > 0 ? (
         <div className="mt-4">
           <SectionLabel>items ativos</SectionLabel>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {activeItems.slice(0, 5).map((item, i) => (
               <motion.div
                 key={item.id}

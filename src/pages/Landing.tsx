@@ -21,12 +21,12 @@ export function LandingPage({ onLogin }: LandingPageProps) {
           sistema operacional pessoal
         </p>
         <p className="text-[13px] text-text-muted font-light leading-relaxed mb-6">
-          emocao precede acao, reflexao fecha o ciclo.<br />
+          emocao precede acao, reflexao fecha o ciclo.
           capture, organize, conecte — do ponto ao circulo.
         </p>
 
         {/* Geometry sequence */}
-        <div className="flex items-center justify-center gap-2 text-text-muted text-base mb-8 whitespace-nowrap">
+        <div className="flex items-center justify-center gap-2 text-text-muted text-base mb-6 whitespace-nowrap">
           <span>·</span>
           <span className="text-[10px]">→</span>
           <span>—</span>

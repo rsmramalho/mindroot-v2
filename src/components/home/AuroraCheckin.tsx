@@ -65,7 +65,7 @@ export function AuroraCheckin() {
                 <button
                   key={opt.key}
                   onClick={() => setEnergy(opt.key)}
-                  className={`flex-1 py-3 min-h-[44px] rounded-xl text-sm font-medium transition-all ${
+                  className={`flex-1 py-3 min-h-[48px] rounded-xl text-sm font-medium transition-all ${
                     energy === opt.key
                       ? 'bg-accent-bg text-accent border border-accent/30'
                       : 'bg-surface text-text-muted border border-border'
