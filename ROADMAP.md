@@ -190,14 +190,14 @@ A seed da Espiral 2 nasce aqui.
 
 ## Espiral 2 — Vida / sistema operacional
 
-**Status:** em andamento (F1 done, F2 10/19, F3 18/19, F4 7/9)
+**Status:** em andamento (F1 done, F2 10/19, F3 19/19 ✓, F4 9/9 ✓)
 **Princípio:** Se existe no digital, tem como entrar. Raiz é a fundação. Conectores são a razão de existir.
 
 ```
      ✓   ·  (1)  F1 — Raiz
      ◐  —   (1)  F2 — Conectores (API + Agent Local)
-     ◐  △   (2)  F3 — Toque + alma
-     ◐  □   (3)  F4 — Biblioteca + grafo
+     ✓  △   (2)  F3 — Toque + alma
+     ✓  □   (3)  F4 — Biblioteca + grafo
         ⬠   (5)  F5 — Companheiro
 ```
 
@@ -275,8 +275,8 @@ Principio de ingestao: tudo que entra por conector (API ou agent) vai pro inbox 
 
 Notas: Gmail MCP e Google Calendar MCP ja estao conectados no Claude.ai. A integracao MindRoot usa as mesmas APIs (Supabase Edge Functions como proxy). Cada conector e independente — se Gmail falha, Calendar continua. Atom Agent e repo separado (`rsmramalho/atom-agent`), Python CLI, fala direto com Supabase via service key. Escopo F2 limitado a leitura + ingestao. Acoes (enviar email, criar evento) sao Espiral 3.
 
-### ◐ Fase 3 △ Toque + alma (effort: 2)
-**Status:** parcial (18/19 — toque 8/8, alma 6/6 ✓, triage 4/5)
+### ✅ Fase 3 △ Toque + alma (effort: 2)
+**Status:** done ✓ (19/19 — toque 8/8, alma 6/6, triage 5/5)
 **Commits:** 589c72e (soul loop) + c6ac59a (UI polish) + 51345e1 (library nav) + 970ed01 (triage edge fn)
 **Protocol:** surface + logic
 **Escopo:** Agora que dados fluem pra dentro, o app precisa ser usável de verdade no dia a dia. Toque (UI) + Alma (soul loop) + Triage real (IA).
@@ -305,12 +305,12 @@ Entregaveis — Triage real:
 - [x] 3 faixas de confianca: auto (>=90/95%), sugere (60-89/94%), manual (<60%)
 - [x] Threshold diferenciado + fallback (item fica no inbox se edge fn falha)
 - [x] Triage roda automaticamente (via usePipeline)
-- [ ] ItemDetail: chips clicaveis (type, module, status editaveis inline)
+- [x] ItemDetail: chips clicaveis (type, module, status editaveis inline). Type change em stage 3+ chama morph RPC (81bf017)
 
 Notas: Soul loop segue Marco Zero seção 5 — nunca forçar, linguagem livre, só em tasks peso > 1. Triage segue Genesis v5 Parte 3.1. Esta fase é effort 2 porque combina UI + backend + IA — três camadas ao mesmo tempo. Mas o design de cada parte já existe.
 
-### ◐ Fase 4 □ Biblioteca + grafo (effort: 3)
-**Status:** parcial (7/9 — library + graph D3 + connections CRUD done)
+### ✅ Fase 4 □ Biblioteca + grafo (effort: 3)
+**Status:** done ✓ (9/9 — library + graph + connections + prompt + domain filter)
 **Commits:** 51345e1 (library nav) + db6d214 (graph D3)
 **Protocol:** full
 **Escopo:** Library page, connections UI, graph visualization. O Genesis estágio 5 (Pentágono) ganha corpo na interface. Com items fluindo dos conectores e classificados pelo triage, agora o sistema mostra as conexões.
@@ -320,10 +320,10 @@ Entregaveis:
 - [x] Library cards: titulo + type chip + preview notes + data + modulo cor
 - [x] Item Detail: ConnectionsSection — adicionar/remover connections tipadas (8 AtomRelations)
 - [x] Item Detail: ao adicionar connection, item avanca pro estagio 5 automaticamente (FSM)
-- [ ] Prompt de conexao: no estagio 4, "isso se conecta com algo?" (Genesis Parte 2, portao 4)
+- [x] Prompt de conexao: no estagio 4, "isso se conecta com algo?" — sugere items por module/tags, conectar avanca pra stage 5 (81bf017)
 - [x] Graph view: D3 force layout (/graph) — nos + edges interativos
 - [x] Graph: nos coloridos por modulo, edges rotuladas por relation
-- [ ] Graph: filtro por dominio Raiz (so tem module filter atualmente)
+- [x] Graph: filtro por dominio Raiz (#domain:* tags) + module filter (81bf017)
 - [x] Search: filtros avancados por module, type, status, domain, tags
 
 Notas: Wireframe Library existe (mindroot-wireframe-library-reflexoes.html). Graph usa D3 force layout. Connections usam tabela item_connections (deployed via migration 007). O grafo é o raio-x do Genesis — mostra a geometria real de tudo que entrou no sistema.
