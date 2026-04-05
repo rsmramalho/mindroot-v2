@@ -17,7 +17,7 @@ export function AnalyticsPage() {
   return (
     <div className="px-5 pb-4">
       <div className="pt-4 pb-4">
-        <h1 className="text-2xl font-medium tracking-tight">analytics</h1>
+        <h1 className="text-[24px] font-medium tracking-tight">analytics</h1>
       </div>
 
       {/* Tab bar */}

@@ -135,7 +135,7 @@ export function ItemDetailPage() {
       {item.genesis_stage === 1 && (
         <div className="mb-4">
           {triageResult ? (
-            <div className="bg-surface rounded-xl p-3.5">
+            <div className="bg-surface rounded-[14px] p-3.5">
               <div className="flex items-center gap-1.5 mb-2">
                 <div className="w-5 h-5 rounded-full bg-gradient-to-br from-ai-purple to-ai-blue flex items-center justify-center text-[10px] text-white font-medium shrink-0">
                   A

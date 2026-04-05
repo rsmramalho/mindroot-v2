@@ -46,14 +46,14 @@ export function LibraryPage() {
   return (
     <div className="px-5 pb-4">
       <div className="pt-4 pb-3 flex items-center justify-between">
-        <h1 className="text-2xl font-medium tracking-tight">biblioteca</h1>
+        <h1 className="text-[24px] font-medium tracking-tight">biblioteca</h1>
         <button onClick={() => navigate('graph' as any)} className="text-xs text-accent">
           ver grafo →
         </button>
       </div>
 
       {/* Search */}
-      <div className="bg-card border border-border rounded-xl px-3.5 py-2.5 flex items-center gap-2 mb-3">
+      <div className="bg-card border border-border rounded-[14px] px-3.5 py-2.5 flex items-center gap-2 mb-3">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0 text-text-muted">
           <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.2" />
           <line x1="9.5" y1="9.5" x2="12" y2="12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
@@ -133,7 +133,7 @@ function LibraryCard({ item, onClick }: { item: AtomItem; onClick?: () => void }
   return (
     <div
       onClick={onClick}
-      className="bg-card border border-border rounded-xl p-3 px-3.5 cursor-pointer hover:border-accent-light/30 transition-colors"
+      className="bg-card border border-border rounded-[14px] p-3.5 px-4 cursor-pointer hover:bg-surface transition-colors"
       style={{ borderLeftWidth: '3px', borderLeftColor: moduleColor }}
     >
       <div className="flex items-start justify-between mb-1">

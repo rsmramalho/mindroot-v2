@@ -39,12 +39,12 @@ export function SettingsPage() {
   return (
     <div className="px-5 pb-4">
       <div className="pt-4 pb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-medium tracking-tight">settings</h1>
+        <h1 className="text-[24px] font-medium tracking-tight">settings</h1>
         <button onClick={() => navigate('home')} className="text-xs text-accent">fechar</button>
       </div>
 
       {/* Profile */}
-      <div className="bg-card border border-border rounded-xl p-4 mb-4">
+      <div className="bg-card border border-border rounded-[14px] p-4 mb-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-accent-bg flex items-center justify-center text-lg text-accent font-medium">
             {name.charAt(0).toUpperCase()}
@@ -58,7 +58,7 @@ export function SettingsPage() {
 
       {/* Theme */}
       <SectionLabel>aparencia</SectionLabel>
-      <div className="bg-card border border-border rounded-xl overflow-hidden mb-4">
+      <div className="bg-card border border-border rounded-[14px] overflow-hidden mb-4">
         {(['system', 'light', 'dark'] as const).map((t) => (
           <button
             key={t}
@@ -77,7 +77,7 @@ export function SettingsPage() {
 
       {/* Ritual times */}
       <SectionLabel>rituais</SectionLabel>
-      <div className="bg-card border border-border rounded-xl overflow-hidden mb-4">
+      <div className="bg-card border border-border rounded-[14px] overflow-hidden mb-4">
         {RITUAL_PERIODS.map((p) => (
           <div key={p.key} className="flex items-center justify-between px-4 py-3 border-b border-surface last:border-0">
             <div className="flex items-center gap-2">
@@ -91,7 +91,7 @@ export function SettingsPage() {
 
       {/* Modules */}
       <SectionLabel>modulos</SectionLabel>
-      <div className="bg-card border border-border rounded-xl overflow-hidden mb-4">
+      <div className="bg-card border border-border rounded-[14px] overflow-hidden mb-4">
         {MODULES.map((m) => (
           <div key={m.key} className="flex items-center justify-between px-4 py-3 border-b border-surface last:border-0">
             <div className="flex items-center gap-2">
@@ -105,14 +105,14 @@ export function SettingsPage() {
 
       {/* Export */}
       <SectionLabel>exportar</SectionLabel>
-      <div className="bg-card border border-border rounded-xl overflow-hidden mb-4">
+      <div className="bg-card border border-border rounded-[14px] overflow-hidden mb-4">
         <ExportRow label="Backup JSON" description="todos os items como JSON" onClick={handleExportJSON} />
         <ExportRow label="Obsidian vault" description="todos os items como .md" onClick={handleExportObsidian} />
       </div>
 
       {/* Connectors */}
       <SectionLabel>conectores</SectionLabel>
-      <div className="bg-card border border-border rounded-xl overflow-hidden mb-4">
+      <div className="bg-card border border-border rounded-[14px] overflow-hidden mb-4">
         {!isGoogleUser && (
           <div className="px-4 py-3 text-[12px] text-text-muted border-b border-surface">
             Faca login com Google para conectar Calendar e Gmail

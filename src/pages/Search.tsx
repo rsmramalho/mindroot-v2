@@ -40,7 +40,7 @@ export function SearchPage() {
       {/* Header */}
       <div className="pt-4 pb-3 flex items-center gap-3">
         <button onClick={() => navigate('home')} className="text-sm text-accent">←</button>
-        <h1 className="text-lg font-medium tracking-tight">buscar</h1>
+        <h1 className="text-[24px] font-medium tracking-tight">buscar</h1>
       </div>
 
       {/* Search input */}

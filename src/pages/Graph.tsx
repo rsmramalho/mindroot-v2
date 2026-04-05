@@ -152,7 +152,7 @@ export function GraphPage() {
       {/* Header */}
       <div className="px-5 pt-4 pb-2 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-medium tracking-tight">grafo</h1>
+          <h1 className="text-[24px] font-medium tracking-tight">grafo</h1>
           <span className="text-xs text-text-muted">{nodes.length} nos, {links.length} conexoes</span>
         </div>
       </div>

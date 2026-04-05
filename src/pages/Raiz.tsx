@@ -159,13 +159,13 @@ export function RaizPage() {
         {mode === 'panorama' && (
           <motion.div key="panorama" {...anim} className="px-5 pb-6">
             <div className="pt-4 pb-3">
-              <h1 className="text-2xl font-medium tracking-tight">raiz</h1>
+              <h1 className="text-[24px] font-medium tracking-tight">raiz</h1>
               <p className="text-[13px] text-text-muted">sua vida · 9 gavetas</p>
             </div>
 
             {/* Health ring */}
             {healthyCount > 0 && (
-              <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-4 mb-4">
+              <div className="bg-card border border-border rounded-[14px] p-4 flex items-center gap-4 mb-4">
                 <div className="relative w-14 h-14 shrink-0">
                   <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
                     <circle cx="18" cy="18" r="15.5" fill="none" className="stroke-border" strokeWidth="3" />

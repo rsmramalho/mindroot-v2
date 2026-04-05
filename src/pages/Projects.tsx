@@ -218,7 +218,7 @@ function ProjectDetail({ project, children, onBack }: { project: AtomItem; child
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="px-5 pb-4">
       <button onClick={onBack} className="text-[13px] text-accent pt-4 pb-2">← projects</button>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-medium mb-1.5">{project.title}</h1>
+        <h1 className="text-[24px] font-medium tracking-tight mb-1.5">{project.title}</h1>
         <button onClick={() => selectItem(project.id)} className="text-xs text-accent">editar</button>
       </div>
       <div className="text-[13px] text-text-muted mb-4 flex items-center gap-2">
