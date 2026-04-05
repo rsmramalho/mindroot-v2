@@ -149,6 +149,14 @@ export const connectionService = {
     if (error) throw error;
     return (data ?? []) as ItemConnection[];
   },
+
+  async list(): Promise<ItemConnection[]> {
+    const { data, error } = await supabase
+      .from('item_connections')
+      .select('*');
+    if (error) throw error;
+    return (data ?? []) as ItemConnection[];
+  },
 };
 
 // ─── Events ──────────────────────────────────────────────

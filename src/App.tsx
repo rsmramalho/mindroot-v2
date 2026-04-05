@@ -13,6 +13,7 @@ import { AppShell } from '@/components/shell/AppShell';
 import { OfflineBanner } from '@/components/shared/OfflineBanner';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { ToastContainer } from '@/components/shared/ToastContainer';
+import { checkSoulMidnightReset } from '@/store/soul-store';
 import type { AppPage } from '@/types/ui';
 
 // Static pages (pre-auth)
@@ -162,10 +163,11 @@ function AuthenticatedApp() {
 // ─── Auth Gate ────────────────────────────────────────
 
 function AppContent() {
-  // Apply saved theme on mount
+  // Apply saved theme + reset stale soul state on mount
   useLayoutEffect(() => {
     const saved = localStorage.getItem('mindroot-theme') as ThemeMode | null;
     applyTheme(saved ?? 'system');
+    checkSoulMidnightReset();
   }, []);
   const { user, loading } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
