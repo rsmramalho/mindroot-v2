@@ -6,7 +6,10 @@
 import { test, expect } from './fixtures/auth';
 
 test.describe('Flow: Bottom Navigation', () => {
-  test('navigate through all 5 tabs', async ({ authenticatedPage: page }) => {
+  // BottomNav only visible on mobile (<768px)
+  test('navigate through all 5 tabs', async ({ authenticatedPage: page, browserName }, testInfo) => {
+    const isMobile = testInfo.project.name === 'mobile';
+    if (!isMobile) { test.skip(); return; }
     await page.goto('/home');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(400);
