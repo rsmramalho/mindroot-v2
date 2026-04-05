@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 interface GmailMessage {
   id: string; thread_id: string; subject: string; from: string;
