@@ -3,7 +3,8 @@
 
 import { create } from 'zustand';
 import { wrapService, type WrapSession } from '@/service/wrap-service';
-import type { AtomItem } from '@/types/item';
+import { useSoulStore } from './soul-store';
+import type { AtomItem, Emotion, EnergyLevel } from '@/types/item';
 
 interface WrapState {
   session: WrapSession | null;
@@ -18,7 +19,7 @@ interface WrapState {
 }
 
 const EMPTY_AUDIT = { inbox_count: 0, below_floor: [], orphans: [], stale_count: 0 };
-const EMPTY_SOUL = { aurora: null, intention: null, tasks: [], crepusculo: null, shift: null };
+// aurora is now read from soul-store in startWrap
 
 export const useWrapStore = create<WrapState>((set, get) => ({
   session: null,
@@ -29,6 +30,14 @@ export const useWrapStore = create<WrapState>((set, get) => ({
     set({ loading: true });
     try {
       const data = await wrapService.collectWrapData();
+
+      // Read aurora check-in from soul-store
+      const soulState = useSoulStore.getState();
+      const hasAurora = soulState.auroraCheckedToday && soulState.emotion && soulState.energy;
+      const aurora = hasAurora
+        ? { emotion: soulState.emotion as Emotion, energy: soulState.energy as EnergyLevel }
+        : null;
+
       set({
         session: {
           created: data.created ?? [],
@@ -36,7 +45,13 @@ export const useWrapStore = create<WrapState>((set, get) => ({
           decided: [],
           connections: [],
           seeds: [],
-          soul: EMPTY_SOUL,
+          soul: {
+            aurora,
+            intention: soulState.intention ?? null,
+            tasks: [],
+            crepusculo: null,
+            shift: null,
+          },
           audit: data.audit ?? EMPTY_AUDIT,
           next: [],
         },

@@ -12,8 +12,9 @@ import { usePipeline } from '@/hooks/usePipeline';
 import { useTriage } from '@/hooks/useTriage';
 import { useNav } from '@/hooks/useNav';
 import { useAppStore } from '@/store/app-store';
-import { MODULES } from '@/types/item';
-import type { AtomType, AtomModule, AtomStatus } from '@/types/item';
+import { MODULES, EMOTIONS } from '@/types/item';
+import type { AtomType, AtomModule, AtomStatus, Emotion } from '@/types/item';
+import { shouldTriggerCheckIn } from '@/engine/soul';
 import { toast } from '@/store/toast-store';
 import { ALL_TYPES } from '@/config/types';
 import { STAGE_COLORS, STAGE_GEOMETRIES, MODULE_COLORS } from '@/components/atoms/tokens';
@@ -45,6 +46,7 @@ export function ItemDetailPage() {
   const { classify: aiClassify, isClassifying, result: triageResult, reset: resetTriage } = useTriage();
   const storeId = useAppStore((s) => s.selectedItemId);
   const { navigate, goBack } = useNav();
+  const [checkInPrompt, setCheckInPrompt] = useState<string | null>(null);
 
   const itemId = urlId ?? storeId;
   const item = items.find((i) => i.id === itemId);
@@ -63,6 +65,28 @@ export function ItemDetailPage() {
 
   const update = (updates: Record<string, unknown>) => {
     updateMutation.mutate({ id: item.id, updates });
+
+    // Trigger soul check-in when completing a task
+    if (updates.status === 'completed' && item.status !== 'completed') {
+      const simulated = { ...item, status: 'completed' as const };
+      const trigger = shouldTriggerCheckIn(simulated);
+      if (trigger) {
+        setCheckInPrompt(trigger.prompt);
+      }
+    }
+  };
+
+  const handleEmotionAfter = (emotion: Emotion) => {
+    const existingBody = (item.body ?? {}) as Record<string, unknown>;
+    const existingSoul = (existingBody.soul ?? {}) as Record<string, unknown>;
+    updateMutation.mutate({
+      id: item.id,
+      updates: {
+        body: { ...existingBody, soul: { ...existingSoul, emotion_after: emotion } } as Record<string, unknown>,
+      },
+    });
+    setCheckInPrompt(null);
+    toast.success('emotion registrada');
   };
 
   const handleAiClassify = async () => {
@@ -130,6 +154,27 @@ export function ItemDetailPage() {
         <ModuleSelector value={item.module} onChange={(module) => update({ module })} />
         <StatusSelector value={item.status} onChange={(status) => update({ status })} />
       </div>
+
+      {/* Soul check-in after completion */}
+      {checkInPrompt && (
+        <div className="mb-4 bg-accent-bg border border-accent/20 rounded-[14px] p-4">
+          <p className="text-[13px] text-accent mb-2.5">{checkInPrompt}</p>
+          <div className="flex flex-wrap gap-1.5">
+            {EMOTIONS.map((e) => (
+              <button
+                key={e}
+                onClick={() => handleEmotionAfter(e)}
+                className="px-2.5 py-1 rounded-2xl border border-border bg-card text-xs text-text-muted hover:border-accent-light hover:text-accent transition-all"
+              >
+                {e}
+              </button>
+            ))}
+          </div>
+          <button onClick={() => setCheckInPrompt(null)} className="text-[11px] text-text-muted mt-2">
+            pular
+          </button>
+        </div>
+      )}
 
       {/* Classify / Advance actions */}
       {item.genesis_stage === 1 && (

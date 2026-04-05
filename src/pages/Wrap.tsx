@@ -9,6 +9,7 @@ import { useItems } from '@/hooks/useItems';
 import { useFullAudit } from '@/hooks/useAudit';
 import { useNav } from '@/hooks/useNav';
 import { getCreatedToday, getModifiedToday, computeAudit } from '@/engine/wrap';
+import { detectShift } from '@/engine/soul';
 import { StageBadge } from '@/components/atoms/StageBadge';
 import { EMOTIONS } from '@/types/item';
 import type { Emotion, EnergyLevel, AtomItem, AtomRelation } from '@/types/item';
@@ -73,10 +74,15 @@ export function WrapPage() {
       return;
     }
     if (session) {
+      const crepusculo = { emotion: (selectedEmotions[0] ?? 'neutro') as Emotion, energy };
+      const auroraEmotion = session.soul.aurora?.emotion ?? null;
+      const shift = detectShift(auroraEmotion, crepusculo.emotion);
+
       updateSession({
         soul: {
           ...session.soul,
-          crepusculo: { emotion: (selectedEmotions[0] ?? 'neutro') as Emotion, energy },
+          crepusculo,
+          shift: shift !== 'unknown' ? shift : null,
         },
         decided: decisions,
         next: validNext,
@@ -154,13 +160,13 @@ export function WrapPage() {
       <div className="flex-1 overflow-y-auto px-5 pb-4">
         <AnimatePresence mode="wait">
           <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            {step === 0 && <SoulStep emotions={selectedEmotions} setEmotions={setSelectedEmotions} energy={energy} setEnergy={setEnergy} />}
+            {step === 0 && <SoulStep emotions={selectedEmotions} setEmotions={setSelectedEmotions} energy={energy} setEnergy={setEnergy} aurora={session?.soul.aurora ?? null} intention={session?.soul.intention ?? null} />}
             {step === 1 && <ItemsStep created={created} modified={modified} />}
             {step === 2 && <DecidedStep decisions={decisions} setDecisions={setDecisions} newDecision={newDecision} setNewDecision={setNewDecision} />}
             {step === 3 && <ConnectionsStep items={items} createdToday={created} modifiedToday={modified} />}
             {step === 4 && <SeedsStep />}
             {step === 5 && <AuditStep audit={audit} fullAudit={fullAudit ?? null} auditLoading={auditLoading} />}
-            {step === 6 && <CommitStep created={created} modified={modified} decisions={decisions} audit={audit} nextSteps={nextSteps} setNextSteps={setNextSteps} />}
+            {step === 6 && <CommitStep created={created} modified={modified} decisions={decisions} audit={audit} nextSteps={nextSteps} setNextSteps={setNextSteps} aurora={session?.soul.aurora ?? null} crepusculo={{ emotion: (selectedEmotions[0] ?? 'neutro') as Emotion, energy }} />}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -202,9 +208,11 @@ export function WrapPage() {
 
 // ─── Step Components ──────────────────────────────────
 
-function SoulStep({ emotions, setEmotions, energy, setEnergy }: {
+function SoulStep({ emotions, setEmotions, energy, setEnergy, aurora, intention }: {
   emotions: string[]; setEmotions: (e: string[]) => void;
   energy: EnergyLevel; setEnergy: (e: EnergyLevel) => void;
+  aurora: { emotion: Emotion; energy: EnergyLevel } | null;
+  intention: string | null;
 }) {
   const toggleEmotion = (e: string) => {
     setEmotions(emotions.includes(e) ? emotions.filter((x) => x !== e) : [...emotions, e]);
@@ -212,6 +220,18 @@ function SoulStep({ emotions, setEmotions, energy, setEnergy }: {
 
   return (
     <div className="bg-card border border-border rounded-[14px] p-4">
+      {aurora && (
+        <div className="mb-3 pb-3 border-b border-surface">
+          <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-1">aurora</div>
+          <div className="flex items-center gap-2 text-[13px]">
+            <span className="px-2.5 py-0.5 rounded-lg bg-accent-bg text-accent text-xs">{aurora.emotion}</span>
+            <span className="text-text-muted text-xs">· {aurora.energy}</span>
+          </div>
+          {intention && (
+            <p className="text-xs text-text-muted mt-1 italic">"{intention}"</p>
+          )}
+        </div>
+      )}
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">como voce esta saindo hoje?</div>
       <div className="flex flex-wrap gap-1.5 mt-2">
         {EMOTIONS.map((e) => (
@@ -523,10 +543,19 @@ function AuditRow({ label, value, ok, detail }: { label: string; value: number; 
   );
 }
 
-function CommitStep({ created, modified, decisions, audit, nextSteps, setNextSteps }: {
+const SHIFT_LABELS: Record<string, string> = {
+  positive: 'positivo',
+  negative: 'negativo',
+  stable: 'estavel',
+};
+
+function CommitStep({ created, modified, decisions, audit, nextSteps, setNextSteps, aurora, crepusculo }: {
   created: any[]; modified: any[]; decisions: string[]; audit: any;
   nextSteps: string[]; setNextSteps: (s: string[]) => void;
+  aurora: { emotion: Emotion; energy: EnergyLevel } | null;
+  crepusculo: { emotion: Emotion; energy: EnergyLevel };
 }) {
+  const shift = aurora ? detectShift(aurora.emotion, crepusculo.emotion) : 'unknown';
   const updateStep = (i: number, val: string) => {
     const copy = [...nextSteps];
     copy[i] = val;
@@ -561,6 +590,32 @@ function CommitStep({ created, modified, decisions, audit, nextSteps, setNextSte
           </div>
         </div>
       </div>
+
+      {/* Soul summary */}
+      {(aurora || crepusculo.emotion !== 'neutro') && (
+        <div className="bg-card border border-border rounded-[14px] p-4 mt-4">
+          <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">soul</div>
+          <div className="flex items-center gap-2 text-xs">
+            {aurora && (
+              <>
+                <span className="px-2 py-0.5 rounded-lg bg-accent-bg text-accent">{aurora.emotion}</span>
+                <span className="text-text-muted">→</span>
+              </>
+            )}
+            <span className="px-2 py-0.5 rounded-lg bg-accent-bg text-accent">{crepusculo.emotion}</span>
+            {shift !== 'unknown' && (
+              <span className={`ml-auto text-[11px] font-medium px-2 py-0.5 rounded-lg ${
+                shift === 'positive' ? 'bg-success-bg text-success-text' :
+                shift === 'negative' ? 'bg-error-bg text-error-text' :
+                'bg-surface text-text-muted'
+              }`}>
+                {SHIFT_LABELS[shift]}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="mt-4">
         <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">proximos passos</div>
         {nextSteps.map((s, i) => (
