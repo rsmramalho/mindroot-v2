@@ -190,7 +190,7 @@ A seed da Espiral 2 nasce aqui.
 
 ## Espiral 2 — Vida / sistema operacional
 
-**Status:** em andamento (F1 done, F2 10/19, F3 15/19, F4 7/9)
+**Status:** em andamento (F1 done, F2 10/19, F3 18/19, F4 7/9)
 **Princípio:** Se existe no digital, tem como entrar. Raiz é a fundação. Conectores são a razão de existir.
 
 ```
@@ -276,7 +276,7 @@ Principio de ingestao: tudo que entra por conector (API ou agent) vai pro inbox 
 Notas: Gmail MCP e Google Calendar MCP ja estao conectados no Claude.ai. A integracao MindRoot usa as mesmas APIs (Supabase Edge Functions como proxy). Cada conector e independente — se Gmail falha, Calendar continua. Atom Agent e repo separado (`rsmramalho/atom-agent`), Python CLI, fala direto com Supabase via service key. Escopo F2 limitado a leitura + ingestao. Acoes (enviar email, criar evento) sao Espiral 3.
 
 ### ◐ Fase 3 △ Toque + alma (effort: 2)
-**Status:** parcial (15/19 — toque 8/8, alma 3/6, triage 4/5)
+**Status:** parcial (18/19 — toque 8/8, alma 6/6 ✓, triage 4/5)
 **Commits:** 589c72e (soul loop) + c6ac59a (UI polish) + 51345e1 (library nav) + 970ed01 (triage edge fn)
 **Protocol:** surface + logic
 **Escopo:** Agora que dados fluem pra dentro, o app precisa ser usável de verdade no dia a dia. Toque (UI) + Alma (soul loop) + Triage real (IA).
@@ -295,10 +295,10 @@ Entregaveis — Toque:
 Entregaveis — Alma:
 - [x] Soul loop aurora: AuroraCheckin no primeiro acesso do dia (emotion + energy + intention)
 - [x] Soul loop aurora: registra no soul-store (Zustand)
-- [ ] Soul loop task: apos milestone/entrega, pergunta "como foi?" — registra emotion_after
+- [x] Soul loop task: apos milestone/entrega, pergunta "como foi?" — registra emotion_after (122175e)
 - [x] Soul loop crepusculo: wrap SoulStep (step 1) com emotions + energy
-- [ ] Wrap: aurora data (soul-store) nao flui pro wrap body → shift fica null
-- [ ] Wrap display: secao SOUL renderizada com shift visivel (aurora → crepusculo)
+- [x] Wrap: aurora data (soul-store) flui pro wrap body via startWrap → shift calculado (122175e)
+- [x] Wrap display: secao SOUL renderizada com shift visivel no CommitStep (122175e)
 
 Entregaveis — Triage real:
 - [x] Edge function triage-classify com Claude Haiku (deployed, 135 LOC)
