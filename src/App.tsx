@@ -13,6 +13,7 @@ import { AppShell } from '@/components/shell/AppShell';
 import { OfflineBanner } from '@/components/shared/OfflineBanner';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { ToastContainer } from '@/components/shared/ToastContainer';
+import { CompanionSheet } from '@/components/companion/CompanionSheet';
 import { checkSoulMidnightReset } from '@/store/soul-store';
 import type { AppPage } from '@/types/ui';
 
@@ -146,6 +147,8 @@ function FirstTimeRaizRedirect() {
 function AuthenticatedApp() {
   useRealtime();
   const routerNavigate = useNavigate();
+  const companionOpen = useAppStore((s) => s.companionOpen);
+  const toggleCompanion = useAppStore((s) => s.toggleCompanion);
 
   return (
     <>
@@ -156,6 +159,18 @@ function AuthenticatedApp() {
         <FirstTimeRaizRedirect />
         <AnimatedRoutes />
       </AppShell>
+      <CompanionSheet open={companionOpen} onClose={toggleCompanion} />
+      {/* Companion FAB — visible on all pages */}
+      {!companionOpen && (
+        <button
+          onClick={toggleCompanion}
+          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 w-12 h-12 rounded-full shadow-lg z-30 flex items-center justify-center"
+          style={{ background: 'linear-gradient(135deg, var(--color-accent), var(--color-ai-blue), var(--color-success))' }}
+          aria-label="Abrir companheiro"
+        >
+          <span className="text-white text-lg font-light">○</span>
+        </button>
+      )}
     </>
   );
 }
