@@ -20,7 +20,8 @@ export function SettingsPage() {
   const setTheme = useAppStore((s) => s.setTheme);
   const { items } = useItems();
   const { signOut } = useAuth();
-  const { getStatus, connectGoogle, syncCalendar, syncGmail, disconnect, syncState } = useConnectors();
+  const { getStatus, syncCalendar, syncGmail, disconnect, syncState } = useConnectors();
+  const isGoogleUser = user?.app_metadata?.provider === 'google';
 
   const email = user?.email ?? '';
   const name = user?.user_metadata?.full_name ?? email.split('@')[0];
@@ -112,26 +113,29 @@ export function SettingsPage() {
       {/* Connectors */}
       <SectionLabel>conectores</SectionLabel>
       <div className="bg-card border border-border rounded-xl overflow-hidden mb-4">
+        {!isGoogleUser && (
+          <div className="px-4 py-3 text-[12px] text-text-muted border-b border-surface">
+            Faca login com Google para conectar Calendar e Gmail
+          </div>
+        )}
         <ConnectorRow
-          icon="📅"
+          icon="cal"
           name="Google Calendar"
           status={getStatus('google')}
           syncing={syncState === 'syncing'}
-          onConnect={connectGoogle}
-          onSync={syncCalendar}
-          onDisconnect={() => disconnect('google')}
+          onSync={isGoogleUser ? syncCalendar : undefined}
+          onDisconnect={isGoogleUser ? () => disconnect('google') : undefined}
         />
         <ConnectorRow
-          icon="📧"
+          icon="mail"
           name="Gmail"
           status={getStatus('google')}
           syncing={syncState === 'syncing'}
-          onConnect={connectGoogle}
-          onSync={syncGmail}
-          onDisconnect={() => disconnect('google')}
+          onSync={isGoogleUser ? syncGmail : undefined}
+          onDisconnect={isGoogleUser ? () => disconnect('google') : undefined}
         />
         <ConnectorRow
-          icon="☁️"
+          icon="drive"
           name="Google Drive"
           comingSoon
         />
@@ -175,14 +179,13 @@ function ExportRow({ label, description, onClick }: { label: string; description
 
 function ConnectorRow({
   icon, name, status, syncing, comingSoon,
-  onConnect, onSync, onDisconnect,
+  onSync, onDisconnect,
 }: {
   icon: string;
   name: string;
   status?: { provider: string; status: string; lastSyncAt: string | null; metadata: Record<string, unknown> };
   syncing?: boolean;
   comingSoon?: boolean;
-  onConnect?: () => void;
   onSync?: () => void;
   onDisconnect?: () => void;
 }) {
@@ -219,15 +222,11 @@ function ConnectorRow({
               {syncing ? 'sincronizando...' : 'sincronizar'}
             </button>
           )}
-          {isConnected && onDisconnect ? (
+          {isConnected && onDisconnect && (
             <button onClick={onDisconnect} className="text-[11px] text-error">
               ×
             </button>
-          ) : !isConnected && onConnect ? (
-            <button onClick={onConnect} className="text-[11px] px-2.5 py-1 rounded-lg bg-accent text-white">
-              conectar
-            </button>
-          ) : null}
+          )}
         </div>
       )}
     </div>

@@ -31,11 +31,6 @@ export interface GmailMessage {
   labels: string[];
 }
 
-const GOOGLE_SCOPES = [
-  'https://www.googleapis.com/auth/calendar.readonly',
-  'https://www.googleapis.com/auth/gmail.readonly',
-].join(' ');
-
 export const connectorService = {
   async getConnectors(): Promise<ConnectorStatus[]> {
     const { data, error } = await supabase
@@ -55,60 +50,43 @@ export const connectorService = {
     }));
   },
 
-  async connectGoogle(): Promise<void> {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        scopes: GOOGLE_SCOPES,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
-      },
-    });
-    if (error) throw error;
-  },
-
   async storeTokens(
     providerRefreshToken: string,
     provider: string,
-    metadata: Record<string, unknown> = {},
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
-    // Try edge function first
-    try {
-      const resp = await supabase.functions.invoke('connector-auth', {
-        body: {
-          provider_refresh_token: providerRefreshToken,
-          provider,
-          scopes: GOOGLE_SCOPES.split(' '),
-          metadata,
-        },
-      });
-      if (resp.error) throw new Error(resp.error.message);
-      return;
-    } catch (edgeFnErr) {
-      console.warn('[connector] edge function failed, falling back to direct insert:', edgeFnErr);
-    }
-
-    // Fallback: insert directly
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) throw new Error('No active session for fallback insert');
-    const { error } = await supabase
-      .from('user_connectors')
-      .upsert(
+    if (!session) throw new Error('Not authenticated');
+
+    const resp = await supabase.functions.invoke('connector-auth', {
+      body: {
+        user_id: session.user.id,
+        provider_refresh_token: providerRefreshToken,
+        provider,
+        scopes: [
+          'https://www.googleapis.com/auth/calendar.readonly',
+          'https://www.googleapis.com/auth/gmail.readonly',
+        ],
+        metadata: metadata ?? {},
+      },
+    });
+
+    if (resp.error) {
+      console.warn('[connector] edge function failed, using fallback:', resp.error.message);
+      const { error } = await supabase.from('user_connectors').upsert(
         {
           user_id: session.user.id,
           provider,
           status: 'connected',
           provider_refresh_token: providerRefreshToken,
-          scopes: GOOGLE_SCOPES.split(' '),
+          scopes: ['calendar.readonly', 'gmail.readonly'],
           metadata: metadata ?? {},
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'user_id,provider' },
       );
-    if (error) throw new Error(`Direct insert failed: ${error.message}`);
+      if (error) throw new Error(`Direct insert failed: ${error.message}`);
+    }
   },
 
   async syncCalendar(): Promise<CalendarEvent[]> {

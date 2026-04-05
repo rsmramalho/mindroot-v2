@@ -284,6 +284,14 @@ VITE_SUPABASE_ANON_KEY=...
 - shared/ (4): ItemCard, Skeleton, EmptyState, ErrorBanner
 - companion/ (1): CompanionSheet
 
+## Edge Functions
+
+- **Deploy:** `./supabase/deploy.sh` (requer `supabase/.env.supabase`)
+- **Import padrao:** `jsr:@supabase/supabase-js@2`
+- **Auth padrao:** `--no-verify-jwt` + user_id no body + service role key
+- **Secrets necessarios:** GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, ANTHROPIC_API_KEY
+- **6 functions:** connector-auth, calendar-sync, gmail-sync, triage-classify, parse-input, send-push
+
 ## PHI Phases
 
 | Phase | Geometry | Status | Commit |

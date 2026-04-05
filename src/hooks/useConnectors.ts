@@ -34,14 +34,6 @@ export function useConnectors() {
   const getStatus = (provider: string): ConnectorStatus | undefined =>
     connectors.find((c) => c.provider === provider);
 
-  const connectGoogle = async () => {
-    try {
-      await connectorService.connectGoogle();
-    } catch {
-      toast.error('Erro ao conectar Google');
-    }
-  };
-
   const syncCalendar = async () => {
     if (!user) return;
     setSyncState('syncing');
@@ -86,6 +78,6 @@ export function useConnectors() {
 
   return {
     connectors, loading, syncState,
-    getStatus, connectGoogle, syncCalendar, syncGmail, disconnect, refresh,
+    getStatus, syncCalendar, syncGmail, disconnect, refresh,
   };
 }
