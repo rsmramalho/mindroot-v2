@@ -10,8 +10,8 @@ export function LandingPage({ onLogin }: LandingPageProps) {
   return (
     <div className="min-h-dvh bg-bg">
       {/* Hero */}
-      <div className="min-h-dvh flex flex-col items-center justify-center px-6 md:px-12 text-center">
-        <div className="w-full max-w-lg">
+      <div className="min-h-dvh flex flex-col items-center justify-center px-4 md:px-12 text-center">
+        <div style={{ width: '100%', maxWidth: '480px' }}>
           {/* Raiz symbol */}
           <div className="mb-6">
             <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center"
@@ -24,7 +24,7 @@ export function LandingPage({ onLogin }: LandingPageProps) {
           <p className="text-lg md:text-xl text-text-muted font-light leading-relaxed mb-3">
             organize sua vida de dentro pra fora
           </p>
-          <p className="text-[14px] text-text-muted/70 font-light leading-relaxed mb-8 max-w-sm mx-auto">
+          <p className="text-[14px] text-text-muted/70 font-light leading-relaxed mb-8">
             capture o que pensa, organize no seu ritmo, reflita no final do dia. emocao precede acao.
           </p>
 
