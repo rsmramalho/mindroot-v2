@@ -211,7 +211,7 @@ function SoulStep({ emotions, setEmotions, energy, setEnergy }: {
   };
 
   return (
-    <div className="bg-card border border-border rounded-xl p-4">
+    <div className="bg-card border border-border rounded-[14px] p-4">
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">como voce esta saindo hoje?</div>
       <div className="flex flex-wrap gap-1.5 mt-2">
         {EMOTIONS.map((e) => (
@@ -246,7 +246,7 @@ function SoulStep({ emotions, setEmotions, energy, setEnergy }: {
 
 function ItemsStep({ created, modified }: { created: any[]; modified: any[] }) {
   return (
-    <div className="bg-card border border-border rounded-xl p-4">
+    <div className="bg-card border border-border rounded-[14px] p-4">
       <div className="text-xs font-medium text-text-muted pb-1.5 border-b border-border mb-1">criados hoje</div>
       {created.length === 0 ? (
         <p className="text-xs text-text-muted py-2">nenhum item criado hoje</p>
@@ -287,7 +287,7 @@ function DecidedStep({ decisions, setDecisions, newDecision, setNewDecision }: {
   };
 
   return (
-    <div className="bg-card border border-border rounded-xl p-4">
+    <div className="bg-card border border-border rounded-[14px] p-4">
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">decisoes</div>
       {decisions.map((d, i) => (
         <div key={i} className="py-2 border-b border-surface last:border-0 flex items-center gap-2.5">
@@ -337,7 +337,7 @@ function ConnectionsStep({ items, createdToday, modifiedToday }: {
 
   if (todayItems.length === 0) {
     return (
-      <div className="bg-card border border-border rounded-xl p-4">
+      <div className="bg-card border border-border rounded-[14px] p-4">
         <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">connections</div>
         <p className="text-xs text-text-muted py-4 text-center">nenhum item criado ou modificado hoje</p>
       </div>
@@ -345,7 +345,7 @@ function ConnectionsStep({ items, createdToday, modifiedToday }: {
   }
 
   return (
-    <div className="bg-card border border-border rounded-xl p-4">
+    <div className="bg-card border border-border rounded-[14px] p-4">
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">
         connections
         {added.size > 0 && (
@@ -447,7 +447,7 @@ function WrapConnectionPicker({ items, sourceId, onSelect, onCancel }: {
 
 function SeedsStep() {
   return (
-    <div className="bg-card border border-border rounded-xl p-4">
+    <div className="bg-card border border-border rounded-[14px] p-4">
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">entropia</div>
       <p className="text-xs text-text-muted py-4 text-center">items inativos serao detectados na Fase 5</p>
     </div>
@@ -466,7 +466,7 @@ function AuditStep({ audit, fullAudit, auditLoading }: {
   const stale = fullAudit?.stale ?? [];
 
   return (
-    <div className="bg-card border border-border rounded-xl p-4">
+    <div className="bg-card border border-border rounded-[14px] p-4">
       <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">saude do sistema</div>
       {auditLoading && (
         <div className="space-y-2 mb-2">
@@ -536,7 +536,7 @@ function CommitStep({ created, modified, decisions, audit, nextSteps, setNextSte
 
   return (
     <>
-      <div className="bg-accent-bg border border-border rounded-xl p-6 text-center">
+      <div className="bg-accent-bg border border-border rounded-[14px] p-6 text-center">
         <div className="text-[10px] text-text-muted tracking-wider mb-4">
           · → — → △ → □ → ⬠ → ⬡ → ○
         </div>

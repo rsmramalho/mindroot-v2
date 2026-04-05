@@ -86,7 +86,7 @@ export function ProjectsPage() {
     <div className="px-5 pb-4">
       <div className="pt-4 pb-3 flex items-center justify-between">
         <div>
-          <h1 className="text-[22px] font-medium">projects</h1>
+          <h1 className="text-[24px] font-medium tracking-tight">projects</h1>
           <p className="text-[13px] text-text-muted mt-0.5">{projects.length} projetos · {activeCount} ativos · {totalItems} items</p>
         </div>
         <button
@@ -189,7 +189,7 @@ function ProjectCard({ project, childCount, connectionCount, onClick }: { projec
   return (
     <button
       onClick={onClick}
-      className="w-full text-left bg-card border border-border rounded-xl p-3.5 px-4 mb-2 relative overflow-hidden"
+      className="w-full text-left bg-card border border-border rounded-[14px] p-4 mb-2 relative overflow-hidden hover:bg-surface transition-colors"
       style={{ borderLeftWidth: '3px', borderLeftColor: moduleColor }}
     >
       <div className="flex justify-between items-start mb-1">

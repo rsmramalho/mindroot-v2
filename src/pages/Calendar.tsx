@@ -83,7 +83,7 @@ export function CalendarPage() {
     <div className="px-5 pb-4">
       {/* Header */}
       <div className="pt-4 pb-2 flex items-baseline justify-between">
-        <h1 className="text-2xl font-medium tracking-tight">agenda</h1>
+        <h1 className="text-[24px] font-medium tracking-tight">agenda</h1>
         <span className="text-[13px] text-text-muted">{format(selectedDate, 'MMMM yyyy', { locale: ptBR })}</span>
       </div>
 
@@ -178,7 +178,7 @@ function RitualBlock({ period, color, bgClass, items, habits, showWrap, wrapItem
   if (items.length === 0 && habits.length === 0 && !showWrap) return null;
 
   return (
-    <div className={`rounded-xl p-2.5 px-3.5 mb-1.5 border ${bgClass}`}>
+    <div className={`rounded-[14px] p-3 px-3.5 mb-2 border ${bgClass}`}>
       <div className="flex items-center gap-2 mb-2">
         <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] text-white" style={{ background: color }}>
           {period === 'aurora' ? '☀' : period === 'zenite' ? '◆' : '☽'}

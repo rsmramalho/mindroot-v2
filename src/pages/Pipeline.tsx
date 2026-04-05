@@ -27,7 +27,7 @@ export function PipelinePage() {
     <div className="px-5 pb-4">
       {/* Header */}
       <div className="pt-4 pb-4">
-        <h1 className="text-2xl font-medium tracking-tight text-text-heading">Pipeline</h1>
+        <h1 className="text-[24px] font-medium tracking-tight text-text-heading">Pipeline</h1>
         <div className="text-[13px] text-text-muted mt-0.5">7 estagios · Genesis v5</div>
       </div>
 
@@ -174,7 +174,7 @@ function StageItem({ item }: { item: AtomItem }) {
   const typeColor = item.type ? getTypeColor(item.type) : 'var(--color-mod-bridge)';
 
   return (
-    <div onClick={() => selectItem(item.id)} className="flex items-center gap-2 p-2 px-2.5 mt-1 rounded-lg bg-card border border-border text-[13px] cursor-pointer">
+    <div onClick={() => selectItem(item.id)} className="flex items-center gap-2 p-2.5 px-3 mt-1 rounded-lg bg-card border border-border text-[13px] cursor-pointer hover:bg-surface transition-colors">
       <div className="w-[3px] h-6 rounded-sm shrink-0" style={{ background: moduleColor }} />
       <span className="flex-1 truncate">{item.title}</span>
       {item.type && (
@@ -289,7 +289,7 @@ function TriageView() {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
-            className="bg-card border border-border rounded-2xl p-5 mb-4"
+            className="bg-card border border-border rounded-[14px] p-5 mb-4"
           >
             {/* Module bar */}
             <div
