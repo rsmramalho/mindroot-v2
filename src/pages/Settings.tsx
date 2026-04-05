@@ -134,11 +134,6 @@ export function SettingsPage() {
           onSync={isGoogleUser ? syncGmail : undefined}
           onDisconnect={isGoogleUser ? () => disconnect('google') : undefined}
         />
-        <ConnectorRow
-          icon="drive"
-          name="Google Drive"
-          comingSoon
-        />
       </div>
 
       {/* About */}

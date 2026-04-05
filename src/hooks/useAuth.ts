@@ -49,8 +49,17 @@ export function useAuth() {
           session.provider_refresh_token,
           'google',
           { email: session.user?.email },
-        ).then(() => {
+        ).then(async () => {
           console.log('[connector] tokens stored successfully');
+          // Auto-sync Calendar + Gmail on first connect
+          try {
+            await connectorService.syncCalendar();
+            console.log('[connector] calendar auto-synced');
+          } catch { /* non-blocking */ }
+          try {
+            await connectorService.syncGmail();
+            console.log('[connector] gmail auto-synced');
+          } catch { /* non-blocking */ }
         }).catch((err) => {
           tokenStored.current = false; // allow retry on failure
           console.warn('[connector] failed to store tokens:', err);
