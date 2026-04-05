@@ -33,7 +33,7 @@ export function AuroraCheckin() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-40 bg-bg/95 flex items-center justify-center px-6"
+        className="fixed inset-0 z-50 bg-bg flex items-center justify-center px-4"
       >
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
@@ -65,7 +65,7 @@ export function AuroraCheckin() {
                 <button
                   key={opt.key}
                   onClick={() => setEnergy(opt.key)}
-                  className={`flex-1 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                  className={`flex-1 py-3 min-h-[44px] rounded-xl text-sm font-medium transition-all ${
                     energy === opt.key
                       ? 'bg-accent-bg text-accent border border-accent/30'
                       : 'bg-surface text-text-muted border border-border'

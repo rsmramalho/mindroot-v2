@@ -1,5 +1,5 @@
 // hooks/useAuth.ts — Auth state management
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { authService } from '@/service/auth-service';
 import { connectorService } from '@/service/connector-service';
 import { useAppStore } from '@/store/app-store';
@@ -8,6 +8,7 @@ import type { ThemeMode } from '@/store/app-store';
 export function useAuth() {
   const { user, setUser } = useAppStore();
   const [loading, setLoading] = useState(true);
+  const tokenStored = useRef(false);
 
   useEffect(() => {
     // On the OAuth callback URL, Supabase needs to read ?code from the URL
@@ -40,8 +41,9 @@ export function useAuth() {
         useAppStore.getState().setTheme(saved);
       }
 
-      // Capture Google OAuth tokens for connectors (non-blocking)
-      if (session?.provider_refresh_token) {
+      // Capture Google OAuth tokens for connectors (non-blocking, once per session)
+      if (session?.provider_refresh_token && !tokenStored.current) {
+        tokenStored.current = true;
         console.log('[connector] refresh_token detected, storing...');
         connectorService.storeTokens(
           session.provider_refresh_token,
@@ -50,10 +52,9 @@ export function useAuth() {
         ).then(() => {
           console.log('[connector] tokens stored successfully');
         }).catch((err) => {
+          tokenStored.current = false; // allow retry on failure
           console.warn('[connector] failed to store tokens:', err);
         });
-      } else if (session?.provider_token) {
-        console.log('[connector] provider_token present but NO refresh_token — Google may not have returned one. User needs to re-consent.');
       }
 
       // Clean OAuth callback URL after successful exchange
@@ -77,6 +78,7 @@ export function useAuth() {
 
   const signOut = async () => {
     await authService.signOut();
+    tokenStored.current = false;
     setUser(null);
   };
 

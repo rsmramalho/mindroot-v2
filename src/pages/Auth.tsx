@@ -93,8 +93,8 @@ export function AuthPage({ onBack }: AuthPageProps) {
   // ─── Forgot password ─────────────────────────────────
   if (mode === 'forgot') {
     return (
-      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6 w-full">
-        <div className="w-full max-w-sm">
+      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-4 w-full">
+        <div style={{ width: '100%', maxWidth: '360px' }}>
           <div className="text-center mb-8">
             <div className="text-3xl font-medium text-text-heading tracking-tight">MindRoot</div>
             <p className="text-sm text-text-muted mt-1">recuperar senha</p>
@@ -144,8 +144,8 @@ export function AuthPage({ onBack }: AuthPageProps) {
   // ─── Reset password (from email link) ─────────────────
   if (mode === 'reset') {
     return (
-      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6 w-full">
-        <div className="w-full max-w-sm">
+      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-4 w-full">
+        <div style={{ width: '100%', maxWidth: '360px' }}>
           <div className="text-center mb-8">
             <div className="text-3xl font-medium text-text-heading tracking-tight">MindRoot</div>
             <p className="text-sm text-text-muted mt-1">nova senha</p>
@@ -176,12 +176,12 @@ export function AuthPage({ onBack }: AuthPageProps) {
 
   // ─── Login / Signup ───────────────────────────────────
   return (
-    <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6 w-full">
-      <div className="w-full max-w-sm">
+    <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-4 w-full">
+      <div style={{ width: '100%', maxWidth: '360px' }}>
         {/* Logo */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <div className="text-3xl font-medium text-text-heading tracking-tight">MindRoot</div>
-          <p className="text-sm text-text-muted mt-1 font-light">emocao precede acao</p>
+          <p className="text-[13px] text-text-muted mt-1 font-light">emocao precede acao</p>
         </div>
 
         {success && (
@@ -193,7 +193,7 @@ export function AuthPage({ onBack }: AuthPageProps) {
         {/* Google */}
         <button
           onClick={handleGoogle}
-          className="w-full bg-surface border border-border rounded-xl py-3 text-sm font-medium text-text-heading mb-4 hover:opacity-80 transition-colors"
+          className="w-full bg-surface border border-border rounded-xl py-3 text-sm font-medium text-text-heading mb-4 hover:opacity-80 transition-colors whitespace-nowrap"
         >
           Continuar com Google
         </button>

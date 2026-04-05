@@ -19,9 +19,9 @@ export const auditService = {
   async getFullReport(): Promise<AuditReport> {
     const [inbox, belowFloor, orphans, stale, total, allItems] = await Promise.all([
       supabase.from('items').select('id', { count: 'exact' }).eq('state', 'inbox'),
-      supabase.from('v_below_floor').select('*'),
-      supabase.from('v_orphan_items').select('*'),
-      supabase.from('v_inbox_stale').select('*'),
+      supabase.from('v_below_floor').select('*').then((r) => r.error ? { data: [] } : r),
+      supabase.from('v_orphan_items').select('*').then((r) => r.error ? { data: [] } : r),
+      supabase.from('v_inbox_stale').select('*').then((r) => r.error ? { data: [] } : r),
       supabase.from('items').select('id', { count: 'exact' }).neq('state', 'archived'),
       supabase.from('items').select('genesis_stage, module').neq('state', 'archived'),
     ]);
@@ -47,8 +47,8 @@ export const auditService = {
   async getLightAudit(): Promise<{ inbox: number; stale: number; orphans: number }> {
     const [inbox, stale, orphans] = await Promise.all([
       supabase.from('items').select('id', { count: 'exact' }).eq('state', 'inbox'),
-      supabase.from('v_inbox_stale').select('id', { count: 'exact' }),
-      supabase.from('v_orphan_items').select('id', { count: 'exact' }),
+      supabase.from('v_inbox_stale').select('id', { count: 'exact' }).then((r) => r.error ? { count: 0 } : r),
+      supabase.from('v_orphan_items').select('id', { count: 'exact' }).then((r) => r.error ? { count: 0 } : r),
     ]);
     return {
       inbox: inbox.count ?? 0,
