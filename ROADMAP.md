@@ -1,6 +1,6 @@
 # Atom — Roadmap
 
-**Versão:** 6.7
+**Versão:** 6.8
 **Data:** 05 Abr 2026
 **Status:** active
 **Princípio:** Motor → Inteligência → Visualização → Reflexão. Presença sobre produtividade.
@@ -59,8 +59,8 @@ Cada espiral é um ciclo PHI completo (7 fases, Fibonacci 1-1-2-3-5-8-13). A seg
 - RPCs: morph_item, decay_item, propagate_effect, commit_item
 - RLS: ativo (row-level security por user_id)
 - Audit views: v_orphan_items, v_below_floor, v_inbox_stale
-- Edge functions: parse-input, send-push, triage-classify
-- Auth: email + Google OAuth
+- Edge functions: parse-input, send-push, triage-classify, connector-auth, calendar-sync, gmail-sync (6 total)
+- Auth: email + Google OAuth (migration 009: provider unificado 'google')
 
 ### Specs e design (completo ✓)
 
@@ -190,7 +190,7 @@ A seed da Espiral 2 nasce aqui.
 
 ## Espiral 2 — Vida / sistema operacional
 
-**Status:** em andamento (F1 done, F2 parcial, F3 15/19, F4 7/9)
+**Status:** em andamento (F1 done, F2 10/19, F3 15/19, F4 7/9)
 **Princípio:** Se existe no digital, tem como entrar. Raiz é a fundação. Conectores são a razão de existir.
 
 ```
@@ -241,7 +241,7 @@ Os 9 domínios:
 Notas: Wireframes existem (telas 10 e 11). Raiz É o onboarding. E depois fica como painel de saúde da vida. Cada domínio é uma lente — os items são os mesmos do Supabase, filtrados por `#domain:*`. Zero schema novo.
 
 ### ◐ Fase 2 — Conectores (effort: 1)
-**Status:** em progresso (edge functions + Gmail + Atom Agent)
+**Status:** em progresso (10/19 — OAuth+UI+edge fns done, Agent CLI done, Gmail+timezone pendentes)
 **Commits:** cfc2eb2 (infra) + edc1f68 (fallback) + 978b24f (edge fix) + e26891a (F2 fix)
 **Protocol:** full (GUARDIAO → ROOT → ESTRUTURA → INTERFACE → TEIA)
 **Escopo:** Portas de entrada reais — API + filesystem. O que o Raiz mapeou agora tem caminho pra entrar no sistema. Tres bocas, uma esteira.
@@ -261,12 +261,12 @@ Entregaveis — Conectores API:
 - [x] Edge functions bulletproof: connector-auth (AUTH_xxx), calendar-sync (CAL_xxx), gmail-sync (GMAIL_xxx) — commit e26891a
 
 Entregaveis — Agent Local (Atom Agent):
-- [ ] **Atom Agent v0.1**: Python CLI — scan, classify, rename, move, index no Supabase
+- [x] **Atom Agent v0.1**: Python CLI — scan, classify, rename, move (repo rsmramalho/atom-agent, 17 files, 678 LOC). Index Supabase: client existe, end-to-end pendente.
 - [ ] body.location extension (service, path, hash, mime, size) — zero migracao
-- [ ] Scanner: SHA-256 hash, dedup, metadata
-- [ ] Classifier: regras por nome + extensao + confidence bands
-- [ ] Namer: naming convention Genesis §8.4 aplicada a filenames
-- [ ] CLI: `atom-agent scan <path>` com aprovacao humana antes de mover
+- [x] Scanner: SHA-256 hash, dedup, metadata
+- [x] Classifier: regras por nome + extensao + confidence bands
+- [x] Namer: naming convention Genesis §8.4 aplicada a filenames
+- [x] CLI: `atom-agent scan <path>` com aprovacao humana antes de mover
 - [ ] AtomDrive: estrutura local espelhando modulos Genesis
 - [ ] Agent: `atom-agent watch <path>` — daemon mode (v0.2)
 - [ ] Agent: Haiku fallback pra classificacao ambigua (v0.2)
@@ -427,6 +427,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 | 6.4 | 05 Abr 2026 | F3 Toque+Alma + F4 Biblioteca: Soul loop aurora (AuroraCheckin + soul-store), Library no BottomNav (calendar removido), domain filter Raiz, Graph view (D3 force layout, /graph), Home polish (search→capture, ver todos link), ItemDetail advance labels. 14 pages, 109 files, ~6.7K LOC, 90 tests. |
 | 6.5 | 05 Abr 2026 | Roadmap sync: F3 15/19 (toque 8/8, alma 3/6, triage 4/5), F4 7/9 (library+graph+connections done). F2 expandido: Atom Agent v0.1 movido de Seeds pra F2, protocol:full marcado. Metricas: 77 commits, 109 files, ~12.1K LOC. |
 | 6.7 | 05 Abr 2026 | Cross-repo sync: F2 edge functions checkbox marcado (e26891a), metricas reais (80 commits, 6 edge fns, 9 migrations). Atom Agent repo criado (2 commits, 17 files). PENTAGON v3.1 alinhado. Versao corrigida (6.5→6.7, pulando 6.6 que foi sobrescrita). |
+| 6.8 | 05 Abr 2026 | Sprint Fechamento Espiral 2 — Fase 1 Verdade: sync ROADMAP com estado real. F2 5/19→10/19 (Atom Agent scanner/classifier/namer/CLI marcados ✓). Infra: 6 edge functions listadas, migration 009 confirmada. F3 15/19, F4 7/9 confirmados. |
 
 ---
 
