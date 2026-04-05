@@ -91,11 +91,11 @@
 
 @media (prefers-color-scheme: dark) {
   @theme {
-    /* Background */
-    --color-bg: #111318;
-    --color-card: #1e2024;
-    --color-surface: #1a1d24;
-    --color-border: #2a2d34;
+    /* Background (warm — aligned with wireframes) */
+    --color-bg: #18171a;
+    --color-card: #201e24;
+    --color-surface: #1c1a22;
+    --color-border: #2e2a34;
 
     /* Text */
     --color-text: #d4d0cc;
@@ -148,10 +148,10 @@
 /* ─── Manual theme overrides (class-based) ───────────── */
 
 html.dark {
-  --color-bg: #111318;
-  --color-card: #1e2024;
-  --color-surface: #1a1d24;
-  --color-border: #2a2d34;
+  --color-bg: #18171a;
+  --color-card: #201e24;
+  --color-surface: #1c1a22;
+  --color-border: #2e2a34;
   --color-text: #d4d0cc;
   --color-text-muted: #8a8580;
   --color-text-heading: #f0ece6;
@@ -248,5 +248,22 @@ html.light {
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
+  }
+}
+
+/* ─── Wireframe alignment: 0.5px borders ─────────────── */
+
+@layer utilities {
+  .border {
+    border-width: 0.5px;
+  }
+  .border-b {
+    border-bottom-width: 0.5px;
+  }
+  .border-t {
+    border-top-width: 0.5px;
+  }
+  .border-l {
+    border-left-width: 0.5px;
   }
 }

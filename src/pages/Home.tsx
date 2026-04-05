@@ -118,7 +118,7 @@ export function HomePage() {
       {/* Raiz health */}
       <button
         onClick={() => navigate('raiz')}
-        className="w-full bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between text-left mt-3"
+        className="w-full bg-card border border-border rounded-[14px] px-4 py-3.5 flex items-center justify-between text-left mt-4"
       >
         <div className="flex items-center gap-3">
           <span className="text-lg">○</span>
@@ -133,7 +133,7 @@ export function HomePage() {
       </button>
 
       {/* Capture */}
-      <div className="mt-3">
+      <div className="mt-4">
         <SectionLabel>captura</SectionLabel>
         <AtomInput
           placeholder={isCrepusculo ? 'ultima captura antes do wrap...' : 'o que esta na cabeca?'}
@@ -155,7 +155,7 @@ export function HomePage() {
 
       {/* Active items */}
       {activeItems.length > 0 ? (
-        <div className="mt-3">
+        <div className="mt-4">
           <SectionLabel>items ativos</SectionLabel>
           <div className="space-y-1.5">
             {activeItems.slice(0, 5).map((item, i) => (
@@ -185,7 +185,7 @@ export function HomePage() {
 
       {/* Created today */}
       {createdToday.length > 0 && (
-        <div className="mt-3">
+        <div className="mt-4">
           <SectionLabel>
             criados hoje <span className="text-success text-[13px] normal-case tracking-normal font-medium">{createdToday.length}</span>
           </SectionLabel>
@@ -208,7 +208,7 @@ export function HomePage() {
 
       {/* Inbox */}
       {inboxItems.length > 0 && (
-        <div className="mt-3">
+        <div className="mt-4">
           <SectionLabel>
             inbox <span className="text-error font-medium text-[13px] normal-case tracking-normal">{inboxItems.length}</span>
           </SectionLabel>

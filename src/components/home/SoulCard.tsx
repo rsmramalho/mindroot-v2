@@ -45,7 +45,7 @@ export function SoulCard({ period, intention, emotions, energy }: SoulCardProps)
   const s = PERIOD_STYLES[period] ?? PERIOD_STYLES.aurora;
 
   return (
-    <div className={`rounded-2xl p-3.5 px-4 flex items-center gap-3.5 border ${s.bg} ${s.border}`}>
+    <div className={`rounded-[14px] p-4 flex items-center gap-3.5 border ${s.bg} ${s.border}`}>
       {/* Orb */}
       <div className="w-11 h-11 rounded-full relative flex items-center justify-center shrink-0">
         <motion.div
