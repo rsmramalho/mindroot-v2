@@ -37,12 +37,12 @@ describe('AGENTE DADOS — Cache e deduplicacao', () => {
 
   it('filtro por tags suporta multiplas tags', () => {
     const items = [
-      makeItem('1', { tags: ['#domain:saude', '#raiz'] }),
-      makeItem('2', { tags: ['#domain:saude'] }),
+      makeItem('1', { tags: ['#domain:health', '#raiz'] }),
+      makeItem('2', { tags: ['#domain:health'] }),
       makeItem('3', { tags: ['#raiz'] }),
     ];
     const raizSaude = items.filter(
-      i => i.tags.includes('#domain:saude') && i.tags.includes('#raiz')
+      i => i.tags.includes('#domain:health') && i.tags.includes('#raiz')
     );
     expect(raizSaude.length).toBe(1);
   });

@@ -28,10 +28,10 @@ describe('AGENTE LOGICA — Library filters', () => {
 
   it('filtro por domain funciona com tag', () => {
     const items = [
-      makeItem({ tags: ['#domain:saude'], type: 'recipe' }),
-      makeItem({ tags: ['#domain:financas'], type: 'article' }),
+      makeItem({ tags: ['#domain:health'], type: 'recipe' }),
+      makeItem({ tags: ['#domain:finance'], type: 'article' }),
     ];
-    const saude = items.filter(i => i.tags.includes('#domain:saude'));
+    const saude = items.filter(i => i.tags.includes('#domain:health'));
     expect(saude.length).toBe(1);
   });
 

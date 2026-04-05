@@ -20,28 +20,28 @@ describe('AGENTE FLUXO — Captura no Raiz → Panorama → Refresh', () => {
 
     const newItem = makeItem('new-1', {
       title: 'google drive',
-      tags: ['#domain:arquivos', '#raiz'],
+      tags: ['#domain:storage', '#raiz'],
       module: 'bridge',
     });
     supabaseItems.push(newItem);
-    domainInputs['arquivos'] = [...(domainInputs['arquivos'] ?? []), 'google drive'];
+    domainInputs['storage'] = [...(domainInputs['storage'] ?? []), 'google drive'];
 
-    const supabaseCount = supabaseItems.filter(i => i.tags.includes('#domain:arquivos')).length;
-    const sessionCount = domainInputs['arquivos']?.length ?? 0;
+    const supabaseCount = supabaseItems.filter(i => i.tags.includes('#domain:storage')).length;
+    const sessionCount = domainInputs['storage']?.length ?? 0;
     const displayCount = Math.max(supabaseCount, sessionCount);
     expect(displayCount).toBe(1);
 
     domainInputs = {};
 
-    const supabaseCountAfter = supabaseItems.filter(i => i.tags.includes('#domain:arquivos')).length;
-    const sessionCountAfter = domainInputs['arquivos']?.length ?? 0;
+    const supabaseCountAfter = supabaseItems.filter(i => i.tags.includes('#domain:storage')).length;
+    const sessionCountAfter = domainInputs['storage']?.length ?? 0;
     const displayCountAfter = Math.max(supabaseCountAfter, sessionCountAfter);
     expect(displayCountAfter).toBe(1);
 
     const persistedTitles = supabaseItems
-      .filter(i => i.tags.includes('#domain:arquivos'))
+      .filter(i => i.tags.includes('#domain:storage'))
       .map(i => i.title);
-    const sessionTitles = domainInputs['arquivos'] ?? [];
+    const sessionTitles = domainInputs['storage'] ?? [];
     const sessionSet = new Set(sessionTitles);
     const allVisibleItems = [
       ...persistedTitles.filter(p => !sessionSet.has(p)),
@@ -57,26 +57,26 @@ describe('AGENTE FLUXO — Captura no Raiz → Panorama → Refresh', () => {
 
     ['academia', 'vitamina D', 'exame de sangue'].forEach((title, i) => {
       supabaseItems.push(makeItem(`s-${i}`, {
-        title, tags: ['#domain:saude', '#raiz'], module: 'body',
+        title, tags: ['#domain:health', '#raiz'], module: 'body',
       }));
-      domainInputs['saude'] = [...(domainInputs['saude'] ?? []), title];
+      domainInputs['health'] = [...(domainInputs['health'] ?? []), title];
     });
 
     const displayCount = Math.max(
-      supabaseItems.filter(i => i.tags.includes('#domain:saude')).length,
-      domainInputs['saude']?.length ?? 0,
+      supabaseItems.filter(i => i.tags.includes('#domain:health')).length,
+      domainInputs['health']?.length ?? 0,
     );
     expect(displayCount).toBe(3);
   });
 
   it('fluxo: captura em dominios diferentes nao contamina', () => {
     const supabaseItems: AtomItem[] = [
-      makeItem('a1', { title: 'passaporte', tags: ['#domain:identidade'], module: 'bridge' }),
-      makeItem('a2', { title: 'vitamina', tags: ['#domain:saude'], module: 'body' }),
+      makeItem('a1', { title: 'passaporte', tags: ['#domain:identity'], module: 'bridge' }),
+      makeItem('a2', { title: 'vitamina', tags: ['#domain:health'], module: 'body' }),
     ];
 
-    const identidadeCount = supabaseItems.filter(i => i.tags.includes('#domain:identidade')).length;
-    const saudeCount = supabaseItems.filter(i => i.tags.includes('#domain:saude')).length;
+    const identidadeCount = supabaseItems.filter(i => i.tags.includes('#domain:identity')).length;
+    const saudeCount = supabaseItems.filter(i => i.tags.includes('#domain:health')).length;
 
     expect(identidadeCount).toBe(1);
     expect(saudeCount).toBe(1);

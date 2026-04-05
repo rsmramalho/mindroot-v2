@@ -1,12 +1,9 @@
-// shell/AppShell.tsx — Responsive app layout
-// Mobile (<768px): TopBar + content + BottomNav
-// Desktop (≥768px): SidebarNav + TopBar + content (no BottomNav)
+// shell/AppShell.tsx — App layout wrapper
+// TopBar + content area + BottomNav. Light-first, responsive.
 
 import type { ReactNode } from 'react';
 import { TopBar } from './TopBar';
 import { BottomNav } from './BottomNav';
-import { SidebarNav } from './SidebarNav';
-import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 interface AppShellProps {
   children: ReactNode;
@@ -14,25 +11,15 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, onOpenSettings }: AppShellProps) {
-  const { isMobile } = useBreakpoint();
-
   return (
-    <div className="min-h-dvh bg-bg text-text font-sans flex">
-      {/* Sidebar — desktop only */}
-      <SidebarNav />
+    <div className="min-h-dvh bg-bg text-text font-sans flex flex-col mx-auto w-full max-w-[430px] border-x border-border/50 relative pt-[env(safe-area-inset-top)]">
+      <TopBar onOpenSettings={onOpenSettings} />
 
-      {/* Main column */}
-      <div className="flex-1 flex flex-col min-h-dvh relative">
-        {isMobile && <TopBar onOpenSettings={onOpenSettings} />}
+      <main className="flex-1 pb-16 overflow-y-auto">
+        {children}
+      </main>
 
-        <main className={`flex-1 overflow-y-auto ${isMobile ? 'pb-16' : 'pb-4'}`}>
-          <div className="mx-auto w-full max-w-3xl">
-            {children}
-          </div>
-        </main>
-
-        {isMobile && <BottomNav />}
-      </div>
+      <BottomNav />
     </div>
   );
 }

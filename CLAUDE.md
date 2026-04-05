@@ -140,7 +140,7 @@ Emotional productivity system — the face of Atom OS. Emotion precedes action, 
 
 ## Version
 
-v2.0.0-beta.1 — Responsive desktop shell, AI companion, soul loop complete, 126 tests.
+v2.0.0-alpha.12 — PHI spiral. 14 pages, 11 services, connectors, triage, graph, visual tests.
 
 ## Stack
 
@@ -238,15 +238,15 @@ supabase, item-service (itemService + connectionService + eventService), auth-se
 
 ## Engines (6)
 
-fsm (state machine), wrap (daily close), parsing (token parser), recurrence (RRULE), soul (check-in), search (fulltext + filters), companion (contextual suggestions)
+fsm (state machine), wrap (daily close), parsing (token parser), recurrence (RRULE), soul (check-in), search (fulltext + filters)
 
 ## Stores (4)
 
 app-store (nav, filters, user), soul-store (check-in state), wrap-store (wrap session), toast-store (notifications)
 
-## Hooks (14)
+## Hooks (13)
 
-useAuth, useItems, useItemMutations, usePipeline, useWrap, useRealtime, useProject, useAudit, useConnections, useConnectors, useNav, useRaiz, useTriage, useBreakpoint
+useAuth, useItems, useItemMutations, usePipeline, useWrap, useRealtime, useProject, useAudit, useConnections, useConnectors, useNav, useRaiz, useTriage
 
 ## Supabase
 
@@ -284,19 +284,18 @@ VITE_SUPABASE_ANON_KEY=...
 | Search | pages/Search.tsx | — |
 | ItemDetail | pages/ItemDetail.tsx | — |
 
-## Components (28)
+## Components (26)
 
 - atoms/ (8): tokens, GeometryIcon, TypeChip, StageBadge, ModuleBar, ConfidenceBar, FAB, index
-- shell/ (4): AppShell, TopBar, BottomNav, SidebarNav
+- shell/ (3): AppShell, TopBar, BottomNav
 - home/ (5): SoulCard, WrapBanner, AtomInput, InboxPreview, AuroraCheckin
 - shared/ (8): ConnectionsSection, EmptyState, ErrorBanner, ErrorBoundary, ItemCard, OfflineBanner, Skeleton, ToastContainer
 - analytics/ (2): ConnectionsPanel, SoulPanel
 - audit/ (2): AuditPanel, HealthBar
-- companion/ (1): CompanionSheet
 
 ## Tests
 
-- Unit: 126 tests, 17 suites (vitest) — `npx vitest run`
+- Unit: 90 tests, 14 suites (vitest) — `npx vitest run`
 - Visual: 21 tests, 30 screenshots (playwright) — `npm run test:visual`
 - Visual report: `npm run test:visual:report` (opens HTML)
 - Baselines: `e2e/screenshots/` (committed to git)

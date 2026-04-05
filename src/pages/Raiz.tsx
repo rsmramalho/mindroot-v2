@@ -15,7 +15,7 @@ import { useNav } from '@/hooks/useNav';
 import { useAppStore } from '@/store/app-store';
 import { supabase } from '@/service/supabase';
 import { RAIZ_DOMAINS, RAIZ_DOORS, type RaizDomain, type RaizDoorKey } from '@/config/raiz';
-import { MODULE_COLORS, STAGE_COLORS } from '@/components/atoms/tokens';
+import { MODULE_COLORS } from '@/components/atoms/tokens';
 
 const anim = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -12 } };
 
@@ -42,24 +42,6 @@ export function RaizPage() {
       return { ...domain, count: health?.count ?? 0, oldest: health?.oldest ?? 0, status: health?.status ?? 'empty' as const };
     });
   }, [domainHealthRaw]);
-
-  // Stage distribution per domain (for mini stage bars)
-  const stagesByDomain = useMemo(() => {
-    const map: Record<string, number[]> = {};
-    RAIZ_DOMAINS.forEach((d) => { map[d.key] = [0, 0, 0, 0, 0, 0, 0]; });
-    allItems.forEach((item) => {
-      if (item.status === 'archived') return;
-      item.tags?.forEach((t) => {
-        if (t.startsWith('#domain:')) {
-          const key = t.replace('#domain:', '');
-          if (map[key] && item.genesis_stage >= 1 && item.genesis_stage <= 7) {
-            map[key][item.genesis_stage - 1]++;
-          }
-        }
-      });
-    });
-    return map;
-  }, [allItems]);
 
   const sessionCount = Object.values(domainInputs).flat().length;
   const touchedDomains = Object.keys(domainInputs).filter((k) => (domainInputs[k]?.length ?? 0) > 0);
@@ -186,17 +168,10 @@ export function RaizPage() {
               <div className="bg-card border border-border rounded-[14px] p-4 flex items-center gap-4 mb-4">
                 <div className="relative w-14 h-14 shrink-0">
                   <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                    <defs>
-                      <linearGradient id="raiz-ring-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="var(--color-accent)" />
-                        <stop offset="50%" stopColor="var(--color-ai-blue)" />
-                        <stop offset="100%" stopColor="var(--color-success)" />
-                      </linearGradient>
-                    </defs>
                     <circle cx="18" cy="18" r="15.5" fill="none" className="stroke-border" strokeWidth="3" />
                     <motion.circle
                       cx="18" cy="18" r="15.5" fill="none"
-                      stroke="url(#raiz-ring-gradient)"
+                      className="stroke-success"
                       strokeWidth="3" strokeLinecap="round"
                       initial={{ strokeDasharray: '0 100' }}
                       animate={{ strokeDasharray: `${healthPct} ${100 - healthPct}` }}
@@ -253,21 +228,8 @@ export function RaizPage() {
                     {displayCount > 0 ? (
                       <>
                         <div className="text-xs font-medium mt-1">{displayCount}</div>
-                        {/* Mini stage bar */}
-                        <div className="flex gap-px mt-1.5 h-[3px]">
-                          {stagesByDomain[domain.key]?.map((count, i) => (
-                            <div
-                              key={i}
-                              className="flex-1 rounded-sm"
-                              style={{
-                                background: count > 0 ? STAGE_COLORS[i + 1] : 'var(--color-border)',
-                                opacity: count > 0 ? 0.8 : 0.3,
-                              }}
-                            />
-                          ))}
-                        </div>
                         {domain.status === 'stale' && (
-                          <div className="text-[9px] text-warning mt-0.5">{domain.oldest}d</div>
+                          <div className="text-[9px] text-warning">{domain.oldest}d</div>
                         )}
                       </>
                     ) : (

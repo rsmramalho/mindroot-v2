@@ -43,11 +43,9 @@ export function useConnectors() {
       queryClient.invalidateQueries({ queryKey: ['items'] });
       await refresh();
       setSyncState('done');
-      setTimeout(() => setSyncState('idle'), 3000);
       toast.success(created > 0 ? `${created} eventos importados pro inbox` : 'Calendar sincronizado');
     } catch (err: any) {
       setSyncState('error');
-      setTimeout(() => setSyncState('idle'), 5000);
       toast.error(err.message ?? 'Erro ao sincronizar calendar');
     }
   };
@@ -61,11 +59,9 @@ export function useConnectors() {
       queryClient.invalidateQueries({ queryKey: ['items'] });
       await refresh();
       setSyncState('done');
-      setTimeout(() => setSyncState('idle'), 3000);
       toast.success(created > 0 ? `${created} emails importados pro inbox` : 'Gmail sincronizado');
     } catch (err: any) {
       setSyncState('error');
-      setTimeout(() => setSyncState('idle'), 5000);
       toast.error(err.message ?? 'Erro ao sincronizar Gmail');
     }
   };

@@ -16,7 +16,7 @@ export interface RaizDomain {
 
 export const RAIZ_DOMAINS: RaizDomain[] = [
   {
-    key: 'identidade',
+    key: 'identity',
     label: 'identidade',
     emoji: '🔑',
     module: 'bridge',
@@ -24,7 +24,7 @@ export const RAIZ_DOMAINS: RaizDomain[] = [
     examples: ['email pessoal', 'email do trabalho', 'gmail antigo', 'conta apple', 'login do banco'],
   },
   {
-    key: 'documentos',
+    key: 'documents',
     label: 'documentos',
     emoji: '📄',
     module: 'bridge',
@@ -32,7 +32,7 @@ export const RAIZ_DOMAINS: RaizDomain[] = [
     examples: ['passaporte', 'contrato do aluguel', 'certidao', 'receitas medicas', 'diploma'],
   },
   {
-    key: 'saude',
+    key: 'health',
     label: 'saude',
     emoji: '❤️',
     module: 'body',
@@ -40,7 +40,7 @@ export const RAIZ_DOMAINS: RaizDomain[] = [
     examples: ['academia', 'exame pendente', 'remedio que tomo', 'dentista atrasado', 'sono ruim'],
   },
   {
-    key: 'financas',
+    key: 'finance',
     label: 'financas',
     emoji: '💰',
     module: 'finance',
@@ -48,7 +48,7 @@ export const RAIZ_DOMAINS: RaizDomain[] = [
     examples: ['conta corrente', 'cartao de credito', 'investimento', 'divida', 'assinatura mensal'],
   },
   {
-    key: 'arquivos',
+    key: 'storage',
     label: 'arquivos',
     emoji: '☁️',
     module: 'bridge',
@@ -56,7 +56,7 @@ export const RAIZ_DOMAINS: RaizDomain[] = [
     examples: ['google drive', 'icloud', 'hd externo', 'dropbox', 'fotos no celular'],
   },
   {
-    key: 'memorias',
+    key: 'memories',
     label: 'memorias',
     emoji: '📸',
     module: 'family',
@@ -64,7 +64,7 @@ export const RAIZ_DOMAINS: RaizDomain[] = [
     examples: ['google photos', 'icloud photos', 'fotos no whatsapp', 'album fisico', 'videos antigos'],
   },
   {
-    key: 'tempo',
+    key: 'time',
     label: 'tempo',
     emoji: '📅',
     module: 'bridge',
@@ -72,7 +72,7 @@ export const RAIZ_DOMAINS: RaizDomain[] = [
     examples: ['google calendar', 'agenda fisica', 'alarmes', 'nenhum sistema', 'monday.com'],
   },
   {
-    key: 'comunicacao',
+    key: 'communication',
     label: 'comunicacao',
     emoji: '💬',
     module: 'social',
@@ -80,7 +80,7 @@ export const RAIZ_DOMAINS: RaizDomain[] = [
     examples: ['whatsapp', 'email', 'instagram', 'telegram', 'slack', 'linkedin'],
   },
   {
-    key: 'projetos',
+    key: 'projects',
     label: 'projetos',
     emoji: '🚀',
     module: 'work',
@@ -107,7 +107,7 @@ export const RAIZ_DOORS: RaizDoor[] = [
     title: 'o mais facil',
     description: 'comunicacao ou calendario — quick win pra criar momentum.',
     tag: 'pra quem precisa de uma vitoria rapida',
-    domainKeys: ['comunicacao', 'tempo', 'projetos'],
+    domainKeys: ['communication', 'time', 'projects'],
   },
   {
     key: 'pain',
@@ -115,7 +115,7 @@ export const RAIZ_DOORS: RaizDoor[] = [
     title: 'o que mais incomoda',
     description: 'o que tira sono. resolver alivia rapido — e o alivio move o resto.',
     tag: 'pra quem sabe onde doi',
-    domainKeys: ['financas', 'saude', 'identidade', 'documentos', 'arquivos'],
+    domainKeys: ['finance', 'health', 'identity', 'documents', 'storage'],
   },
   {
     key: 'guide',
@@ -124,7 +124,7 @@ export const RAIZ_DOORS: RaizDoor[] = [
     description: 'identidade primeiro — contas, emails, logins. de dentro pra fora.',
     tag: 'pra quem ta perdido',
     recommended: true,
-    domainKeys: ['identidade', 'documentos', 'saude', 'financas', 'arquivos', 'memorias', 'tempo', 'comunicacao', 'projetos'],
+    domainKeys: ['identity', 'documents', 'health', 'finance', 'storage', 'memories', 'time', 'communication', 'projects'],
   },
 ];
 

@@ -65,16 +65,12 @@ const NAV_ITEMS: NavItem[] = [
     ),
   },
   {
-    key: 'library',
-    label: 'library',
-    icon: (active: boolean) => (
+    key: 'search',
+    label: 'search',
+    icon: (_active: boolean) => (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <path d="M4 5a1 1 0 011-1h2a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"
-          stroke="currentColor" strokeWidth={active ? '1.8' : '1.3'} fill="none" />
-        <path d="M9 4h2a1 1 0 011 1v14a1 1 0 01-1 1H9"
-          stroke="currentColor" strokeWidth={active ? '1.8' : '1.3'} fill="none" />
-        <path d="M13 5l5-1.5v14.3L13 19.5V5z"
-          stroke="currentColor" strokeWidth={active ? '1.8' : '1.3'} fill="none" />
+        <circle cx="10.5" cy="10.5" r="6" stroke="currentColor" strokeWidth="1.5" />
+        <line x1="15" y1="15" x2="20" y2="20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
   },

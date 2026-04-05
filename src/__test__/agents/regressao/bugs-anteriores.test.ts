@@ -8,12 +8,12 @@ describe('AGENTE REGRESSAO — Bugs anteriores (mobile fixes session)', () => {
     expect(bridgeDomains.length).toBeGreaterThan(1);
 
     const items = [
-      { tags: ['#domain:identidade'], module: 'bridge' },
-      { tags: ['#domain:documentos'], module: 'bridge' },
+      { tags: ['#domain:identity'], module: 'bridge' },
+      { tags: ['#domain:documents'], module: 'bridge' },
     ];
 
-    const identidadeCount = items.filter(i => i.tags.includes('#domain:identidade')).length;
-    const documentosCount = items.filter(i => i.tags.includes('#domain:documentos')).length;
+    const identidadeCount = items.filter(i => i.tags.includes('#domain:identity')).length;
+    const documentosCount = items.filter(i => i.tags.includes('#domain:documents')).length;
 
     expect(identidadeCount).toBe(1);
     expect(documentosCount).toBe(1);

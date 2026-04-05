@@ -48,10 +48,6 @@ interface AppState {
   // UI
   isInputFocused: boolean;
   setInputFocused: (focused: boolean) => void;
-
-  // Companion
-  companionOpen: boolean;
-  toggleCompanion: () => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -90,8 +86,4 @@ export const useAppStore = create<AppState>((set) => ({
   // UI
   isInputFocused: false,
   setInputFocused: (focused) => set({ isInputFocused: focused }),
-
-  // Companion
-  companionOpen: false,
-  toggleCompanion: () => set((s) => ({ companionOpen: !s.companionOpen })),
 }));

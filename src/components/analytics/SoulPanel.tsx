@@ -44,7 +44,6 @@ export function SoulPanel({ items }: SoulPanelProps) {
 
   return (
     <div className="space-y-4">
-      <SoulPatterns wraps={wraps} />
       <SoulStreak wraps={wraps} />
       <EnergyTrend wraps={wraps} />
       <EmotionFrequency wraps={wraps} />
@@ -203,68 +202,6 @@ function EmotionFrequency({ wraps }: { wraps: WrapSoul[] }) {
               />
             </div>
             <span className="text-xs text-accent w-5 text-right font-medium">{count}</span>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-// ─── Soul Patterns (natural language) ────────────────
-
-function SoulPatterns({ wraps }: { wraps: WrapSoul[] }) {
-  const patterns = useMemo(() => {
-    if (wraps.length < 3) return [];
-    const insights: string[] = [];
-
-    // Pattern 1: Most common aurora emotion
-    const auroraCounts: Record<string, number> = {};
-    const crepCounts: Record<string, number> = {};
-    wraps.forEach((w) => {
-      if (w.aurora?.emotion) auroraCounts[w.aurora.emotion] = (auroraCounts[w.aurora.emotion] ?? 0) + 1;
-      if (w.crepusculo?.emotion) crepCounts[w.crepusculo.emotion] = (crepCounts[w.crepusculo.emotion] ?? 0) + 1;
-    });
-
-    const topAurora = Object.entries(auroraCounts).sort((a, b) => b[1] - a[1])[0];
-    const topCrep = Object.entries(crepCounts).sort((a, b) => b[1] - a[1])[0];
-
-    if (topAurora && topCrep && topAurora[0] !== topCrep[0]) {
-      insights.push(`voce tende a comecar ${topAurora[0]} e terminar ${topCrep[0]}`);
-    }
-
-    // Pattern 2: Energy trend
-    const recentEnergies = wraps.slice(0, 7).map((w) => w.crepusculo?.energy ?? w.aurora?.energy).filter(Boolean);
-    const highCount = recentEnergies.filter((e) => e === 'high').length;
-    const lowCount = recentEnergies.filter((e) => e === 'low').length;
-    if (recentEnergies.length >= 3) {
-      if (highCount > recentEnergies.length * 0.6) insights.push('energia consistentemente alta nos ultimos dias');
-      else if (lowCount > recentEnergies.length * 0.5) insights.push('energia baixa frequente — considere ajustar o ritmo');
-    }
-
-    // Pattern 3: Positive shift tendency
-    const shiftsWithData = wraps.filter((w) => w.aurora?.emotion && w.crepusculo?.emotion);
-    if (shiftsWithData.length >= 3) {
-      const positiveShifts = shiftsWithData.filter((w) =>
-        !POSITIVE_EMOTIONS.includes(w.aurora!.emotion as any) && POSITIVE_EMOTIONS.includes(w.crepusculo!.emotion as any)
-      ).length;
-      const ratio = positiveShifts / shiftsWithData.length;
-      if (ratio > 0.5) insights.push('a maioria dos seus dias termina melhor do que comeca');
-      else if (ratio < 0.2 && shiftsWithData.length >= 5) insights.push('poucos shifts positivos — o wrap pode ajudar a entender por que');
-    }
-
-    return insights;
-  }, [wraps]);
-
-  if (patterns.length === 0) return null;
-
-  return (
-    <section>
-      <div className="text-[11px] font-medium tracking-wider uppercase text-text-muted mb-2">padroes observados</div>
-      <div className="bg-card border border-border rounded-[14px] p-4 space-y-2">
-        {patterns.map((p, i) => (
-          <div key={i} className="flex items-start gap-2.5">
-            <span className="text-accent text-xs mt-0.5">◆</span>
-            <p className="text-[13px] text-text leading-relaxed">{p}</p>
           </div>
         ))}
       </div>

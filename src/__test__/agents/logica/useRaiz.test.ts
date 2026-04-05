@@ -40,23 +40,23 @@ function makeItem(overrides: Partial<AtomItem> = {}): AtomItem {
 describe('AGENTE LOGICA — useRaiz domain health', () => {
   it('conta items por domain tag', () => {
     const items = [
-      makeItem({ tags: ['#domain:saude', '#raiz'] }),
-      makeItem({ tags: ['#domain:saude', '#raiz'] }),
-      makeItem({ tags: ['#domain:financas', '#raiz'] }),
+      makeItem({ tags: ['#domain:health', '#raiz'] }),
+      makeItem({ tags: ['#domain:health', '#raiz'] }),
+      makeItem({ tags: ['#domain:finance', '#raiz'] }),
     ];
     const health = computeDomainHealth(items);
-    expect(health.find(d => d.key === 'saude')?.count).toBe(2);
-    expect(health.find(d => d.key === 'financas')?.count).toBe(1);
-    expect(health.find(d => d.key === 'documentos')?.count).toBe(0);
+    expect(health.find(d => d.key === 'health')?.count).toBe(2);
+    expect(health.find(d => d.key === 'finance')?.count).toBe(1);
+    expect(health.find(d => d.key === 'documents')?.count).toBe(0);
   });
 
   it('ignora items archived', () => {
     const items = [
-      makeItem({ tags: ['#domain:saude'], status: 'archived' }),
-      makeItem({ tags: ['#domain:saude'], status: 'active' }),
+      makeItem({ tags: ['#domain:health'], status: 'archived' }),
+      makeItem({ tags: ['#domain:health'], status: 'active' }),
     ];
     const health = computeDomainHealth(items);
-    expect(health.find(d => d.key === 'saude')?.count).toBe(1);
+    expect(health.find(d => d.key === 'health')?.count).toBe(1);
   });
 
   it('retorna empty quando domain sem items', () => {
@@ -71,9 +71,9 @@ describe('AGENTE LOGICA — useRaiz domain health', () => {
   });
 
   it('cada domain e independente — saude nao contamina financas', () => {
-    const items = [makeItem({ tags: ['#domain:saude'] })];
+    const items = [makeItem({ tags: ['#domain:health'] })];
     const health = computeDomainHealth(items);
-    expect(health.find(d => d.key === 'saude')?.count).toBe(1);
-    expect(health.find(d => d.key === 'financas')?.count).toBe(0);
+    expect(health.find(d => d.key === 'health')?.count).toBe(1);
+    expect(health.find(d => d.key === 'finance')?.count).toBe(0);
   });
 });

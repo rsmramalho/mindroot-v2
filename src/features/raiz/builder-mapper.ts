@@ -111,9 +111,9 @@ function inferType(questionId: string, _value: string): AtomType {
 
 function inferDomain(module: AtomModule): string {
   const map: Partial<Record<AtomModule, string>> = {
-    body: 'saude', mind: 'projetos', family: 'comunicacao', work: 'projetos', finance: 'financas',
+    body: 'health', mind: 'projects', family: 'communication', work: 'projects', finance: 'finance',
   };
-  return map[module] ?? 'projetos';
+  return map[module] ?? 'projects';
 }
 
 function inferSlot(_questionId: string, answers: BuilderAnswer[]): RitualSlot | undefined {

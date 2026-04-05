@@ -96,36 +96,15 @@ export function HomePage() {
         </div>
       </div>
 
-      {/* Soul + Raiz — side by side on desktop */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <div>
-          <SectionLabel>soul</SectionLabel>
-          <SoulCard
-            period={period.key}
-            intention={soulIntention ?? intention}
-            emotions={soulEmotion ?? currentEmotion ?? 'neutro'}
-            energy={soulEnergy}
-          />
-        </div>
-
-        <div>
-          <SectionLabel>raiz</SectionLabel>
-          <button
-            onClick={() => navigate('raiz')}
-            className="w-full bg-card border border-border rounded-[14px] px-4 py-3.5 flex items-center justify-between text-left"
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-lg">○</span>
-              <div>
-                <div className="text-sm font-medium">raiz · {healthPct}%</div>
-                <div className="text-xs text-text-muted">
-                  {staleCount > 0 ? `${staleCount} dominios stale` : emptyCount > 0 ? `${emptyCount} dominios vazios` : '9 dominios ativos'}
-                </div>
-              </div>
-            </div>
-            <span className="text-xs text-text-muted">→</span>
-          </button>
-        </div>
+      {/* Soul */}
+      <div>
+        <SectionLabel>soul</SectionLabel>
+        <SoulCard
+          period={period.key}
+          intention={soulIntention ?? intention}
+          emotions={soulEmotion ?? currentEmotion ?? 'neutro'}
+          energy={soulEnergy}
+        />
       </div>
 
       {/* Wrap banner (crepúsculo only) */}
@@ -135,6 +114,23 @@ export function HomePage() {
           modifiedCount={modifiedToday.length}
         />
       )}
+
+      {/* Raiz health */}
+      <button
+        onClick={() => navigate('raiz')}
+        className="w-full bg-card border border-border rounded-[14px] px-4 py-3.5 flex items-center justify-between text-left mt-4"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-lg">○</span>
+          <div>
+            <div className="text-sm font-medium">raiz · {healthPct}%</div>
+            <div className="text-xs text-text-muted">
+              {staleCount > 0 ? `${staleCount} dominios stale` : emptyCount > 0 ? `${emptyCount} dominios vazios` : '9 dominios ativos'}
+            </div>
+          </div>
+        </div>
+        <span className="text-xs text-text-muted">→</span>
+      </button>
 
       {/* Capture */}
       <div className="mt-4">
