@@ -1,6 +1,6 @@
 # Atom — Roadmap
 
-**Versão:** 6.8
+**Versão:** 6.9
 **Data:** 05 Abr 2026
 **Status:** active
 **Princípio:** Motor → Inteligência → Visualização → Reflexão. Presença sobre produtividade.
@@ -190,7 +190,7 @@ A seed da Espiral 2 nasce aqui.
 
 ## Espiral 2 — Vida / sistema operacional
 
-**Status:** em andamento (F1 done, F2 10/19, F3 19/19 ✓, F4 9/9 ✓)
+**Status:** em andamento (F1 done, F2 14/19, F3 19/19 ✓, F4 9/9 ✓)
 **Princípio:** Se existe no digital, tem como entrar. Raiz é a fundação. Conectores são a razão de existir.
 
 ```
@@ -241,7 +241,7 @@ Os 9 domínios:
 Notas: Wireframes existem (telas 10 e 11). Raiz É o onboarding. E depois fica como painel de saúde da vida. Cada domínio é uma lente — os items são os mesmos do Supabase, filtrados por `#domain:*`. Zero schema novo.
 
 ### ◐ Fase 2 — Conectores (effort: 1)
-**Status:** em progresso (10/19 — OAuth+UI+edge fns done, Agent CLI done, Gmail+timezone pendentes)
+**Status:** em progresso (14/19 — OAuth+UI+edge fns+Gmail+Calendar+Agent CLI done. Pendente: body.location, AtomDrive, watch, Haiku, ritual blocks→Seeds)
 **Commits:** cfc2eb2 (infra) + edc1f68 (fallback) + 978b24f (edge fix) + e26891a (F2 fix)
 **Protocol:** full (GUARDIAO → ROOT → ESTRUTURA → INTERFACE → TEIA)
 **Escopo:** Portas de entrada reais — API + filesystem. O que o Raiz mapeou agora tem caminho pra entrar no sistema. Tres bocas, uma esteira.
@@ -249,12 +249,12 @@ Notas: Wireframes existem (telas 10 e 11). Raiz É o onboarding. E depois fica c
 O Raiz diz "voce tem 6 emails." Os conectores fazem esses emails virarem items. O Raiz diz "seu calendario ta em UTC." Os conectores corrigem e sincronizam. O agent local organiza Downloads todo dia. A promessa do "Human Systems" se materializa aqui.
 
 Entregaveis — Conectores API:
-- [ ] **Gmail → Atom**: emails starred viram items no inbox automaticamente
-- [ ] Gmail: contatos relevantes viram tags `#who:*` com dados reais
+- [x] **Gmail → Atom**: emails starred viram items no inbox (edge fn + ingest + sync button em Settings)
+- [x] Gmail: contatos relevantes viram tags `#who:*` extraidos do sender (71afe6b)
 - [x] **Google Calendar → Atom**: OAuth conectado, refresh token salvo, UI de conectores
-- [ ] Calendar: sync de eventos end-to-end (edge function fix pendente)
-- [ ] Calendar: timezone corrigido (UTC → Australia/Brisbane)
-- [ ] Calendar: blocos do ritual (aurora/zenite/crepusculo) como eventos recorrentes reais
+- [x] Calendar: sync de eventos end-to-end (edge fn deployed, ingest + sync button funcional)
+- [x] Calendar: timezone corrigido — parseISO+format em vez de UTC string slicing (71afe6b)
+- [ ] ~~Calendar: blocos rituais como eventos recorrentes~~ → movido pra Seeds Espiral 3 (requer scope write)
 - [x] Painel de conectores: status de cada integracao (conectado / desconectado / erro)
 - [x] Pipeline de ingestao: conector → inbox (estagio 1) → Genesis pipeline normal
 - [x] connector-service.ts + useConnectors hook
@@ -351,7 +351,7 @@ Notas: Wireframe tela 10 (mindroot-wireframe-ai-companion.html). O companion é 
 
 Nascem da completude da Espiral 2. Não detalhadas até lá.
 
-- **Escudo:** Corp Shield avançado. Ações nos conectores (enviar email, criar evento, mover arquivo). O sistema passa de leitor pra agente.
+- **Escudo:** Corp Shield avançado. Ações nos conectores (enviar email, criar evento, mover arquivo). O sistema passa de leitor pra agente. Inclui: blocos rituais (aurora/zenite/crepúsculo) como eventos recorrentes no Google Calendar (requer scope write).
 - **Resiliência:** PWA offline completo + Ollama local como fallback do Claude + sync engine. O sistema funciona sem internet.
 - **Propagação:** Estágio 6 do Genesis ganha mecânica real — cascata de eventos entre items conectados. Completar uma task atualiza o projeto. Projeto mudar de status notifica items dependentes.
 - **Atom Agent v2+:** Evolucao do agent local (entregue em F2 como v0.1). Watch mode, Haiku classification, Google Drive scan, Photos migration, daemon diario. Repo: `rsmramalho/atom-agent`.
@@ -428,6 +428,7 @@ Nascem da completude da Espiral 2. Não detalhadas até lá.
 | 6.5 | 05 Abr 2026 | Roadmap sync: F3 15/19 (toque 8/8, alma 3/6, triage 4/5), F4 7/9 (library+graph+connections done). F2 expandido: Atom Agent v0.1 movido de Seeds pra F2, protocol:full marcado. Metricas: 77 commits, 109 files, ~12.1K LOC. |
 | 6.7 | 05 Abr 2026 | Cross-repo sync: F2 edge functions checkbox marcado (e26891a), metricas reais (80 commits, 6 edge fns, 9 migrations). Atom Agent repo criado (2 commits, 17 files). PENTAGON v3.1 alinhado. Versao corrigida (6.5→6.7, pulando 6.6 que foi sobrescrita). |
 | 6.8 | 05 Abr 2026 | Sprint Fechamento Espiral 2 — Fase 1 Verdade: sync ROADMAP com estado real. F2 5/19→10/19 (Atom Agent scanner/classifier/namer/CLI marcados ✓). Infra: 6 edge functions listadas, migration 009 confirmada. F3 15/19, F4 7/9 confirmados. |
+| 6.9 | 05 Abr 2026 | Sprint Fechamento Espiral 2 completo. F3 19/19 ✓ (soul loop, morph chips, emotion_after). F4 9/9 ✓ (connection prompt, graph domain filter). F2 10/19→14/19 (Gmail #who tags, calendar timezone fix, ritual blocks→Seeds). UI mobile polish (landing, aurora 48px, home spacing). |
 
 ---
 
