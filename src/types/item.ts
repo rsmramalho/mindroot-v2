@@ -1,5 +1,5 @@
 // types/item.ts — Atom Engine Schema v2
-// Reference: Genesis v4.2 + AtomItem Schema v2
+// Reference: Genesis v5.0.4 + AtomItem Schema v2
 // TYPE_FLOORS now derived from @/config/types (type-schemas.json)
 
 // ═══════════════════════════════════════════
