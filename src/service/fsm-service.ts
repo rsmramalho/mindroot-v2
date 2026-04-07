@@ -4,7 +4,7 @@
 
 import { supabase } from './supabase';
 import { itemService } from './item-service';
-import { canAdvance, advance, getItemState } from '@/engine/fsm';
+import { canAdvance, getNextState, getItemStage } from '@/engine/fsm';
 import { getFloorStage, getTypeSchema } from '@/config/types';
 import type { AtomType } from '@/config/types';
 import type { AtomItem, AtomModule, UpdateItemPayload } from '@/types/item';
@@ -14,11 +14,38 @@ export interface GateResult {
   reason?: string;
 }
 
+// Content gates kept in the service layer: the engine handles state-machine
+// integrity; the service enforces item-content prerequisites for each stage.
+function checkContentGates(item: AtomItem, targetStage: number): GateResult {
+  // Stage 2 (classified): needs type + module
+  if (targetStage >= 2 && (!item.type || !item.module)) {
+    return { passed: false, reason: 'Precisa de tipo e modulo para avancar para Linha (stage 2)' };
+  }
+  // Stage 3 (structured): needs notes or body content
+  if (targetStage >= 3 && !item.notes && Object.keys(item.body).length <= 0) {
+    return { passed: false, reason: 'Precisa de notas ou conteudo para Triangulo (stage 3)' };
+  }
+  // Stage 4 (validated): item must have been touched after creation
+  if (targetStage >= 4) {
+    const created = new Date(item.created_at).getTime();
+    const updated = new Date(item.updated_at).getTime();
+    if (updated - created < 60_000) {
+      return { passed: false, reason: 'Item precisa ser revisado antes de Quadrado (stage 4)' };
+    }
+  }
+  return { passed: true };
+}
+
 export const fsmService = {
 
   checkGate(item: AtomItem, targetStage: number): GateResult {
-    const result = canAdvance(item, targetStage);
-    return { passed: result.allowed, reason: result.reason };
+    if (targetStage <= item.genesis_stage) {
+      return { passed: false, reason: 'Ja esta neste estagio ou acima' };
+    }
+    if (targetStage > 7) {
+      return { passed: false, reason: 'Estagio maximo e 7 (Circulo)' };
+    }
+    return checkContentGates(item, targetStage);
   },
 
   async advance(itemId: string): Promise<AtomItem> {
@@ -29,15 +56,21 @@ export const fsmService = {
     const nextStage = item.genesis_stage + 1;
     if (nextStage > 7) throw new Error('Ja no estagio maximo');
 
-    const result = advance(item, nextStage);
-    if (!result) {
-      const gate = canAdvance(item, nextStage);
+    // Engine: validate state-machine sequential transition
+    const nextState = getNextState(item.state);
+    if (nextState === null || !canAdvance(item.state, nextState)) {
+      throw new Error(`Transicao invalida a partir de ${item.state}`);
+    }
+
+    // Service: validate content gates
+    const gate = checkContentGates(item, nextStage);
+    if (!gate.passed) {
       throw new Error(`Gate falhou: ${gate.reason ?? 'desconhecido'}`);
     }
 
     return itemService.update(itemId, {
-      state: result.state,
-      genesis_stage: result.genesis_stage,
+      state: nextState,
+      genesis_stage: getItemStage(nextState),
     });
   },
 
