@@ -1,75 +1,120 @@
-// home/SoulCard.tsx — Soul state card (aurora/crepúsculo)
-// Wireframe: orb with pulsing ring, intention (italic), emotion + energy badge
+// home/SoulCard.tsx — Soul state card with emotion check-in
+// Signature component: how are you feeling before what you need to do
 
-import { motion } from 'framer-motion';
-import type { EnergyLevel, RitualSlot } from '@/types/item';
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import type { EnergyLevel } from '@/types/item';
 
 interface SoulCardProps {
-  period: RitualSlot;
+  period: string;
   intention: string | null;
   emotions: string | null;
   energy: EnergyLevel | null;
+  onEmotionChange?: (emotion: string, energy: EnergyLevel | null) => void;
 }
 
-const PERIOD_STYLES: Record<string, {
-  bg: string;
-  border: string;
-  orbInnerStyle: React.CSSProperties;
-  orbRing: string;
-  energyClass: string;
-}> = {
-  aurora: {
-    bg: 'bg-gradient-to-br from-aurora-bg-from to-aurora-bg-to',
-    border: 'border-aurora-border',
-    orbInnerStyle: { background: 'radial-gradient(circle, var(--color-aurora), var(--color-warning) 60%, var(--color-error))' },
-    orbRing: 'border-warning',
-    energyClass: 'bg-success-bg text-success-text',
-  },
-  zenite: {
-    bg: 'bg-gradient-to-br from-surface to-zenite-bg-to',
-    border: 'border-border',
-    orbInnerStyle: { background: 'radial-gradient(circle, var(--color-zenite), var(--color-zenite-mid) 60%, var(--color-mod-mind))' },
-    orbRing: 'border-zenite-mid',
-    energyClass: 'bg-surface text-text-muted',
-  },
-  crepusculo: {
-    bg: 'bg-gradient-to-br from-crepusculo-bg-from to-crepusculo-bg-to',
-    border: 'border-crepusculo-border',
-    orbInnerStyle: { background: 'radial-gradient(circle, var(--color-accent-lighter), var(--color-accent-light) 60%, var(--color-accent))' },
-    orbRing: 'border-accent-light',
-    energyClass: 'bg-accent-bg text-accent',
-  },
-};
+const EMOTION_SUGGESTIONS = ['calmo', 'focado', 'ansioso', 'grato', 'cansado'];
 
-export function SoulCard({ period, intention, emotions, energy }: SoulCardProps) {
-  const s = PERIOD_STYLES[period] ?? PERIOD_STYLES.aurora;
+export function SoulCard({ period, intention, emotions, energy, onEmotionChange }: SoulCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [emotionInput, setEmotionInput] = useState(emotions ?? '');
+  const [selectedEnergy, setSelectedEnergy] = useState<EnergyLevel | null>(energy ?? null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isExpanded && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isExpanded]);
+
+  const handleEmotionSubmit = () => {
+    if (emotionInput.trim()) {
+      onEmotionChange?.(emotionInput.trim(), selectedEnergy);
+    }
+  };
+
+  const handleChipClick = (chip: string) => {
+    setEmotionInput(chip);
+  };
+
+  const handleEnergySelect = (level: EnergyLevel) => {
+    setSelectedEnergy(level);
+  };
 
   return (
-    <div className={`rounded-[14px] p-4 flex items-center gap-3.5 border ${s.bg} ${s.border}`}>
-      {/* Orb */}
-      <div className="w-11 h-11 rounded-full relative flex items-center justify-center shrink-0">
-        <motion.div
-          className={`absolute inset-0 rounded-full border-2 ${s.orbRing} opacity-30`}
-          animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.1, 0.3] }}
-          transition={{ duration: period === 'crepusculo' ? 3 : 2.5, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <div className="w-7 h-7 rounded-full" style={s.orbInnerStyle} />
+    <motion.div
+      layout
+      className="rounded-[16px] p-4 bg-card border border-border overflow-hidden"
+      style={{
+        borderTopWidth: '3px',
+        borderTopColor: 'var(--color-warning)',
+      }}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      {/* Header */}
+      <div className="mb-3">
+        <h3 className="text-[15px] font-medium text-text-heading">
+          como você tá chegando hoje?
+        </h3>
       </div>
 
-      {/* Text */}
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium italic truncate">
-          {intention ? `"${intention}"` : 'sem intencao definida'}
-        </div>
-        <div className="text-xs text-text-muted mt-0.5 flex items-center gap-1.5">
-          <span>{emotions ?? 'neutro'}</span>
-          {energy && (
-            <span className={`text-[10px] px-2 py-0.5 rounded-xl font-medium ${s.energyClass}`}>
-              {energy}
-            </span>
-          )}
+      {/* Input field */}
+      <input
+        ref={inputRef}
+        type="text"
+        value={emotionInput}
+        onChange={(e) => setEmotionInput(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && handleEmotionSubmit()}
+        placeholder="em uma palavra ou frase..."
+        className="w-full px-3 py-2.5 rounded-[12px] text-sm bg-surface text-text placeholder:text-text-muted border border-border outline-none focus:border-accent transition-colors mb-3"
+      />
+
+      {/* Emotion chips */}
+      <div className="flex flex-wrap gap-2 mb-3">
+        {EMOTION_SUGGESTIONS.map((chip) => (
+          <button
+            key={chip}
+            onClick={() => {
+              handleChipClick(chip);
+              setEmotionInput(chip);
+            }}
+            className="px-3 py-1.5 rounded-[10px] text-[12px] bg-surface text-mod-body border border-border hover:border-mod-body transition-colors"
+          >
+            {chip}
+          </button>
+        ))}
+      </div>
+
+      {/* Energy scale */}
+      <div className="flex items-center gap-2">
+        <span className="text-[11px] font-medium text-text-muted uppercase tracking-wider">
+          energia:
+        </span>
+        <div className="flex gap-1.5">
+          {(['low', 'med', 'high'] as const).map((level) => (
+            <button
+              key={level}
+              onClick={() => handleEnergySelect(level)}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all ${
+                selectedEnergy === level
+                  ? 'bg-warning text-text-heading'
+                  : 'bg-surface text-text-muted'
+              }`}
+            >
+              {level}
+            </button>
+          ))}
         </div>
       </div>
-    </div>
+
+      {/* Submit hint */}
+      {emotionInput && (
+        <div className="mt-3 text-[11px] text-text-muted">
+          pressione enter para salvar →
+        </div>
+      )}
+    </motion.div>
   );
 }
